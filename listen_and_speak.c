@@ -38,13 +38,33 @@ int main(void) {
 
     listen(sockfd, 1);
 
-    int clientfd = accept(sockfd, NULL, NULL);
+    struct sockaddr_in client_adddr;
+    socklen_t client_addr_len = sizeof client_adddr;
+    int clientfd = accept(sockfd, (struct sockaddr*) &client_adddr, &client_addr_len);
     printf("Connexion received, clientfd: %d\n", clientfd);
+    char dst[16];
+    inet_ntop(AF_INET, &client_adddr.sin_addr, dst, sizeof dst);
+    printf("%s\n", dst);
+
 
     char buf[1000];
-    ssize_t n = read(clientfd, buf, sizeof buf);
-    printf("Data received, size: %zi\n", n);
-    printf("Data: %s\n", buf);
-    
-    write(clientfd, buf, n);
+    printf("Contents of buffer: ");
+        for (size_t i = 0; i < 20; i++) {
+            printf("%d, ", buf[i]);
+        }
+        printf("…\n");
+
+    while (1) {
+        ssize_t n = read(clientfd, buf, (sizeof buf) - 1);
+        // -1 to keep last bit for 0
+        buf[n] = 0;
+        printf("Data received, size: %zi\n", n);
+        printf("Contents of buffer: ");
+        for (size_t i = 0; i < 20; i++) {
+            printf("%d, ", buf[i]);
+        }
+        printf("…\n");
+        printf("Data: %s\n", buf);
+        write(clientfd, buf, n);
+    }
 }
