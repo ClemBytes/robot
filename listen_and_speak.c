@@ -71,6 +71,10 @@ int main(void) {
         printf("-------------------------------------\n");
         printf("%s\n", buf);
         printf("-------------------------------------\n");
+
+        char header[100];
+        int w = snprintf(header, sizeof header, "HTTP/1.0 200 OK\r\nContent-Length: %d\r\n\r\n", n);
+        write(clientfd, header, w);
         write(clientfd, buf, n);
     }
 }
