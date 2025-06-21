@@ -6,27 +6,31 @@
 #include <stdio.h>
 
 int main(void) {
-    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    printf("Socket created, sockfd: %d\n", sockfd);
     // A socket is like a case number (a file descriptor)
     // Here, we tell him that we wanna use the IPV4 protocol family (AF_INET),
     // and the TCP protocol (SOCK_STREAM)
+    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0) {
+        perror("socket() failed");
+        return 1;
+    }
+    printf("Socket created, sockfd: %d\n", sockfd);
 
-    int optval = 1;
-    setsockopt(sockfd, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof optval);
     // I always want this to avoid error when I use this twice in a row
+    int optval = 1;
+    int ret = setsockopt(sockfd, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof optval);
+    if (ret < 0) {
+        perror("setsockopt() failed");
+        return 1;
+    }
 
-    /*
-    struct sockaddr_in {
-        short AF_INET;
-        unsigned short htons(8000);
-        struct in_addr sin_addr;   // see struct in_addr, below
-        char sin_zero[8]; // zero this if you want to
-    };
-    */
-
+    const char *interface = "0.0.0.0";
     struct in_addr mysinaddr;
-    inet_aton("0.0.0.0", &mysinaddr);
+    ret = inet_aton(interface, &mysinaddr);
+    if (ret == 0) {
+        fprintf(stderr, "Invalid IP address: %s\n", interface);
+        return 1;
+    }
 
     struct sockaddr_in myaddr = {
         .sin_family = AF_INET,
@@ -34,39 +38,48 @@ int main(void) {
         .sin_addr = mysinaddr,
     };
 
-    bind(sockfd, (struct sockaddr*) &myaddr, sizeof myaddr);
+    ret = bind(sockfd, (struct sockaddr*) &myaddr, sizeof myaddr);
+    if (ret < 0) {
+        perror("bind() failed");
+        return 1;
+    }
 
-    listen(sockfd, 1);
+    ret = listen(sockfd, 1);
+    if (ret < 0) {
+        perror("listen() failed");
+        return 1;
+    }
 
     struct sockaddr_in client_adddr;
     socklen_t client_addr_len = sizeof client_adddr;
     int clientfd = accept(sockfd, (struct sockaddr*) &client_adddr, &client_addr_len);
+    if (clientfd < 0) {
+        perror("accept() failed");
+        return 1;
+    }
     printf("Connexion received, clientfd: %d\n", clientfd);
     char dst[16];
-    inet_ntop(AF_INET, &client_adddr.sin_addr, dst, sizeof dst);
-    printf("%s\n", dst);
+    const char* ret2 = inet_ntop(AF_INET, &client_adddr.sin_addr, dst, sizeof dst);
+    if (ret2 == NULL) {
+        perror("inet_ntop() failed");
+        return 1;
+    }
+    printf("Client IP address: %s\n", dst);
 
 
     char buf[1000];
-    /*
-    printf("Contents of buffer: ");
-    for (size_t i = 0; i < 20; i++) {
-        printf("%d, ", buf[i]);
-    }
-    printf("…\n");
-    */
     while (1) {
-        ssize_t n = read(clientfd, buf, (sizeof buf) - 1);
         // -1 to keep last bit for 0
+        ssize_t n = read(clientfd, buf, (sizeof buf) - 1);
+        if (n == 0) {
+            printf("Client disconnected\n");
+            break;
+        } else if (n < 0) {
+            perror("read() failed");
+            break;
+        }
         buf[n] = 0;
         printf("Data received, size: %zi\n", n);
-        /*
-        printf("Contents of buffer: ");
-        for (size_t i = 0; i < 20; i++) {
-            printf("%d, ", buf[i]);
-        }
-        printf("…\n");
-        */
         printf("DATA:\n");
         printf("-------------------------------------\n");
         printf("%s\n", buf);
@@ -74,7 +87,15 @@ int main(void) {
 
         char header[100];
         int w = snprintf(header, sizeof header, "HTTP/1.0 200 OK\r\nContent-Length: %d\r\n\r\n", n);
-        write(clientfd, header, w);
-        write(clientfd, buf, n);
+        ret = write(clientfd, header, w);
+        if (ret < 0) {
+            perror("write() header failed");
+            break;
+        }
+        ret = write(clientfd, buf, n);
+        if (ret < 0) {
+            perror("write() data failed");
+            break;
+        }
     }
 }
