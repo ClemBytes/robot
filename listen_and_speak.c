@@ -48,23 +48,29 @@ int main(void) {
 
 
     char buf[1000];
+    /*
     printf("Contents of buffer: ");
-        for (size_t i = 0; i < 20; i++) {
-            printf("%d, ", buf[i]);
-        }
-        printf("…\n");
-
+    for (size_t i = 0; i < 20; i++) {
+        printf("%d, ", buf[i]);
+    }
+    printf("…\n");
+    */
     while (1) {
         ssize_t n = read(clientfd, buf, (sizeof buf) - 1);
         // -1 to keep last bit for 0
         buf[n] = 0;
         printf("Data received, size: %zi\n", n);
+        /*
         printf("Contents of buffer: ");
         for (size_t i = 0; i < 20; i++) {
             printf("%d, ", buf[i]);
         }
         printf("…\n");
-        printf("Data: %s\n", buf);
+        */
+        printf("DATA:\n");
+        printf("-------------------------------------\n");
+        printf("%s\n", buf);
+        printf("-------------------------------------\n");
         write(clientfd, buf, n);
     }
 }
