@@ -50,52 +50,54 @@ int main(void) {
         return 1;
     }
 
-    struct sockaddr_in client_adddr;
-    socklen_t client_addr_len = sizeof client_adddr;
-    int clientfd = accept(sockfd, (struct sockaddr*) &client_adddr, &client_addr_len);
-    if (clientfd < 0) {
-        perror("accept() failed");
-        return 1;
-    }
-    printf("Connexion received, clientfd: %d\n", clientfd);
-    char dst[16];
-    const char* ret2 = inet_ntop(AF_INET, &client_adddr.sin_addr, dst, sizeof dst);
-    if (ret2 == NULL) {
-        perror("inet_ntop() failed");
-        return 1;
-    }
-    printf("Client IP address: %s\n", dst);
-
-
-    char buf[1000];
     while (1) {
-        // -1 to keep last bit for 0
-        ssize_t n = read(clientfd, buf, (sizeof buf) - 1);
-        if (n == 0) {
-            printf("Client disconnected\n");
-            break;
-        } else if (n < 0) {
-            perror("read() failed");
-            break;
+        struct sockaddr_in client_adddr;
+        socklen_t client_addr_len = sizeof client_adddr;
+        int clientfd = accept(sockfd, (struct sockaddr*) &client_adddr, &client_addr_len);
+        if (clientfd < 0) {
+            perror("accept() failed");
+            return 1;
         }
-        buf[n] = 0;
-        printf("Data received, size: %zi\n", n);
-        printf("DATA:\n");
-        printf("-------------------------------------\n");
-        printf("%s\n", buf);
-        printf("-------------------------------------\n");
+        printf("Connexion received, clientfd: %d\n", clientfd);
+        char dst[16];
+        const char* ret2 = inet_ntop(AF_INET, &client_adddr.sin_addr, dst, sizeof dst);
+        if (ret2 == NULL) {
+            perror("inet_ntop() failed");
+            return 1;
+        }
+        printf("Client IP address: %s\n", dst);
 
-        char header[100];
-        int w = snprintf(header, sizeof header, "HTTP/1.0 200 OK\r\nContent-Length: %d\r\n\r\n", n);
-        ret = write(clientfd, header, w);
-        if (ret < 0) {
-            perror("write() header failed");
-            break;
-        }
-        ret = write(clientfd, buf, n);
-        if (ret < 0) {
-            perror("write() data failed");
-            break;
+
+        char buf[1000];
+        while (1) {
+            // -1 to keep last bit for 0
+            ssize_t n = read(clientfd, buf, (sizeof buf) - 1);
+            if (n == 0) {
+                printf("Client disconnected\n");
+                break;
+            } else if (n < 0) {
+                perror("read() failed");
+                break;
+            }
+            buf[n] = 0;
+            printf("Data received, size: %zi\n", n);
+            printf("DATA:\n");
+            printf("-------------------------------------\n");
+            printf("%s\n", buf);
+            printf("-------------------------------------\n");
+
+            char header[100];
+            int w = snprintf(header, sizeof header, "HTTP/1.0 200 OK\r\nContent-Length: %d\r\n\r\n", n);
+            ret = write(clientfd, header, w);
+            if (ret < 0) {
+                perror("write() header failed");
+                break;
+            }
+            ret = write(clientfd, buf, n);
+            if (ret < 0) {
+                perror("write() data failed");
+                break;
+            }
         }
     }
 }
