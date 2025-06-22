@@ -59,7 +59,7 @@ int main(void) {
             perror("accept() failed");
             return 1;
         }
-        printf("Connexion received, clientfd: %d\n", clientfd);
+        printf("\n --- NEW CONNEXION RECEIVED, clientfd: %d ---\n", clientfd);
         char dst[16];
         const char* ret2 = inet_ntop(AF_INET, &client_adddr.sin_addr, dst, sizeof dst);
         if (ret2 == NULL) {
@@ -74,7 +74,7 @@ int main(void) {
             // -1 to keep last bit for 0
             ssize_t n = read(clientfd, buf, (sizeof buf) - 1);
             if (n == 0) {
-                printf("Client disconnected\n");
+                printf("Client %d disconnected\n", clientfd);
                 break;
             } else if (n < 0) {
                 perror("read() failed");
