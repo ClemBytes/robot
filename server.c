@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
 
 int main(void) {
     // A socket is like a case number (a file descriptor)
@@ -88,14 +89,14 @@ int main(void) {
 
             char header[100];
             int w = snprintf(header, sizeof header, "HTTP/1.0 200 OK\r\nContent-Length: %d\r\n\r\n", n);
-            ret = write(clientfd, header, w);
+
+            char str[w + n];
+            strcat(str, header);
+            strcat(str, buf);
+
+            ret = write(clientfd, str, w + n);
             if (ret < 0) {
-                perror("write() header failed");
-                break;
-            }
-            ret = write(clientfd, buf, n);
-            if (ret < 0) {
-                perror("write() data failed");
+                perror("write() failed");
                 break;
             }
         }
