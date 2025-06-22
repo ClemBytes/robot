@@ -91,7 +91,7 @@ int main(void) {
             int w = snprintf(header, sizeof header, "HTTP/1.0 200 OK\r\nContent-Length: %d\r\n\r\n", n);
 
             char str[w + n];
-            strcat(str, header);
+            strcpy(str, header);
             strcat(str, buf);
 
             ret = write(clientfd, str, w + n);
