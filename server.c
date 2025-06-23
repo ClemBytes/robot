@@ -70,13 +70,13 @@ int main(void) {
         }
         printf("\n --- NEW CONNEXION RECEIVED, clientfd: %d ---\n", clientfd);
         // Get client IP address in '0.0.0.0' format for printing
-        char dst[16];
-        const char* ret2 = inet_ntop(AF_INET, &client_addr.sin_addr, dst, sizeof dst);
+        char client_ip_address[16];
+        const char* ret2 = inet_ntop(AF_INET, &client_addr.sin_addr, client_ip_address, sizeof client_ip_address);
         if (ret2 == NULL) {
             perror("inet_ntop() failed");
             return 1;
         }
-        printf("Client IP address: %s\n", dst);
+        printf("Client IP address: %s\n", client_ip_address);
 
 
         char buf[1000];
