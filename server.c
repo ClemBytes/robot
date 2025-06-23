@@ -87,6 +87,8 @@ int main(void) {
             ssize_t n = read(clientfd, buf, (sizeof buf) - 1);
             if (n == 0) {
                 printf("Client %d disconnected\n", clientfd);
+                printf("-------------------------------------\n");
+                printf("-------------------------------------\n");
                 break;
             } else if (n < 0) {
                 perror("read() failed");
