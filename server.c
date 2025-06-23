@@ -49,6 +49,7 @@ int handle_client(int clientfd, struct sockaddr_in client_addr) {
 
         // Create HTML response
         char html_rep[1000];
+        int button_value = 0;
         int w = snprintf(html_rep, sizeof html_rep,
             "<!DOCTYPE html>\
             <html>\
@@ -59,14 +60,22 @@ int handle_client(int clientfd, struct sockaddr_in client_addr) {
                 <h1>Hey! Welcome to my robot page!</h1>\
                 <p>Your client file descriptor is %d.</p>\
                 <p>Your IP address is %s.</p>\
-                <p>Here is the request you sent me:</p>\
-                <pre>%s</pre>\
+                <p>Current value: %d</p>\
+                <form action='/action_page' method='post'>\
+                    <button type='submit'>Increase current value!</button>\
+                </form>\
             </body>\
-            </html>", clientfd, client_ip_address, buf);
+            </html>", clientfd, client_ip_address, button_value);
         if (w < 0) {
             perror("snprintf() for html failed");
             break;
         }
+
+        printf("html sent, size: %zi\n", w);
+        printf("HTML:\n");
+        printf("-------------------------------------\n");
+        printf("%s\n", html_rep);
+        printf("-------------------------------------\n");
 
         // Concatenate header and data of response
         char str[h + w + 1];
