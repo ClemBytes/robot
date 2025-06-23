@@ -41,22 +41,43 @@ int handle_client(int clientfd, struct sockaddr_in client_addr) {
 
         // Create header for response
         char header[100];
-        int w = snprintf(header, sizeof header, "HTTP/1.0 200 OK\r\nContent-Length: %d\r\n\r\n", n);
-        if (w < 0) {
+        int h = snprintf(header, sizeof header, "HTTP/1.0 200 OK\r\nContent-Length: %d\r\n\r\n", n);
+        if (h < 0) {
             perror("snprintf() for header failed");
             break;
         }
 
+        // Create HTML response
+        char html_rep[1000];
+        int w = snprintf(html_rep, sizeof html_rep,
+            "<!DOCTYPE html>\
+            <html>\
+            <head>\
+                <title>A simple HTML file</title>\
+            </head>\
+            <body>\
+                <h1>Hey! Welcome to my robot page!</h1>\
+                <p>Your client file descriptor is %d.</p>\
+                <p>Your IP address is %s.</p>\
+                <p>Here is the request you sent me:</p>\
+                <pre>%s</pre>\
+            </body>\
+            </html>", clientfd, client_ip_address, buf);
+        if (w < 0) {
+            perror("snprintf() for html failed");
+            break;
+        }
+
         // Concatenate header and data of response
-        char str[w + n + 1];
-        int ret = snprintf(str, sizeof str, "%s%s", header, buf);
+        char str[h + w + 1];
+        int ret = snprintf(str, sizeof str, "%s%s", header, html_rep);
         if (ret < 0) {
             perror("snprintf() for concatenation failed");
             break;
         }
 
         // Send response to client (write to client file descriptor)
-        ret = write(clientfd, str, w + n);
+        ret = write(clientfd, str, sizeof str);
         if (ret < 0) {
             perror("write() failed");
             break;
