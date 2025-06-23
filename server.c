@@ -6,6 +6,66 @@
 #include <stdio.h>
 #include <string.h>
 
+int handle_client(int clientfd, struct sockaddr_in client_addr) {
+    // Get client IP address in '0.0.0.0' format for printing
+    char client_ip_address[16];
+    const char* ret2 = inet_ntop(AF_INET, &client_addr.sin_addr, client_ip_address, sizeof client_ip_address);
+    if (ret2 == NULL) {
+        perror("inet_ntop() failed");
+        return 1;
+    }
+    printf("Client IP address: %s\n", client_ip_address);
+
+
+    char buf[1000];
+    // Repeat indefinitely for each new request from current client
+    while (1) {
+        // Read data sent from client
+        // -1 to keep last bit for 0
+        ssize_t n = read(clientfd, buf, (sizeof buf) - 1);
+        if (n == 0) {
+            printf("Client %d disconnected\n", clientfd);
+            printf("-------------------------------------\n");
+            printf("-------------------------------------\n");
+            break;
+        } else if (n < 0) {
+            perror("read() failed");
+            break;
+        }
+        buf[n] = 0;
+        printf("Data received, size: %zi\n", n);
+        printf("DATA:\n");
+        printf("-------------------------------------\n");
+        printf("%s\n", buf);
+        printf("-------------------------------------\n");
+
+        // Create header for response
+        char header[100];
+        int w = snprintf(header, sizeof header, "HTTP/1.0 200 OK\r\nContent-Length: %d\r\n\r\n", n);
+        if (w < 0) {
+            perror("snprintf() for header failed");
+            break;
+        }
+
+        // Concatenate header and data of response
+        char str[w + n + 1];
+        int ret = snprintf(str, sizeof str, "%s%s", header, buf);
+        if (ret < 0) {
+            perror("snprintf() for concatenation failed");
+            break;
+        }
+
+        // Send response to client (write to client file descriptor)
+        ret = write(clientfd, str, w + n);
+        if (ret < 0) {
+            perror("write() failed");
+            break;
+        }
+    }
+    return 0;
+}
+
+
 int main(void) {
     /*
     Create a socket and get its file descriptor.
@@ -69,60 +129,6 @@ int main(void) {
             return 1;
         }
         printf("\n --- NEW CONNEXION RECEIVED, clientfd: %d ---\n", clientfd);
-        // Get client IP address in '0.0.0.0' format for printing
-        char client_ip_address[16];
-        const char* ret2 = inet_ntop(AF_INET, &client_addr.sin_addr, client_ip_address, sizeof client_ip_address);
-        if (ret2 == NULL) {
-            perror("inet_ntop() failed");
-            return 1;
-        }
-        printf("Client IP address: %s\n", client_ip_address);
-
-
-        char buf[1000];
-        // Repeat indefinitely for each new request from current client
-        while (1) {
-            // Read data sent from client
-            // -1 to keep last bit for 0
-            ssize_t n = read(clientfd, buf, (sizeof buf) - 1);
-            if (n == 0) {
-                printf("Client %d disconnected\n", clientfd);
-                printf("-------------------------------------\n");
-                printf("-------------------------------------\n");
-                break;
-            } else if (n < 0) {
-                perror("read() failed");
-                break;
-            }
-            buf[n] = 0;
-            printf("Data received, size: %zi\n", n);
-            printf("DATA:\n");
-            printf("-------------------------------------\n");
-            printf("%s\n", buf);
-            printf("-------------------------------------\n");
-
-            // Create header for response
-            char header[100];
-            int w = snprintf(header, sizeof header, "HTTP/1.0 200 OK\r\nContent-Length: %d\r\n\r\n", n);
-            if (w < 0) {
-                perror("snprintf() for header failed");
-                break;
-            }
-
-            // Concatenate header and data of response
-            char str[w + n + 1];
-            ret = snprintf(str, sizeof str, "%s%s", header, buf);
-            if (ret < 0) {
-                perror("snprintf() for concatenation failed");
-                break;
-            }
-
-            // Send response to client (write to client file descriptor)
-            ret = write(clientfd, str, w + n);
-            if (ret < 0) {
-                perror("write() failed");
-                break;
-            }
-        }
+        handle_client(clientfd, client_addr);
     }
 }
