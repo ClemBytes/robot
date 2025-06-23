@@ -61,9 +61,9 @@ int main(void) {
     // Repeat indefinitely for each new client
     while (1) {
         // Get client connexion address
-        struct sockaddr_in client_adddr;
-        socklen_t client_addr_len = sizeof client_adddr;
-        int clientfd = accept(sockfd, (struct sockaddr*) &client_adddr, &client_addr_len);
+        struct sockaddr_in client_addr;
+        socklen_t client_addr_len = sizeof client_addr;
+        int clientfd = accept(sockfd, (struct sockaddr*) &client_addr, &client_addr_len);
         if (clientfd < 0) {
             perror("accept() failed");
             return 1;
@@ -71,7 +71,7 @@ int main(void) {
         printf("\n --- NEW CONNEXION RECEIVED, clientfd: %d ---\n", clientfd);
         // Get client IP address in '0.0.0.0' format for printing
         char dst[16];
-        const char* ret2 = inet_ntop(AF_INET, &client_adddr.sin_addr, dst, sizeof dst);
+        const char* ret2 = inet_ntop(AF_INET, &client_addr.sin_addr, dst, sizeof dst);
         if (ret2 == NULL) {
             perror("inet_ntop() failed");
             return 1;
