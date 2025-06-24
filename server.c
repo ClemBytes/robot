@@ -39,6 +39,9 @@ int handle_client(int clientfd, struct sockaddr_in client_addr) {
         printf("%s\n", buf);
         printf("-------------------------------------\n");
 
+        // Parse first line of request
+
+
         // Create header for response
         char header[100];
         int h = snprintf(header, sizeof header, "HTTP/1.0 200 OK\r\nContent-Length: %d\r\n\r\n", n);
@@ -55,13 +58,15 @@ int handle_client(int clientfd, struct sockaddr_in client_addr) {
             <html>\
             <head>\
                 <title>A simple HTML file</title>\
+                <link rel='shortcut icon' href='data:favicon.ico' type='image/x-icon'>\
+                <link rel='icon' href='data:favicon.ico' type='image/x-icon'>\
             </head>\
             <body>\
                 <h1>Hey! Welcome to my robot page!</h1>\
                 <p>Your client file descriptor is %d.</p>\
                 <p>Your IP address is %s.</p>\
-                <p>Current value: %d</p>\
-                <form action='/action_page' method='post'>\
+                <form action='/increment' method='post'>\
+                    <p>Current value: %d</p>\
                     <button type='submit'>Increase current value!</button>\
                 </form>\
             </body>\
@@ -70,12 +75,6 @@ int handle_client(int clientfd, struct sockaddr_in client_addr) {
             perror("snprintf() for html failed");
             break;
         }
-
-        printf("html sent, size: %zi\n", w);
-        printf("HTML:\n");
-        printf("-------------------------------------\n");
-        printf("%s\n", html_rep);
-        printf("-------------------------------------\n");
 
         // Concatenate header and data of response
         char str[h + w + 1];
