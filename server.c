@@ -39,8 +39,25 @@ int handle_client(int clientfd, struct sockaddr_in client_addr) {
         printf("%s\n", buf);
         printf("-------------------------------------\n");
 
-        // Parse first line of request
-
+        // Get first line of request
+        int i;
+        char first_line[100];
+        for (i=0; i < n; i++) {
+            if (buf[i] == '\n'){
+                break;
+            } else {
+                first_line[i] = buf[i];
+            }
+        }
+        first_line[i + 1] = 0;
+        printf("First line: %s\n", first_line);
+        // Parse first line
+        char method[16], path[1024], version[16];
+        sscanf(first_line, "%s %s %s", method, path, version);
+        printf("Method: %s\n", method);
+        printf("Path: %s\n", path);
+        printf("Version: %s\n", version);
+        printf("-------------------------------------\n");
 
         // Create header for response
         char header[100];
