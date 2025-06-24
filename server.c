@@ -18,6 +18,7 @@ int handle_client(int clientfd, struct sockaddr_in client_addr) {
 
 
     char buf[1000];
+    int button_value = 0;
     // Repeat indefinitely for each new request from current client
     while (1) {
         // Read data sent from client
@@ -59,6 +60,11 @@ int handle_client(int clientfd, struct sockaddr_in client_addr) {
         printf("Version: %s\n", version);
         printf("-------------------------------------\n");
 
+        // Update button value
+        if (strcmp(method, "POST") == 0 && strcmp(path, "/increment") == 0) {
+            button_value++;
+        }
+
         // Create header for response
         char header[100];
         int h = snprintf(header, sizeof header, "HTTP/1.0 200 OK\r\nContent-Length: %d\r\n\r\n", n);
@@ -69,7 +75,6 @@ int handle_client(int clientfd, struct sockaddr_in client_addr) {
 
         // Create HTML response
         char html_rep[1000];
-        int button_value = 0;
         int w = snprintf(html_rep, sizeof html_rep,
             "<!DOCTYPE html>\
             <html>\
