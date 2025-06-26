@@ -91,7 +91,7 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
         char favicon_data[2000];
         size_t favicon_data_size = fread(favicon_data, 1, (sizeof favicon_data) - 1, favicon_data_file);
         favicon_data[favicon_data_size + 1] = 0;
-        if (feof(favicon_data_file) == 0) {
+        if (!feof(favicon_data_file)) {
             printf("Favicon file not entirely read!\n");
             return 1;
         }
