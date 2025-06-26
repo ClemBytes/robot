@@ -33,24 +33,36 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
             break;
         }
         buf[n] = 0;
+        /*
         printf("Data received, size: %zi\n", n);
         printf("DATA:\n");
         printf("-------------------------------------\n");
         printf("%s\n", buf);
         printf("-------------------------------------\n");
+        */
 
         // Get first line of request
         int i;
-        char first_line[100];
+        int first_line_size = 100;
+        char first_line[first_line_size];
         for (i=0; i < n; i++) {
             if (buf[i] == '\r'){
+                first_line[i] = '\r';
+                first_line[i+1] = '\n';
                 break;
             } else if (buf[i] == '\n') {
+                first_line[i] = '\r';
+                first_line[i+1] = '\n';
                 break;
             } else {
                 first_line[i] = buf[i];
             }
         }
+        if (i >= first_line_size - 1) {
+            printf("Size of first line is not enough: %d given and needs %d!\n", first_line_size, i);
+            break;
+        }
+
         first_line[i + 1] = 0;
         printf("First line: %s\n", first_line);
         // Parse first line
