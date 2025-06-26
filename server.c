@@ -82,45 +82,32 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
             *click_counter_ptr = 0;
         }
 
-        // Create header for response
-        int header_size = 100;
-        char header[header_size];
-        int h = snprintf(header, sizeof header, "HTTP/1.0 200 OK\r\nContent-Length: %d\r\n\r\n", n);
-        if (h < 0) {
-            perror("snprintf() for header failed");
-            break;
-        } else if (h >= header_size) {
-            printf("Size of HTML header is not enough: %d given and needs %d!\n", header_size, h);
-            break;
-        }
-
         // Create HTML response
         int size_html_rep = 10000;
         char html_rep[size_html_rep];
         int w = snprintf(html_rep, sizeof html_rep,
-            "<!DOCTYPE html>\
-            <html>\
-            <head>\
-                <title>A simple HTML file</title>\
-                <link rel='shortcut icon' href='data:favicon.ico' type='image/x-icon'>\
-                <link rel='icon' href='data:favicon.ico' type='image/x-icon'>\
-            </head>\
-            <body>\
-                <h1>Hey! Welcome to my robot page!</h1>\
-                <p>Your client file descriptor is %d.</p>\
-                <p>Your IP address is %s.</p>\
-                <p>Current value: %d</p>\
-                <form action='/increment' method='post'>\
-                    <button type='submit'>Increase current value!</button>\
-                </form>\
-                <form action='/decrement' method='post'>\
-                    <button type='submit'>Decrease current value!</button>\
-                </form>\
-                <form action='/reinitialize' method='post'>\
-                    <button type='submit'>Re-initialize current value!</button>\
-                </form>\
-            </body>\
-            </html>", clientfd, client_ip_address, *click_counter_ptr);
+            "<!DOCTYPE html>\n\
+<html>\n\
+<head>\n\
+    <title>A simple HTML file</title>\n\
+    <link rel='icon' href='data:favicon.ico' type='image/x-icon'>\n\
+</head>\n\
+<body>\n\
+    <h1>Hey! Welcome to my robot page!</h1>\n\
+    <p>Your client file descriptor is %d.</p>\n\
+    <p>Your IP address is %s.</p>\n\
+    <p>Current value: %d</p>\n\
+    <form action='/increment' method='post'>\n\
+        <button type='submit'>Increase current value!</button>\n\
+    </form>\n\
+    <form action='/decrement' method='post'>\n\
+        <button type='submit'>Decrease current value!</button>\n\
+    </form>\n\
+    <form action='/reinitialize' method='post'>\n\
+        <button type='submit'>Re-initialize current value!</button>\n\
+    </form>\n\
+</body>\n\
+</html>", clientfd, client_ip_address, *click_counter_ptr);
         if (w < 0) {
             perror("snprintf() for html failed");
             break;
@@ -135,6 +122,18 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
         printf("-------------------------------------\n");
         */
 
+        // Create header for response
+        int header_size = 100;
+        char header[header_size];
+        int h = snprintf(header, sizeof header, "HTTP/1.0 200 OK\r\nContent-Length: %d\r\n\r\n", w);
+        if (h < 0) {
+            perror("snprintf() for header failed");
+            break;
+        } else if (h >= header_size) {
+            printf("Size of HTML header is not enough: %d given and needs %d!\n", header_size, h);
+            break;
+        }
+
         // Concatenate header and data of response
         char str[h + w + 1];
         int ret = snprintf(str, sizeof str, "%s%s", header, html_rep);
@@ -144,7 +143,7 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
         }
 
         // Send response to client (write to client file descriptor)
-        ret = write(clientfd, str, sizeof str);
+        ret = write(clientfd, str, ret);
         if (ret < 0) {
             perror("write() failed");
             break;
