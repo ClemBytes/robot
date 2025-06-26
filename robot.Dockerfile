@@ -5,4 +5,5 @@ RUN gcc -static -o server server.c
 
 FROM scratch
 COPY --from=gcc ./server ./server
+COPY data data
 CMD ["./server"]
