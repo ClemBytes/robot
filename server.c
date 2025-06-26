@@ -64,6 +64,10 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
         // Update button value
         if (strcmp(method, "POST") == 0 && strcmp(path, "/increment") == 0) {
             (*click_counter_ptr)++;
+        } else if (strcmp(method, "POST") == 0 && strcmp(path, "/decrement") == 0) {
+            (*click_counter_ptr)--;
+        } else if (strcmp(method, "POST") == 0 && strcmp(path, "/reinitialize") == 0) {
+            *click_counter_ptr = 0;
         }
 
         // Create header for response
@@ -75,7 +79,8 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
         }
 
         // Create HTML response
-        char html_rep[1000];
+        int size_html_rep = 10000;
+        char html_rep[size_html_rep];
         int w = snprintf(html_rep, sizeof html_rep,
             "<!DOCTYPE html>\
             <html>\
@@ -88,16 +93,31 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
                 <h1>Hey! Welcome to my robot page!</h1>\
                 <p>Your client file descriptor is %d.</p>\
                 <p>Your IP address is %s.</p>\
+                <p>Current value: %d</p>\
                 <form action='/increment' method='post'>\
-                    <p>Current value: %d</p>\
                     <button type='submit'>Increase current value!</button>\
+                </form>\
+                <form action='/decrement' method='post'>\
+                    <button type='submit'>Decrease current value!</button>\
+                </form>\
+                <form action='/reinitialize' method='post'>\
+                    <button type='submit'>Re-initialize current value!</button>\
                 </form>\
             </body>\
             </html>", clientfd, client_ip_address, *click_counter_ptr);
         if (w < 0) {
             perror("snprintf() for html failed");
             break;
+        } else if (w >= size_html_rep) {
+            printf("Size of HTML response is not enough!\n");
+            break;
         }
+        /*
+        printf("HTML, size: %zi\n", n);
+        printf("-------------------------------------\n");
+        printf("%s\n", html_rep);
+        printf("-------------------------------------\n");
+        */
 
         // Concatenate header and data of response
         char str[h + w + 1];
