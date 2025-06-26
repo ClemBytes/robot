@@ -82,6 +82,23 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
             *click_counter_ptr = 0;
         }
 
+        // Read favicon data:
+        FILE *favicon_data_file = fopen("./data/favicon-16x16_data", "r");
+        if (favicon_data_file == NULL) {
+            perror("Erreur d'ouverture du fichier");
+            return 1;
+        }
+        char favicon_data[2000];
+        size_t favicon_data_size = fread(favicon_data, 1, (sizeof favicon_data) - 1, favicon_data_file);
+        favicon_data[favicon_data_size + 1] = 0;
+        // TODO: check error
+        /*
+        printf("Image data, size: %d:\n", favicon_data_size);
+        printf("-------------------------------------\n");
+        printf("%s\n", favicon_data);
+        printf("-------------------------------------\n");
+        */
+        
         // Create HTML response
         int size_html_rep = 100000;
         char html_rep[size_html_rep];
@@ -90,7 +107,7 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
 <html>\n\
 <head>\n\
     <title>A simple HTML file</title>\n\
-    <link rel='icon' href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAC+0lEQVQ4T21Ta0gUURj97p1Zd7dx3C3LlIooyxJyM3uYpVRQKrRGD3uB9aOX2FKQSlAWDUUJoQnF9pL6UUKPLYws2SzoQe+H6RpopfXDwrSsXcdlnzO3O7MPyhoYuPf7zj33fOfMIBjyZFpbshmEqhFBGYCAVdsEggSRZomQsheW9Md/HkF/buZa21IxyG8QQvqhxCoPIR4Z8MznlrT2SP8vgnknHcc5Ddqx1sSDPi5ABYQeQl/PgAauOERwB8iJp9tNO/8hSBXsG3njqCMl2fFjHMZOcIkiMHxIiCR6wMDzYHJOglOP+7+Kzu9724X8C0pPvWTsrqt63mAYiDUMZ8sKjHDt1nUgsgy6SYkqgbfzGyCModC8CqobnDDo+hUUXa64LzVrPNERpgr2u7xhxOLyvHi442kFzOtAdvtUAsxpQRa9kDcsHarsP0B0/bzXIeQviSqIzJNlbb05LUFXYM5E0INEdfYIKJHwcPsFgXd93oZnlunL/mtilrVtM0KkVkdzTOAYoGmETCQE+twSeGmOhKCtzyxp5/5LoBRnHH26Xgr6T9Hb+QgorEJk2JiSt7vnXRpSD6mcslqop5bOQhNNcUjH0cME4seFoP3dYSVet0g+OQZo6/V7m7BCEad2RueWc0ZjrItuGEhOl5FWjzFDYIY5RNB8iyIlBMRHv6OuFkzVSU7noKG3qcodTeHQsTOv2nvcTc26KQsQw85XDsboQzb6w2ERKfgkw/v+YWoSl7u/tHh2xGAVVFd38aUkyYcrPyd5QJbt4KPkQX9IAhsDoOUIYJy/Z0KPnmFwRVHRhjlRgpQCYeT4MTqHX5JPP6zdezBl3aGtWJZqKIALG+aWsab0w+WKswu3VB7QsKi4u9eV1lFf2a+OMLlwn5nBbAM1522HTchQaouWb9oWAM0ZZa2BQPH9G+fPKmtqdgtNd7oswdIP14XGsAcCnroaNgaC8LqrXninAHPyVibptdwjJQ1/0JfzoNH2TaknrxCmYRZmfbQB/RcE+TfDJSUg0zV5jAAAAABJRU5ErkJggg=='>\n\
+    <link rel='icon' href='data:image/png;base64,%s'>\n\
 </head>\n\
 <body>\n\
     <h1>Hey! Welcome to my robot page!</h1>\n\
@@ -107,7 +124,7 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
         <button type='submit'>Re-initialize current value!</button>\n\
     </form>\n\
 </body>\n\
-</html>", clientfd, client_ip_address, *click_counter_ptr);
+</html>", favicon_data, clientfd, client_ip_address, *click_counter_ptr);
         if (w < 0) {
             perror("snprintf() for html failed");
             break;
