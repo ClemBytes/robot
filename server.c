@@ -71,10 +71,14 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
         }
 
         // Create header for response
-        char header[100];
+        int header_size = 100;
+        char header[header_size];
         int h = snprintf(header, sizeof header, "HTTP/1.0 200 OK\r\nContent-Length: %d\r\n\r\n", n);
         if (h < 0) {
             perror("snprintf() for header failed");
+            break;
+        } else if (h >= header_size) {
+            printf("Size of HTML header is not enough: %d given and needs %d!\n", header_size, h);
             break;
         }
 
@@ -109,7 +113,7 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
             perror("snprintf() for html failed");
             break;
         } else if (w >= size_html_rep) {
-            printf("Size of HTML response is not enough!\n");
+            printf("Size of HTML response is not enough: %d given and needs %d!\n", size_html_rep, w);
             break;
         }
         /*
