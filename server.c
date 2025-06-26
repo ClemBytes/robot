@@ -43,7 +43,9 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
         int i;
         char first_line[100];
         for (i=0; i < n; i++) {
-            if (buf[i] == '\n'){
+            if (buf[i] == '\r'){
+                break;
+            } else if (buf[i] == '\n') {
                 break;
             } else {
                 first_line[i] = buf[i];
