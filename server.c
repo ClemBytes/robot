@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 
-int handle_client(int clientfd, struct sockaddr_in client_addr) {
+int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_counter_ptr) {
     // Get client IP address in '0.0.0.0' format for printing
     char client_ip_address[16];
     const char* ret2 = inet_ntop(AF_INET, &client_addr.sin_addr, client_ip_address, sizeof client_ip_address);
@@ -18,7 +18,6 @@ int handle_client(int clientfd, struct sockaddr_in client_addr) {
 
 
     char buf[1000];
-    int button_value = 0;
     // Repeat indefinitely for each new request from current client
     while (1) {
         // Read data sent from client
@@ -62,7 +61,7 @@ int handle_client(int clientfd, struct sockaddr_in client_addr) {
 
         // Update button value
         if (strcmp(method, "POST") == 0 && strcmp(path, "/increment") == 0) {
-            button_value++;
+            (*click_counter_ptr)++;
         }
 
         // Create header for response
@@ -92,7 +91,7 @@ int handle_client(int clientfd, struct sockaddr_in client_addr) {
                     <button type='submit'>Increase current value!</button>\
                 </form>\
             </body>\
-            </html>", clientfd, client_ip_address, button_value);
+            </html>", clientfd, client_ip_address, *click_counter_ptr);
         if (w < 0) {
             perror("snprintf() for html failed");
             break;
@@ -169,6 +168,9 @@ int main(void) {
         return 1;
     }
 
+    // Initialize button
+    int click_counter = 0;
+
     // Repeat indefinitely for each new client
     while (1) {
         // Get client connexion address
@@ -180,6 +182,6 @@ int main(void) {
             return 1;
         }
         printf("\n --- NEW CONNEXION RECEIVED, clientfd: %d ---\n", clientfd);
-        handle_client(clientfd, client_addr);
+        handle_client(clientfd, client_addr, &click_counter);
     }
 }
