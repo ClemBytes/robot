@@ -1,18 +1,28 @@
 import os
 
-def base64_perso(path):
-    s = ''
-    with open(path, 'rb') as f:
-        for line in f:
-            for c in line:
-                s += '{0:08b}'.format(c)
-    print(s)
-    print('\n')
-    i = 0
-    while i < len(s) - 6:
-        binary = s[i:i+6]
-        print(f'{binary} : {int(binary, 2)}')
-        i += 6
+charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+assert len(charset) == 64
 
-# base64_perso('./data/favicon-16x16.png')
-base64_perso('./test')
+def base64(data):
+    bits = ''.join('{0:08b}'.format(byte) for byte in data)
+    bits += '0' * ((6 - len(bits)) % 6)
+    i = 0
+    res = ''
+    while i < len(bits):
+        six_bits = bits[i:i+6]
+        print(f'{six_bits} : {int(six_bits, 2)}')
+        res += charset[int(six_bits, 2)]
+        i += 6
+    res += '=' * ((4 - len(res)) % 4)
+    print(res)
+    return res
+
+
+data = ''
+with open('./data/favicon-16x16.png', 'rb') as f:
+    data = f.read()
+base64(data)
+assert base64(b'Many hands make light work.') == "TWFueSBoYW5kcyBtYWtlIGxpZ2h0IHdvcmsu"
+assert base64(b'Man') == "TWFu"
+assert base64(b'Ma') == "TWE="
+assert base64(b'M') == "TQ=="
