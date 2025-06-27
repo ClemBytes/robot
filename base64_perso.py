@@ -4,21 +4,28 @@ charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 assert len(charset) == 64
 
 def base64(data):
-    bits = ''.join('{0:08b}'.format(byte) for byte in data)
-    bits += '0' * ((6 - len(bits)) % 6)
-    i = 0
+    j = 0
     res = ''
-    while i < len(bits):
-        six_bits = bits[i:i+6]
-        print(f'{six_bits} : {int(six_bits, 2)}')
-        res += charset[int(six_bits, 2)]
-        i += 6
+    while j + 2 < len(data):
+        res += charset[data[j + 0] >> 2]
+        res += charset[((data[j + 0] & 0b00000011) << 4) | (data[j + 1] >> 4)]
+        res += charset[((data[j + 1] & 0b00001111) << 2) | (data[j + 2] >> 6)]
+        res += charset[data[j + 2] & 0b00111111]
+        j += 3
+
+    if len(data) - j == 1:
+        res += charset[data[j + 0] >> 2]
+        res += charset[((data[j + 0] & 0b00000011) << 4) | (0 >> 4)]
+    elif len(data) - j == 2:
+        res += charset[data[j + 0] >> 2]
+        res += charset[((data[j + 0] & 0b00000011) << 4) | (data[j + 1] >> 4)]
+        res += charset[((data[j + 1] & 0b00001111) << 2) | (0 >> 6)]
+
     res += '=' * ((4 - len(res)) % 4)
     print(res)
     return res
 
 
-data = ''
 with open('./data/favicon-16x16.png', 'rb') as f:
     data = f.read()
 base64(data)
