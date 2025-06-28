@@ -32,14 +32,7 @@ int base64(const char* data, size_t len_data, char* res, size_t res_len) {
         res[i++] = charset[((data[j + 1] & 0b00001111) << 2) | (0 >> 6)];
     }
 
-    if (padding_len == 1) {
-        res[i++] = '=';
-    } else if (padding_len == 2) {
-        res[i++] = '=';
-        res[i++] = '=';
-    } else if (padding_len == 3) {
-        res[i++] = '=';
-        res[i++] = '=';
+    for (int k = 0; k < padding_len; k++) {
         res[i++] = '=';
     }
     res[i] = 0;
