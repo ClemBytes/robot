@@ -16,37 +16,31 @@ int base64(const char* data, size_t len_data, char* res, size_t res_len) {
     int j = 0;
     int i = 0;
     while (j + 2 < len_data) {
-        res[i + 0] = charset[data[j + 0] >> 2];
-        res[i + 1] = charset[((data[j + 0] & 0b00000011) << 4) | (data[j + 1] >> 4)];
-        res[i + 2] = charset[((data[j + 1] & 0b00001111) << 2) | (data[j + 2] >> 6)];
-        res[i + 3] = charset[data[j + 2] & 0b00111111];
+        res[i++] = charset[data[j + 0] >> 2];
+        res[i++] = charset[((data[j + 0] & 0b00000011) << 4) | (data[j + 1] >> 4)];
+        res[i++] = charset[((data[j + 1] & 0b00001111) << 2) | (data[j + 2] >> 6)];
+        res[i++] = charset[data[j + 2] & 0b00111111];
         j += 3;
-        i += 4;
     }
 
     if (len_data - j == 1) {
-        res[i + 0] = charset[data[j + 0] >> 2];
-        res[i + 1] = charset[((data[j + 0] & 0b00000011) << 4) | (0 >> 4)];
-        i += 2;
+        res[i++] = charset[data[j + 0] >> 2];
+        res[i++] = charset[((data[j + 0] & 0b00000011) << 4) | (0 >> 4)];
     } else if (len_data - j == 2) {
-        res[i + 0] = charset[data[j + 0] >> 2];
-        res[i + 1] = charset[((data[j + 0] & 0b00000011) << 4) | (data[j + 1] >> 4)];
-        res[i + 2] = charset[((data[j + 1] & 0b00001111) << 2) | (0 >> 6)];
-        i += 3;
+        res[i++] = charset[data[j + 0] >> 2];
+        res[i++] = charset[((data[j + 0] & 0b00000011) << 4) | (data[j + 1] >> 4)];
+        res[i++] = charset[((data[j + 1] & 0b00001111) << 2) | (0 >> 6)];
     }
 
     if (padding_len == 1) {
-        res[i + 0] = '=';
-        i += 1;
+        res[i++] = '=';
     } else if (padding_len == 2) {
-        res[i + 0] = '=';
-        res[i + 1] = '=';
-        i += 2;
+        res[i++] = '=';
+        res[i++] = '=';
     } else if (padding_len == 3) {
-        res[i + 0] = '=';
-        res[i + 1] = '=';
-        res[i + 2] = '=';
-        i += 3;
+        res[i++] = '=';
+        res[i++] = '=';
+        res[i++] = '=';
     }
     res[i] = 0;
     if (i != size_needed) {
