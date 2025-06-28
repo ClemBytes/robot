@@ -5,12 +5,9 @@
 const char charset[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 int base64(const char* data, size_t len_data, char* res, size_t res_len) {
-    int data_nb_bits = len_data*8;
-    int base64_nb_chars = (data_nb_bits + 5) / 6; // ceil(data_nb_bits/6)
-    // int base64_nb_chars = data_nb_bits / 6;
-    // data_nb_bits += (data_nb_bits%6 != 0);   
-    int padding_len = (4 - base64_nb_chars) % 4;
-    int size_needed = base64_nb_chars + padding_len;
+    int unpadded_len = (len_data*8 + 5) / 6; // ceil(data_nb_bits/6)
+    int padding_len = (4 - unpadded_len) % 4;
+    int size_needed = unpadded_len + padding_len;
     if (res_len < size_needed) {
         printf("Insufficient size\n");
         return size_needed;
@@ -38,7 +35,6 @@ int base64(const char* data, size_t len_data, char* res, size_t res_len) {
         i += 3;
     }
 
-    // int padding_len = (4 - i) % 4;
     if (padding_len == 1) {
         res[i + 0] = '=';
         i += 1;
