@@ -1,15 +1,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 const char charset[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-size_t base64(const char* data, size_t len_data, char* res, size_t res_len) {
+size_t base64(const unsigned char* data, size_t len_data, char* res, size_t res_len) {
     size_t unpadded_len = (len_data*8 + 5) / 6; // ceil(data_nb_bits/6)
     size_t padding_len = (4 - unpadded_len) % 4;
     size_t size_needed = unpadded_len + padding_len;
     if (res_len < size_needed) {
-        printf("Insufficient size\n");
         return size_needed;
     }
 
@@ -71,9 +72,34 @@ int main(void) {
         printf("%d: Size of res buffer is not enough: %d given and needs %d!\n", __LINE__, sizeof res, n);
         return 1;
     }
+
+    // Open favicon PNG file
+    const char path[] = "./data/favicon-16x16.png";
+    int fd = open(path, O_RDONLY);
+    // Get file size
+    off_t file_size = lseek(fd, 0, SEEK_END);
+    // Come back to beginning of file
+    lseek(fd, 0, SEEK_SET);
+    // Read file
+    char data[file_size];
+    int bytes_read = read(fd, data, sizeof data);
+    if (bytes_read < 0) {
+        perror("read() failed");
+        return 1;
+    }
+    if (bytes_read != file_size) {
+        printf("Bytes read (%d) doesn't match file size (%d)", bytes_read, file_size);
+        return 1;
+    }
+    // Close file
+    int e = close(fd);
+    if (e < 0) {
+        perror("close() failed");
+        return 1;
+    }
+
+    // Convert with base64
+    size_t res_size = base64(data, file_size, NULL, 0) + 1;
+    char res_png[res_size];
+    base64(data, file_size, res_png, res_size);
 }
-
-
-// with open('./data/favicon-16x16.png', 'rb') as f:
-//     data = f.read()
-// base64(data)
