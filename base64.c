@@ -50,6 +50,35 @@ size_t base64_str(const char* s, char* res, size_t res_len) {
     base64(s, strlen(s), res, res_len);
 }
 
+char* open_and_read(const char* path, size_t* file_size_out) {
+    int fd = open(path, O_RDONLY);
+    // Get file size
+    off_t file_size = lseek(fd, 0, SEEK_END);
+    // Come back to beginning of file
+    lseek(fd, 0, SEEK_SET);
+    // Read file
+    char* data = malloc(file_size);
+    int bytes_read = read(fd, data, file_size);
+    if (bytes_read < 0) {
+        perror("read() failed");
+        return NULL;
+    }
+    if (bytes_read != file_size) {
+        printf("Bytes read (%d) doesn't match file size (%d)\n", bytes_read, file_size);
+        return NULL;
+    }
+    // Close file
+    int e = close(fd);
+    if (e < 0) {
+        perror("close() failed");
+        return NULL;
+    }
+    if (file_size_out != NULL) {
+        *file_size_out = file_size;
+    }
+    return data;
+}
+
 int main(void) {
     char res[37];
     size_t n = base64_str("Many hands make light work.", res, sizeof res);
@@ -74,27 +103,10 @@ int main(void) {
     }
 
     // Open favicon PNG file
-    const char path[] = "./data/favicon-16x16.png";
-    int fd = open(path, O_RDONLY);
-    // Get file size
-    off_t file_size = lseek(fd, 0, SEEK_END);
-    // Come back to beginning of file
-    lseek(fd, 0, SEEK_SET);
-    // Read file
-    char data[file_size];
-    int bytes_read = read(fd, data, sizeof data);
-    if (bytes_read < 0) {
-        perror("read() failed");
-        return 1;
-    }
-    if (bytes_read != file_size) {
-        printf("Bytes read (%d) doesn't match file size (%d)", bytes_read, file_size);
-        return 1;
-    }
-    // Close file
-    int e = close(fd);
-    if (e < 0) {
-        perror("close() failed");
+    size_t file_size;
+    char* data = open_and_read("./data/favicon-16x16.png", &file_size);
+    if (data == NULL) {
+        printf("open_and_read() failed\n");
         return 1;
     }
 
@@ -102,4 +114,5 @@ int main(void) {
     size_t res_size = base64(data, file_size, NULL, 0) + 1;
     char res_png[res_size];
     base64(data, file_size, res_png, res_size);
+    free(data);
 }
