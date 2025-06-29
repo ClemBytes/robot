@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "base64.c"
+
 int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_counter_ptr) {
     // Get client IP address in '0.0.0.0' format for printing
     char client_ip_address[16];
@@ -83,18 +85,8 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
         }
 
         // Read favicon data:
-        FILE *favicon_data_file = fopen("./data/favicon-16x16_data", "r");
-        if (favicon_data_file == NULL) {
-            perror("Erreur d'ouverture du fichier");
-            return 1;
-        }
-        char favicon_data[2000];
-        size_t favicon_data_size = fread(favicon_data, 1, (sizeof favicon_data) - 1, favicon_data_file);
-        favicon_data[favicon_data_size + 1] = 0;
-        if (!feof(favicon_data_file)) {
-            printf("Favicon file not entirely read!\n");
-            return 1;
-        }
+        // TODO: Extract from function
+        char* favicon_data = base64_from_path("./data/favicon-16x16.png", NULL);
         /*
         printf("Image data, size: %d:\n", favicon_data_size);
         printf("-------------------------------------\n");
@@ -128,6 +120,7 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
     </form>\n\
 </body>\n\
 </html>", favicon_data, clientfd, client_ip_address, *click_counter_ptr);
+        free(favicon_data);
         if (w < 0) {
             perror("snprintf() for html failed");
             break;
