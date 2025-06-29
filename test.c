@@ -2,9 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 
-//#include "base64.c"
-size_t base64_str(const char* s, char* res, size_t res_len);
-char* base64_from_path(const char* path, size_t* res_size_out);
+#include "base64.h"
 
 void test_base64(const char* input, const char* expected) {
     char res[100];
