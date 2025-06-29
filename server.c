@@ -8,7 +8,7 @@
 
 #include "base64.h"
 
-int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_counter_ptr, char* favicon_data, char* html_template, char* css_template, size_t* css_template_size) {
+int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_counter_ptr, char* favicon_data, char* html_template, char* css_template) {
     // Get client IP address in '0.0.0.0' format for printing
     char client_ip_address[16];
     const char* ret2 = inet_ntop(AF_INET, &client_addr.sin_addr, client_ip_address, sizeof client_ip_address);
@@ -75,21 +75,12 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
             (*click_counter_ptr)--;
         } else if (strcmp(method, "POST") == 0 && strcmp(path, "/reinitialize") == 0) {
             *click_counter_ptr = 0;
-        } else if (strcmp(method, "GET") == 0 && strcmp(path, "/data/template.css") == 0) {
-            char css_header[] = "HTTP/1.1 200 OK\r\nContent-Type: text/css\r\n\r\n";
-            char css_answer[(sizeof css_header) + *css_template_size];
-            int w = snprintf(css_answer, sizeof css_answer, "%s%s", css_header, css_template);
-            w = write(clientfd, css_answer, sizeof css_answer);
-            if (w < 0) {
-                perror("write() for CSS failed");
-                break;
-            }
         }
         
         // Create HTML response
         int size_html_rep = 100000;
         char html_rep[size_html_rep];
-        int w = snprintf(html_rep, sizeof html_rep, html_template, favicon_data, clientfd, client_ip_address, *click_counter_ptr);
+        int w = snprintf(html_rep, sizeof html_rep, html_template, favicon_data, css_template, clientfd, client_ip_address, *click_counter_ptr);
         if (w < 0) {
             perror("snprintf() for html failed");
             break;
@@ -191,8 +182,7 @@ int main(void) {
     char* html_template = open_and_read("./data/template.html", NULL);
 
     // Read CSS template:
-    size_t* css_template_size;
-    char* css_template = open_and_read("./data/template.css", css_template_size);
+    char* css_template = open_and_read("./data/template.css", NULL);
 
     // Repeat indefinitely for each new client
     while (1) {
@@ -205,7 +195,7 @@ int main(void) {
             return 1;
         }
         printf("\n --- NEW CONNEXION RECEIVED, clientfd: %d ---\n", clientfd);
-        handle_client(clientfd, client_addr, &click_counter, favicon_data, html_template, css_template, css_template_size);
+        handle_client(clientfd, client_addr, &click_counter, favicon_data, html_template, css_template);
     }
 
     free(favicon_data);
