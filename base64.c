@@ -128,7 +128,7 @@ void test_base64(const char* input, const char* expected) {
     }
 }
 
-char* convert_png(const char* path, size_t* res_size_out) {
+char* base64_from_path(const char* path, size_t* res_size_out) {
     // Open favicon PNG file
     size_t file_size;
     char* data = open_and_read(path, &file_size);
@@ -154,9 +154,9 @@ int main(void) {
     test_base64("Ma", "TWE=");
     test_base64("M", "TQ==");
 
-    char* res_png = convert_png("./data/favicon-16x16.png", NULL);
+    char* res_png = base64_from_path("./data/favicon-16x16.png", NULL);
     if (res_png == NULL) {
-        printf("convert_png() failed!\n");
+        printf("base64_from_path() failed!\n");
         return 1;
     }
     printf("PNG image:\n%s\n", res_png);
