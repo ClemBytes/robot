@@ -8,7 +8,7 @@
 
 #include "base64.h"
 
-int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_counter_ptr) {
+int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_counter_ptr, char* favicon_data, char* html_template) {
     // Get client IP address in '0.0.0.0' format for printing
     char client_ip_address[16];
     const char* ret2 = inet_ntop(AF_INET, &client_addr.sin_addr, client_ip_address, sizeof client_ip_address);
@@ -84,9 +84,7 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
             *click_counter_ptr = 0;
         }
 
-        // Read favicon data:
-        // TODO: Extract reading of favicon_data from function
-        char* favicon_data = base64_from_path("./data/favicon-16x16.png", NULL);
+        
         /*
         printf("Image data, size: %d:\n", favicon_data_size);
         printf("-------------------------------------\n");
@@ -95,14 +93,9 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
         */
         
         // Create HTML response
-        // TODO: Extract reading of html_template from function
-        char* html_template = open_and_read("./data/template.html", NULL);
         int size_html_rep = 100000;
         char html_rep[size_html_rep];
-        int w = snprintf(html_rep, sizeof html_rep,
-            html_template, favicon_data, clientfd, client_ip_address, *click_counter_ptr);
-        free(html_template);
-        free(favicon_data);
+        int w = snprintf(html_rep, sizeof html_rep, html_template, favicon_data, clientfd, client_ip_address, *click_counter_ptr);
         if (w < 0) {
             perror("snprintf() for html failed");
             break;
@@ -203,6 +196,12 @@ int main(void) {
     // Initialize button
     int click_counter = 0;
 
+    // Read favicon data:
+    char* favicon_data = base64_from_path("./data/favicon-16x16.png", NULL);
+
+    // Read html template:
+    char* html_template = open_and_read("./data/template.html", NULL);
+
     // Repeat indefinitely for each new client
     while (1) {
         // Get client connexion address
@@ -214,6 +213,9 @@ int main(void) {
             return 1;
         }
         printf("\n --- NEW CONNEXION RECEIVED, clientfd: %d ---\n", clientfd);
-        handle_client(clientfd, client_addr, &click_counter);
+        handle_client(clientfd, client_addr, &click_counter, favicon_data, html_template);
     }
+
+    free(favicon_data);
+    free(html_template);
 }
