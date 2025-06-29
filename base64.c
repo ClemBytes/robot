@@ -72,7 +72,7 @@ char* open_and_read(const char* path, size_t* file_size_out) {
         return NULL;
     }
     // Read file
-    char* data = malloc(file_size);
+    char* data = malloc(file_size + 1);
     if (data == NULL) {
         perror("malloc() open_and_read failed");
         close(fd);
@@ -89,6 +89,7 @@ char* open_and_read(const char* path, size_t* file_size_out) {
         close(fd);
         return NULL;
     }
+    data[file_size] = 0;
     // Close file
     int e = close(fd);
     if (e < 0) {
