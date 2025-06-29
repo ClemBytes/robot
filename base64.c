@@ -42,7 +42,6 @@ size_t base64(const unsigned char* data, size_t len_data, char* res, size_t res_
         puts("wat");
         exit(1);
     }
-    printf("%s\n", res);
     return i;
 }
 
@@ -99,26 +98,37 @@ char* base64_alloc(const char* data, size_t size, size_t* res_size_out) {
 
 int main(void) {
     char res[37];
-    size_t n = base64_str("Many hands make light work.", res, sizeof res);
+    char s1[] = "Many hands make light work.";
+    size_t n = base64_str(s1, res, sizeof res);
     if (n >= sizeof res) {
         printf("%d: Size of res buffer is not enough: %d given and needs %d!\n", __LINE__, sizeof res, n);
         return 1;
     }
-    n = base64_str("Man", res, sizeof res);
+    printf("%s: %s\n", s1, res);
+
+    char s2[] = "Man";
+    n = base64_str(s2, res, sizeof res);
     if (n >= sizeof res) {
         printf("%d: Size of res buffer is not enough: %d given and needs %d!\n", __LINE__, sizeof res, n);
         return 1;
     }
-    n = base64_str("Ma", res, sizeof res);
+    printf("%s: %s\n", s2, res);
+    
+    char s3[] = "Ma";
+    n = base64_str(s3, res, sizeof res);
     if (n >= sizeof res) {
         printf("%d: Size of res buffer is not enough: %d given and needs %d!\n", __LINE__, sizeof res, n);
         return 1;
     }
-    n = base64_str("M", res, sizeof res);
+    printf("%s: %s\n", s3, res);
+
+    char s4[] = "M";
+    n = base64_str(s4, res, sizeof res);
     if (n >= sizeof res) {
         printf("%d: Size of res buffer is not enough: %d given and needs %d!\n", __LINE__, sizeof res, n);
         return 1;
     }
+    printf("%s: %s\n", s4, res);
 
     // Open favicon PNG file
     size_t file_size;
@@ -129,6 +139,7 @@ int main(void) {
     }
 
     // Convert with base64
-    base64_alloc(data, file_size, NULL);
+    char* res_png = base64_alloc(data, file_size, NULL);
+    printf("PNG image:\n%s\n", res_png);
     free(data);
 }
