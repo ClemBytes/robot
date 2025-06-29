@@ -96,39 +96,26 @@ char* base64_alloc(const char* data, size_t size, size_t* res_size_out) {
     return res_png;
 }
 
+void test_base64(const char* input, const char* expected) {
+    char res[100];
+    size_t n = base64_str(input, res, sizeof res);
+    if (n >= sizeof res) {
+        printf("Size of res buffer is not enough: %d given and needs %d!\n", sizeof res, n);
+        exit(1);
+    }
+    if (strcmp(res, expected) == 0) {
+        printf("%s: %s\n", input, res);
+    } else {
+        printf("UNEXPECTED RESULT!\nInitial: %s\nResult: %s\nExpected: %s\n", input, res, expected);
+        exit(1);
+    }
+}
+
 int main(void) {
-    char res[37];
-    char s1[] = "Many hands make light work.";
-    size_t n = base64_str(s1, res, sizeof res);
-    if (n >= sizeof res) {
-        printf("%d: Size of res buffer is not enough: %d given and needs %d!\n", __LINE__, sizeof res, n);
-        return 1;
-    }
-    printf("%s: %s\n", s1, res);
-
-    char s2[] = "Man";
-    n = base64_str(s2, res, sizeof res);
-    if (n >= sizeof res) {
-        printf("%d: Size of res buffer is not enough: %d given and needs %d!\n", __LINE__, sizeof res, n);
-        return 1;
-    }
-    printf("%s: %s\n", s2, res);
-    
-    char s3[] = "Ma";
-    n = base64_str(s3, res, sizeof res);
-    if (n >= sizeof res) {
-        printf("%d: Size of res buffer is not enough: %d given and needs %d!\n", __LINE__, sizeof res, n);
-        return 1;
-    }
-    printf("%s: %s\n", s3, res);
-
-    char s4[] = "M";
-    n = base64_str(s4, res, sizeof res);
-    if (n >= sizeof res) {
-        printf("%d: Size of res buffer is not enough: %d given and needs %d!\n", __LINE__, sizeof res, n);
-        return 1;
-    }
-    printf("%s: %s\n", s4, res);
+    test_base64("Many hands make light work.", "TWFueSBoYW5kcyBtYWtlIGxpZ2h0IHdvcmsu");
+    test_base64("Man", "TWFu");
+    test_base64("Ma", "TWE=");
+    test_base64("M", "TQ==");
 
     // Open favicon PNG file
     size_t file_size;
@@ -142,4 +129,5 @@ int main(void) {
     char* res_png = base64_alloc(data, file_size, NULL);
     printf("PNG image:\n%s\n", res_png);
     free(data);
+    return 0;
 }
