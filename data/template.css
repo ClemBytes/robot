@@ -1,0 +1,52 @@
+body {
+  background-color: #6e6a86;
+}
+
+p, h1, h2, ul, dl, q {
+  color: #faf4ed;
+}
+
+table {
+  border: 1px solid black; /* Adds a black border around the table */
+  margin: 5px; /* Adds space outside the table */
+  background-color: #286983; /* Sets the table's background color */
+  padding: 5px; /* Adds space inside the table's border */
+  border-spacing: 5px; /* Adds spacing between table cells */
+}
+
+th, td {
+  border: 1px solid black; /* Adds a black border around each cell */
+  width: 100px; /* Sets the width of each cell */
+  height: 100px; /* Sets the height of each cell */
+  background-color: #9ccfd8; /* Sets the background color of the cells */
+  transition: background-color 0.2s ease, border 0.2s ease, transform 0.2s ease; /* Adds smooth transitions for hover effects */
+}
+
+th:hover, td:hover {
+  transform: scale(1.1); /* Slightly enlarges the hovered cell */
+  background-color: #56949f; /* Sets the background color of the hovered cell */
+}
+
+button {
+  width: 300px; /* Sets the button's width */
+  height: 50px; /* Sets the button's height */
+  padding: 10px; /* Adds space inside the button */
+  margin: 5px; /* Adds space outside the button */
+  border: 2px outset #b4637a; /* Adds a solid border around the button */
+  border-radius: 8px; /* Rounds the button's corners */
+  background-color: #ebbcba; /* Sets the button's background color */
+  color: #575279; /* Sets the button's text color */
+  font-size: 16px; /* Sets the size of the button's text */
+  font-weight: bold; /* Makes the button's text bold */
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Adds a shadow to the button */
+  cursor: pointer; /* Changes the cursor to a pointer on hover */
+  transition: background-color 0.2s ease, border 0.2s ease, transform 0.2s ease; /* Adds smooth transitions for hover effects */
+}
+
+button:hover {
+  background-color: #f6c177; /* Changes the background color on hover */
+  border: 2px solid #ea9d34; /* Changes the border color on hover */
+  color: #e0def4; /* Changes the text color on hover */
+  transform: scale(1.1); /* Slightly enlarges the button on hover */
+}
+
