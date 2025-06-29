@@ -51,23 +51,40 @@ size_t base64_str(const char* s, char* res, size_t res_len) {
 
 char* open_and_read(const char* path, size_t* file_size_out) {
     int fd = open(path, O_RDONLY);
+    if (fd < 0) {
+        perror("open() failed in open_and_read");
+        return NULL;
+    }
     // Get file size
     off_t file_size = lseek(fd, 0, SEEK_END);
+    if (file_size < 0) {
+        perror("First lseek() failed in open_and_read");
+        close(fd);
+        return NULL;
+    }
     // Come back to beginning of file
-    lseek(fd, 0, SEEK_SET);
+    off_t r = lseek(fd, 0, SEEK_SET);
+    if (r < 0) {
+        perror("Second lseek() failed in open_and_read");
+        close(fd);
+        return NULL;
+    }
     // Read file
     char* data = malloc(file_size);
     if (data == NULL) {
         perror("malloc() open_and_read failed");
+        close(fd);
         return NULL;
     }
     int bytes_read = read(fd, data, file_size);
     if (bytes_read < 0) {
         perror("read() failed");
+        close(fd);
         return NULL;
     }
     if (bytes_read != file_size) {
         printf("Bytes read (%d) doesn't match file size (%d)\n", bytes_read, file_size);
+        close(fd);
         return NULL;
     }
     // Close file
@@ -127,7 +144,13 @@ int main(void) {
 
     // Convert with base64
     char* res_png = base64_alloc(data, file_size, NULL);
+    if (res_png == NULL) {
+        printf("base64_alloc() failed\n");
+        free(data);
+        return 1;
+    }
     printf("PNG image:\n%s\n", res_png);
+    free(res_png);
     free(data);
     return 0;
 }
