@@ -1,4 +1,4 @@
 # Ignore compiled files
 server
-base64
 test
+*.o

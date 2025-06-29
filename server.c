@@ -6,7 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "base64.c"
+//#include "base64.c"
+char* base64_from_path(const char* path, size_t* res_size_out);
 
 int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_counter_ptr) {
     // Get client IP address in '0.0.0.0' format for printing
