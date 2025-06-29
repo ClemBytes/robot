@@ -85,7 +85,7 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
         }
 
         // Read favicon data:
-        // TODO: Extract from function
+        // TODO: Extract reading of favicon_data from function
         char* favicon_data = base64_from_path("./data/favicon-16x16.png", NULL);
         /*
         printf("Image data, size: %d:\n", favicon_data_size);
@@ -95,31 +95,13 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
         */
         
         // Create HTML response
+        // TODO: Extract reading of html_template from function
+        char* html_template = open_and_read("template.html", NULL);
         int size_html_rep = 100000;
         char html_rep[size_html_rep];
         int w = snprintf(html_rep, sizeof html_rep,
-            "<!DOCTYPE html>\n\
-<html>\n\
-<head>\n\
-    <title>A simple HTML file</title>\n\
-    <link rel='icon' href='data:image/png;base64,%s'>\n\
-</head>\n\
-<body>\n\
-    <h1>Hey! Welcome to my robot page!</h1>\n\
-    <p>Your client file descriptor is %d.</p>\n\
-    <p>Your IP address is %s.</p>\n\
-    <p>Current value: %d</p>\n\
-    <form action='/increment' method='post'>\n\
-        <button type='submit'>Increase current value!</button>\n\
-    </form>\n\
-    <form action='/decrement' method='post'>\n\
-        <button type='submit'>Decrease current value!</button>\n\
-    </form>\n\
-    <form action='/reinitialize' method='post'>\n\
-        <button type='submit'>Re-initialize current value!</button>\n\
-    </form>\n\
-</body>\n\
-</html>", favicon_data, clientfd, client_ip_address, *click_counter_ptr);
+            html_template, favicon_data, clientfd, client_ip_address, *click_counter_ptr);
+        free(html_template);
         free(favicon_data);
         if (w < 0) {
             perror("snprintf() for html failed");

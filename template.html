@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>A simple HTML file</title>
+    <link rel="icon" href="data:image/png;base64,%s">
+</head>
+<body>
+    <h1>Hey! Welcome to my robot page!</h1>
+    <p>Your client file descriptor is %d.</p>
+    <p>Your IP address is %s.</p>
+    <p>Current value: %d</p>
+    <form action="/increment" method="post">
+        <button type="submit">Increase current value!</button>
+    </form>
+    <form action="/decrement" method="post">
+        <button type="submit">Decrease current value!</button>
+    </form>
+    <form action="/reinitialize" method="post">
+        <button type="submit">Re-initialize current value!</button>
+    </form>
+</body>
+</html>
