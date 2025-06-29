@@ -79,6 +79,16 @@ char* open_and_read(const char* path, size_t* file_size_out) {
     return data;
 }
 
+char* base64_alloc(const char* data, size_t size, size_t* res_size_out) {
+    size_t res_size = base64(data, size, NULL, 0) + 1;
+    char* res_png = malloc(res_size);
+    base64(data, size, res_png, res_size);
+    if (res_size_out != NULL) {
+        *res_size_out = res_size;
+    }
+    return res_png;
+}
+
 int main(void) {
     char res[37];
     size_t n = base64_str("Many hands make light work.", res, sizeof res);
@@ -111,8 +121,6 @@ int main(void) {
     }
 
     // Convert with base64
-    size_t res_size = base64(data, file_size, NULL, 0) + 1;
-    char res_png[res_size];
-    base64(data, file_size, res_png, res_size);
+    base64_alloc(data, file_size, NULL);
     free(data);
 }
