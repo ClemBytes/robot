@@ -128,29 +128,38 @@ void test_base64(const char* input, const char* expected) {
     }
 }
 
+char* convert_png(const char* path, size_t* res_size_out) {
+    // Open favicon PNG file
+    size_t file_size;
+    char* data = open_and_read(path, &file_size);
+    if (data == NULL) {
+        printf("open_and_read() failed\n");
+        return NULL;
+    }
+
+    // Convert with base64
+    char* res_png = base64_alloc(data, file_size, res_size_out);
+    if (res_png == NULL) {
+        printf("base64_alloc() failed\n");
+        free(data);
+        return NULL;
+    }
+    free(data);
+    return res_png;
+}
+
 int main(void) {
     test_base64("Many hands make light work.", "TWFueSBoYW5kcyBtYWtlIGxpZ2h0IHdvcmsu");
     test_base64("Man", "TWFu");
     test_base64("Ma", "TWE=");
     test_base64("M", "TQ==");
 
-    // Open favicon PNG file
-    size_t file_size;
-    char* data = open_and_read("./data/favicon-16x16.png", &file_size);
-    if (data == NULL) {
-        printf("open_and_read() failed\n");
-        return 1;
-    }
-
-    // Convert with base64
-    char* res_png = base64_alloc(data, file_size, NULL);
+    char* res_png = convert_png("./data/favicon-16x16.png", NULL);
     if (res_png == NULL) {
-        printf("base64_alloc() failed\n");
-        free(data);
+        printf("convert_png() failed!\n");
         return 1;
     }
     printf("PNG image:\n%s\n", res_png);
     free(res_png);
-    free(data);
     return 0;
 }
