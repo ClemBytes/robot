@@ -96,7 +96,7 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
         
         // Create HTML response
         // TODO: Extract reading of html_template from function
-        char* html_template = open_and_read("template.html", NULL);
+        char* html_template = open_and_read("./data/template.html", NULL);
         int size_html_rep = 100000;
         char html_rep[size_html_rep];
         int w = snprintf(html_rep, sizeof html_rep,
