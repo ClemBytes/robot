@@ -35,13 +35,6 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
             break;
         }
         buf[n] = 0;
-        /*
-        printf("Data received, size: %zi\n", n);
-        printf("DATA:\n");
-        printf("-------------------------------------\n");
-        printf("%s\n", buf);
-        printf("-------------------------------------\n");
-        */
 
         // Get first line of request
         int i;
@@ -83,14 +76,6 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
         } else if (strcmp(method, "POST") == 0 && strcmp(path, "/reinitialize") == 0) {
             *click_counter_ptr = 0;
         }
-
-        
-        /*
-        printf("Image data, size: %d:\n", favicon_data_size);
-        printf("-------------------------------------\n");
-        printf("%s\n", favicon_data);
-        printf("-------------------------------------\n");
-        */
         
         // Create HTML response
         int size_html_rep = 100000;
@@ -103,12 +88,6 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
             printf("Size of HTML response is not enough: %d given and needs %d!\n", size_html_rep, w);
             break;
         }
-        /*
-        printf("HTML, size: %zi\n", n);
-        printf("-------------------------------------\n");
-        printf("%s\n", html_rep);
-        printf("-------------------------------------\n");
-        */
 
         // Create header for response
         int header_size = 100;
