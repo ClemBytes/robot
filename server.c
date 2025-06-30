@@ -57,9 +57,9 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
             printf("Size of first line is not enough: %d given and needs %d!\n", first_line_size, i);
             break;
         }
-
         first_line[i + 1] = 0;
-        printf("First line: %s\n", first_line);
+        printf("Request first line: %s\n", first_line);
+
         // Parse first line
         char method[16], path[1024], version[16];
         sscanf(first_line, "%s %s %s", method, path, version);
@@ -68,50 +68,52 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
         printf("Version: %s\n", version);
         printf("-------------------------------------\n");
 
-        // Update button value
-        if (strcmp(method, "POST") == 0 && strcmp(path, "/increment") == 0) {
-            (*click_counter_ptr)++;
-        } else if (strcmp(method, "POST") == 0 && strcmp(path, "/decrement") == 0) {
-            (*click_counter_ptr)--;
-        } else if (strcmp(method, "POST") == 0 && strcmp(path, "/reinitialize") == 0) {
-            *click_counter_ptr = 0;
-        } else if (strcmp(method, "GET") == 0 && strcmp(path, "/data/template.css") == 0) {
-            char css_header[2000];
-            int h = snprintf(css_header, sizeof css_header, "HTTP/1.0 200 OK\r\nContent-Type: text/css\r\nContent-Length: %d\r\n\r\n", css_template_size);
+        int content_length;
+        char* content_type;
+        char content[100000];
+
+        // Generate response depending on request
+        if (strcmp(method, "GET") == 0 && strcmp(path, "/data/template.css") == 0) {
+            // Request for CSS file
+            content_length = css_template_size;
+            content_type = "text/css";
+            int h = snprintf(content, sizeof content, "%s", css_template);
             if (h < 0) {
-                perror("snprintf() for header failed");
+                perror("snprintf() for content failed");
+                break;
+            } else if (h >= sizeof content) {
+                printf("Size of HTML header is not enough: %d given and needs %d!\n", sizeof content, h);
                 break;
             }
-            char css_answer[h + css_template_size + 1];
-            int w = snprintf(css_answer, sizeof css_answer, "%s%s", css_header, css_template);
-            if (w < 0) {
-                perror("snprintf() for CSS failed");
+
+
+        } else {
+            // Other requests
+            // Update button value
+            if (strcmp(method, "POST") == 0 && strcmp(path, "/increment") == 0) {
+                (*click_counter_ptr)++;
+            } else if (strcmp(method, "POST") == 0 && strcmp(path, "/decrement") == 0) {
+                (*click_counter_ptr)--;
+            } else if (strcmp(method, "POST") == 0 && strcmp(path, "/reinitialize") == 0) {
+                *click_counter_ptr = 0;
+            }
+            
+            // Create HTML response
+            content_type = "text/html";
+            content_length = snprintf(content, sizeof content, html_template, favicon_data, clientfd, client_ip_address, *click_counter_ptr);
+            if (content_length < 0) {
+                perror("snprintf() for html failed");
+                break;
+            } else if (content_length >= sizeof content) {
+                printf("Size of HTML response is not enough: %d given and needs %d!\n", sizeof content, content_length);
                 break;
             }
-            w = write(clientfd, css_answer, w);
-            if (w < 0) {
-                perror("write() for CSS failed");
-                break;
-            }
-            continue;
-        }
-        
-        // Create HTML response
-        int size_html_rep = 100000;
-        char html_rep[size_html_rep];
-        int w = snprintf(html_rep, sizeof html_rep, html_template, favicon_data, clientfd, client_ip_address, *click_counter_ptr);
-        if (w < 0) {
-            perror("snprintf() for html failed");
-            break;
-        } else if (w >= size_html_rep) {
-            printf("Size of HTML response is not enough: %d given and needs %d!\n", size_html_rep, w);
-            break;
         }
 
         // Create header for response
         int header_size = 100;
         char header[header_size];
-        int h = snprintf(header, sizeof header, "HTTP/1.0 200 OK\r\nContent-Length: %d\r\n\r\n", w);
+        int h = snprintf(header, sizeof header, "HTTP/1.0 200 OK\r\nContent-Type: %s\r\nContent-Length: %d\r\n\r\n", content_type, content_length);
         if (h < 0) {
             perror("snprintf() for header failed");
             break;
@@ -121,8 +123,8 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
         }
 
         // Concatenate header and data of response
-        char str[h + w + 1];
-        int ret = snprintf(str, sizeof str, "%s%s", header, html_rep);
+        char str[h + content_length + 1];
+        int ret = snprintf(str, sizeof str, "%s%s", header, content);
         if (ret < 0) {
             perror("snprintf() for concatenation failed");
             break;
