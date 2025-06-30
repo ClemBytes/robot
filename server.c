@@ -70,19 +70,20 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
 
         int content_length;
         char* content_type;
-        char content[100000];
+        char* content;
 
         // Generate response depending on request
         if (strcmp(method, "GET") == 0 && strcmp(path, "/data/template.css") == 0) {
             // Request for CSS file
             content_length = css_template_size;
             content_type = "text/css";
-            int h = snprintf(content, sizeof content, "%s", css_template);
+            content = malloc(content_length + 1);
+            int h = snprintf(content, content_length + 1, "%s", css_template);
             if (h < 0) {
                 perror("snprintf() for content failed");
                 break;
-            } else if (h >= sizeof content) {
-                printf("Size of HTML header is not enough: %d given and needs %d!\n", sizeof content, h);
+            } else if (h >= content_length + 1) {
+                printf("%s:%d - Size of HTML response is not enough: %d given and needs %d!\n", __FILE__, __LINE__, h, content_length + 1);
                 break;
             }
 
@@ -100,12 +101,18 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
             
             // Create HTML response
             content_type = "text/html";
-            content_length = snprintf(content, sizeof content, html_template, favicon_data, clientfd, client_ip_address, *click_counter_ptr);
+            content_length = snprintf(NULL, 0, html_template, favicon_data, clientfd, client_ip_address, *click_counter_ptr);
             if (content_length < 0) {
+                perror("snprinft() for content_length failed");
+                break;
+            }
+            content = malloc(content_length + 1);
+            int h = snprintf(content, content_length + 1, html_template, favicon_data, clientfd, client_ip_address, *click_counter_ptr);
+            if (h < 0) {
                 perror("snprintf() for html failed");
                 break;
-            } else if (content_length >= sizeof content) {
-                printf("Size of HTML response is not enough: %d given and needs %d!\n", sizeof content, content_length);
+            } else if (h >= content_length + 1) {
+                printf("%s:%d - Size of HTML response is not enough: %d given and needs %d!\n", __FILE__, __LINE__, h, content_length + 1);
                 break;
             }
         }
@@ -129,6 +136,8 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
             perror("snprintf() for concatenation failed");
             break;
         }
+
+        free(content);
 
         // Send response to client (write to client file descriptor)
         ret = write(clientfd, str, ret);
