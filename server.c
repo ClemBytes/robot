@@ -77,19 +77,8 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
             // Request for CSS file
             content_length = css_template_size;
             content_type = "text/css";
-            content = malloc(content_length + 1);
-            int h = snprintf(content, content_length + 1, "%s", css_template);
-            if (h < 0) {
-                perror("snprintf() for content failed");
-                free(content);
-                break;
-            } else if (h >= content_length + 1) {
-                printf("%s:%d - Size of HTML response is not enough: %d given and needs %d!\n", __FILE__, __LINE__, h, content_length + 1);
-                free(content);
-                break;
-            }
-
-
+            content = malloc(content_length);
+            memcpy(content, css_template, content_length);
         } else {
             // Other requests
             // Update button value
@@ -123,29 +112,33 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
         }
 
         // Create header for response
-        int header_size = 100;
-        char header[header_size];
+        int header_size = snprintf(NULL, 0, "HTTP/1.0 200 OK\r\nContent-Type: %s\r\nContent-Length: %d\r\n\r\n", content_type, content_length);
+        if (header_size < 0) {
+            perror("snprintf() for header_size failed");
+            free(content);
+            break;
+        }
+        char header[header_size + 1];
         int h = snprintf(header, sizeof header, "HTTP/1.0 200 OK\r\nContent-Type: %s\r\nContent-Length: %d\r\n\r\n", content_type, content_length);
         if (h < 0) {
             perror("snprintf() for header failed");
+            free(content);
             break;
-        } else if (h >= header_size) {
-            printf("Size of HTML header is not enough: %d given and needs %d!\n", header_size, h);
+        } else if (h >= sizeof header) {
+            printf("%s:%d - Size of HTML header is not enough: %d given and needs %d!\n", __FILE__, __LINE__, h, sizeof header);
+            free(content);
             break;
         }
 
         // Concatenate header and data of response
-        char str[h + content_length + 1];
-        int ret = snprintf(str, sizeof str, "%s%s", header, content);
-        if (ret < 0) {
-            perror("snprintf() for concatenation failed");
-            break;
-        }
+        char str[header_size + content_length];
+        memcpy(str, header, header_size);
+        memcpy(str + header_size, content, content_length);
 
         free(content);
 
         // Send response to client (write to client file descriptor)
-        ret = write(clientfd, str, ret);
+        int ret = write(clientfd, str, sizeof str);
         if (ret < 0) {
             perror("write() failed");
             break;
