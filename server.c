@@ -81,9 +81,11 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
             int h = snprintf(content, content_length + 1, "%s", css_template);
             if (h < 0) {
                 perror("snprintf() for content failed");
+                free(content);
                 break;
             } else if (h >= content_length + 1) {
                 printf("%s:%d - Size of HTML response is not enough: %d given and needs %d!\n", __FILE__, __LINE__, h, content_length + 1);
+                free(content);
                 break;
             }
 
@@ -104,15 +106,18 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
             content_length = snprintf(NULL, 0, html_template, favicon_data, clientfd, client_ip_address, *click_counter_ptr);
             if (content_length < 0) {
                 perror("snprinft() for content_length failed");
+                free(content);
                 break;
             }
             content = malloc(content_length + 1);
             int h = snprintf(content, content_length + 1, html_template, favicon_data, clientfd, client_ip_address, *click_counter_ptr);
             if (h < 0) {
                 perror("snprintf() for html failed");
+                free(content);
                 break;
             } else if (h >= content_length + 1) {
                 printf("%s:%d - Size of HTML response is not enough: %d given and needs %d!\n", __FILE__, __LINE__, h, content_length + 1);
+                free(content);
                 break;
             }
         }
