@@ -8,7 +8,7 @@
 
 #include "base64.h"
 
-int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_counter_ptr, char* favicon_data, char* html_template, char* css_template, size_t css_template_size) {
+int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_counter_ptr, char* favicon_data, char* html_template, char* css_template, size_t css_template_size, char* robot_png, size_t robot_png_size) {
     // Get client IP address in '0.0.0.0' format for printing
     char client_ip_address[16];
     const char* ret2 = inet_ntop(AF_INET, &client_addr.sin_addr, client_ip_address, sizeof client_ip_address);
@@ -79,6 +79,12 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
             content_type = "text/css";
             content = malloc(content_length);
             memcpy(content, css_template, content_length);
+        } else if (strcmp(method, "GET") == 0 && strcmp(path, "/data/robot.png") == 0) {
+            // Request for robot PNG file
+            content_length = robot_png_size;
+            content_type = "image/png";
+            content = malloc(content_length);
+            memcpy(content, robot_png, content_length);
         } else {
             // Other requests
             // Update button value
@@ -213,6 +219,10 @@ int main(void) {
     size_t css_template_size;
     char* css_template = open_and_read("./data/template.css", &css_template_size);
 
+    // Read robot PNG:
+    size_t robot_png_size;
+    char* robot_png = open_and_read("./data/robot.png", &robot_png_size);
+
     // Repeat indefinitely for each new client
     while (1) {
         // Get client connexion address
@@ -224,7 +234,7 @@ int main(void) {
             return 1;
         }
         printf("\n --- NEW CONNEXION RECEIVED, clientfd: %d ---\n", clientfd);
-        handle_client(clientfd, client_addr, &click_counter, favicon_data, html_template, css_template, css_template_size);
+        handle_client(clientfd, client_addr, &click_counter, favicon_data, html_template, css_template, css_template_size, robot_png, robot_png_size);
     }
 
     free(favicon_data);
