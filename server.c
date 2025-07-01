@@ -90,52 +90,76 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, in
             // Update coordinates
             int x_max = 4;
             int y_max = 4;
-            if (strcmp(method, "POST") == 0 && strcmp(path, "/right") == 0) {
+            if (strcmp(method, "POST") == 0 && strcmp(path, "/down") == 0) {
                 if ((*x_coord) == x_max) {
                     (*x_coord) = 0;
                 } else {
                     (*x_coord)++;
                 }
-            } else if (strcmp(method, "POST") == 0 && strcmp(path, "/left") == 0) {
+            } else if (strcmp(method, "POST") == 0 && strcmp(path, "/up") == 0) {
                 if ((*x_coord) == 0) {
                     (*x_coord) = x_max;
                 } else {
                     (*x_coord)--;
                 }
-            } else if (strcmp(method, "POST") == 0 && strcmp(path, "/up") == 0) {
+            } else if (strcmp(method, "POST") == 0 && strcmp(path, "/right") == 0) {
                 if ((*y_coord) == y_max) {
                     (*y_coord) = 0;
                 } else {
                     (*y_coord)++;
                 }
-            }else if (strcmp(method, "POST") == 0 && strcmp(path, "/down") == 0) {
+            } else if (strcmp(method, "POST") == 0 && strcmp(path, "/left") == 0) {
                 if ((*y_coord) == 0) {
                     (*y_coord) = y_max;
                 } else {
                     (*y_coord)--;
                 }
             }
+
+            // Generate HTML table
+            char* robot_grid = malloc(100000);
+            int position = 0;
+            for (int x = 0; x < x_max + 1; x++) {
+                memcpy(robot_grid + position, "<tr class='tr-robot-grid'>", sizeof "<tr class='tr-robot-grid'>");
+                position += sizeof "<tr class='tr-robot-grid'>" - 1;
+                for (int y = 0; y < y_max + 1; y++) {
+                    if ((x == *x_coord) && (y == *y_coord)) {
+                        memcpy(robot_grid + position, "<td class='td-robot-grid'><img src='data/robot.png' alt='Robot' class='image-responsive'></td>", sizeof "<td class='td-robot-grid'><img src='data/robot.png' alt='Robot' class='image-responsive'></td>");
+                        position += sizeof "<td class='td-robot-grid'><img src='data/robot.png' alt='Robot' class='image-responsive'></td>" - 1;
+                    } else {
+                        memcpy(robot_grid + position, "<td class='td-robot-grid'></td>", sizeof "<td class='td-robot-grid'></td>");
+                        position += sizeof "<td class='td-robot-grid'></td>" - 1;
+                    }
+                }
+                memcpy(robot_grid + position, "</tr>", sizeof "</tr>");
+                position += sizeof "</tr>" - 1;
+            }
+            robot_grid[position] = 0;
             
             // Create HTML response
             content_type = "text/html";
-            content_length = snprintf(NULL, 0, html_template, favicon_data, *x_coord, *y_coord);
+            content_length = snprintf(NULL, 0, html_template, favicon_data, *x_coord, *y_coord, robot_grid);
             if (content_length < 0) {
                 perror("snprinft() for content_length failed");
                 free(content);
+                free(robot_grid);
                 break;
             }
             content = malloc(content_length + 1);
-            int h = snprintf(content, content_length + 1, html_template, favicon_data, *x_coord, *y_coord);
+            int h = snprintf(content, content_length + 1, html_template, favicon_data, *x_coord, *y_coord, robot_grid);
             if (h < 0) {
                 perror("snprintf() for html failed");
                 free(content);
+                free(robot_grid);
                 break;
             } else if (h >= content_length + 1) {
                 printf(content);
                 printf("%s:%d - Size of HTML response is not enough: %d given and needs %d!\n", __FILE__, __LINE__, h, content_length + 1);
                 free(content);
+                free(robot_grid);
                 break;
             }
+            free(robot_grid);
         }
 
         // Create header for response
