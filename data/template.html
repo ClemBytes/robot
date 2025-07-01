@@ -7,53 +7,77 @@
 </head>
 <body>
     <h1>Hey! Welcome to my robot page!</h1>
-    <p>Current value: %d</p>
-    <form action="/increment" method="post">
-        <button type="submit">Increase current value!</button>
-    </form>
-    <form action="/decrement" method="post">
-        <button type="submit">Decrease current value!</button>
-    </form>
-    <form action="/reinitialize" method="post">
-        <button type="submit">Re-initialize current value!</button>
-    </form>
-
+    <p>Current coordinates: (%d, %d)</p>
     <table>
         <tbody>
             <tr>
                 <td></td>
-                <td><img src="data/robot.png" alt="Robot"></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td><form action="/up" method="post">
+                        <button type="submit" id="up">UP</button>
+                    </form>
+                </td>
                 <td></td>
             </tr>
             <tr>
+                <td><form action="/left" method="post">
+                        <button type="submit" id="left">LEFT</button>
+                    </form>
+                </td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>
+                    <form action="/right" method="post">
+                        <button type="submit" id="right">RIGHT</button>
+                    </form>
+                </td>
             </tr>
             <tr>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>
+                    <form action="/down" method="post">
+                        <button type="submit" id="down">DOWN</button>
+                    </form>
+                </td>
                 <td></td>
             </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+        </tbody>
+    </table>
+
+    <table class="robot-grid">
+        <tbody>
+            <tr class="tr-robot-grid">
+                <td class="td-robot-grid"><img src="data/robot.png" alt="Robot" class="image-responsive"></td>
+                <td class="td-robot-grid"></td>
+                <td class="td-robot-grid"></td>
+                <td class="td-robot-grid"></td>
+                <td class="td-robot-grid"></td>
+            </tr>
+            <tr class="tr-robot-grid">
+                <td class="td-robot-grid"></td>
+                <td class="td-robot-grid"></td>
+                <td class="td-robot-grid"></td>
+                <td class="td-robot-grid"></td>
+                <td class="td-robot-grid"></td>
+            </tr>
+            <tr class="tr-robot-grid">
+                <td class="td-robot-grid"></td>
+                <td class="td-robot-grid"></td>
+                <td class="td-robot-grid"></td>
+                <td class="td-robot-grid"></td>
+                <td class="td-robot-grid"></td>
+            </tr>
+            <tr class="tr-robot-grid">
+                <td class="td-robot-grid"></td>
+                <td class="td-robot-grid"></td>
+                <td class="td-robot-grid"></td>
+                <td class="td-robot-grid"></td>
+                <td class="td-robot-grid"></td>
+            </tr>
+            <tr class="tr-robot-grid">
+                <td class="td-robot-grid"></td>
+                <td class="td-robot-grid"></td>
+                <td class="td-robot-grid"></td>
+                <td class="td-robot-grid"></td>
+                <td class="td-robot-grid"></td>
             </tr>
         </tbody>
     </table>

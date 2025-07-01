@@ -6,7 +6,7 @@ p, h1, h2 {
   color: #faf4ed;
 }
 
-table {
+.robot-grid {
   border: 1px solid black; /* Adds a black border around the table */
   margin: 5px; /* Adds space outside the table */
   background-color: #286983; /* Sets the table's background color */
@@ -14,7 +14,27 @@ table {
   border-spacing: 5px; /* Adds spacing between table cells */
 }
 
-th, td {
+.button-grid {
+    display: grid;
+    grid-template-areas:
+        "up up"
+        "left right"
+        "down down";
+    gap: 10px; /* Space between buttons */
+}
+
+.image-responsive {
+    width: 100%; /* Image takes 100% of container space */
+    height: auto; /* keeps proportions */
+}
+
+td {
+  text-align: center; /* center horizontally */
+  vertical-align: middle; /* center vertically */
+
+}
+
+.tr-robot-grid, .td-robot-grid {
   border: 1px solid black; /* Adds a black border around each cell */
   width: 100px; /* Sets the width of each cell */
   height: 100px; /* Sets the height of each cell */
@@ -22,14 +42,20 @@ th, td {
   transition: background-color 0.2s ease, border 0.2s ease, transform 0.2s ease; /* Adds smooth transitions for hover effects */
 }
 
-th:hover, td:hover {
+.tr-robot-grid:hover, .td-robot-grid:hover {
   transform: scale(1.1); /* Slightly enlarges the hovered cell */
   background-color: #56949f; /* Sets the background color of the hovered cell */
 }
 
+button:hover {
+  background-color: #f6c177; /* Changes the background color on hover */
+  border: 2px solid #ea9d34; /* Changes the border color on hover */
+  color: #e0def4; /* Changes the text color on hover */
+  transform: scale(1.1); /* Slightly enlarges the button on hover */
+}
+
 button {
-  width: 300px; /* Sets the button's width */
-  height: 50px; /* Sets the button's height */
+  width: 100px;
   padding: 10px; /* Adds space inside the button */
   margin: 5px; /* Adds space outside the button */
   border: 2px outset #b4637a; /* Adds a solid border around the button */
@@ -42,11 +68,3 @@ button {
   cursor: pointer; /* Changes the cursor to a pointer on hover */
   transition: background-color 0.2s ease, border 0.2s ease, transform 0.2s ease; /* Adds smooth transitions for hover effects */
 }
-
-button:hover {
-  background-color: #f6c177; /* Changes the background color on hover */
-  border: 2px solid #ea9d34; /* Changes the border color on hover */
-  color: #e0def4; /* Changes the text color on hover */
-  transform: scale(1.1); /* Slightly enlarges the button on hover */
-}
-

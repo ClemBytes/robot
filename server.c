@@ -8,7 +8,7 @@
 
 #include "base64.h"
 
-int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_counter_ptr, char* favicon_data, char* html_template, char* css_template, size_t css_template_size, char* robot_png, size_t robot_png_size) {
+int handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, int* y_coord, char* favicon_data, char* html_template, char* css_template, size_t css_template_size, char* robot_png, size_t robot_png_size) {
     // Get client IP address in '0.0.0.0' format for printing
     char client_ip_address[16];
     const char* ret2 = inet_ntop(AF_INET, &client_addr.sin_addr, client_ip_address, sizeof client_ip_address);
@@ -88,29 +88,32 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
         } else {
             // Other requests
             // Update button value
-            if (strcmp(method, "POST") == 0 && strcmp(path, "/increment") == 0) {
-                (*click_counter_ptr)++;
-            } else if (strcmp(method, "POST") == 0 && strcmp(path, "/decrement") == 0) {
-                (*click_counter_ptr)--;
-            } else if (strcmp(method, "POST") == 0 && strcmp(path, "/reinitialize") == 0) {
-                *click_counter_ptr = 0;
+            if (strcmp(method, "POST") == 0 && strcmp(path, "/right") == 0) {
+                (*x_coord)++;
+            } else if (strcmp(method, "POST") == 0 && strcmp(path, "/left") == 0) {
+                (*x_coord)--;
+            } else if (strcmp(method, "POST") == 0 && strcmp(path, "/up") == 0) {
+                (*y_coord)++;
+            }else if (strcmp(method, "POST") == 0 && strcmp(path, "/down") == 0) {
+                (*y_coord)--;
             }
             
             // Create HTML response
             content_type = "text/html";
-            content_length = snprintf(NULL, 0, html_template, favicon_data, clientfd, client_ip_address, *click_counter_ptr);
+            content_length = snprintf(NULL, 0, html_template, favicon_data, *x_coord, *y_coord);
             if (content_length < 0) {
                 perror("snprinft() for content_length failed");
                 free(content);
                 break;
             }
             content = malloc(content_length + 1);
-            int h = snprintf(content, content_length + 1, html_template, favicon_data, *click_counter_ptr);
+            int h = snprintf(content, content_length + 1, html_template, favicon_data, *x_coord, *y_coord);
             if (h < 0) {
                 perror("snprintf() for html failed");
                 free(content);
                 break;
             } else if (h >= content_length + 1) {
+                printf(content);
                 printf("%s:%d - Size of HTML response is not enough: %d given and needs %d!\n", __FILE__, __LINE__, h, content_length + 1);
                 free(content);
                 break;
@@ -207,7 +210,8 @@ int main(void) {
     }
 
     // Initialize button
-    int click_counter = 0;
+    int x_coord = 0;
+    int y_coord = 0;
 
     // Read favicon data:
     char* favicon_data = base64_from_path("./data/favicon-16x16.png", NULL);
@@ -234,7 +238,7 @@ int main(void) {
             return 1;
         }
         printf("\n --- NEW CONNEXION RECEIVED, clientfd: %d ---\n", clientfd);
-        handle_client(clientfd, client_addr, &click_counter, favicon_data, html_template, css_template, css_template_size, robot_png, robot_png_size);
+        handle_client(clientfd, client_addr, &x_coord, &y_coord, favicon_data, html_template, css_template, css_template_size, robot_png, robot_png_size);
     }
 
     free(favicon_data);
