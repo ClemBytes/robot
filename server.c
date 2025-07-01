@@ -99,7 +99,7 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* click_count
                 break;
             }
             content = malloc(content_length + 1);
-            int h = snprintf(content, content_length + 1, html_template, favicon_data, clientfd, client_ip_address, *click_counter_ptr);
+            int h = snprintf(content, content_length + 1, html_template, favicon_data, *click_counter_ptr);
             if (h < 0) {
                 perror("snprintf() for html failed");
                 free(content);
