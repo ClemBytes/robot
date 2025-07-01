@@ -87,15 +87,33 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, in
             memcpy(content, robot_png, content_length);
         } else {
             // Other requests
-            // Update button value
+            // Update coordinates
+            int x_max = 4;
+            int y_max = 4;
             if (strcmp(method, "POST") == 0 && strcmp(path, "/right") == 0) {
-                (*x_coord)++;
+                if ((*x_coord) == x_max) {
+                    (*x_coord) = 0;
+                } else {
+                    (*x_coord)++;
+                }
             } else if (strcmp(method, "POST") == 0 && strcmp(path, "/left") == 0) {
-                (*x_coord)--;
+                if ((*x_coord) == 0) {
+                    (*x_coord) = x_max;
+                } else {
+                    (*x_coord)--;
+                }
             } else if (strcmp(method, "POST") == 0 && strcmp(path, "/up") == 0) {
-                (*y_coord)++;
+                if ((*y_coord) == y_max) {
+                    (*y_coord) = 0;
+                } else {
+                    (*y_coord)++;
+                }
             }else if (strcmp(method, "POST") == 0 && strcmp(path, "/down") == 0) {
-                (*y_coord)--;
+                if ((*y_coord) == 0) {
+                    (*y_coord) = y_max;
+                } else {
+                    (*y_coord)--;
+                }
             }
             
             // Create HTML response
