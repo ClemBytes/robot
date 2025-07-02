@@ -1,4 +1,5 @@
 # Ignore compiled files
 server
 test
+string
 *.o
