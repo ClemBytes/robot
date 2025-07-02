@@ -118,23 +118,18 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, in
 
             // Generate HTML table
             char* robot_grid = malloc(100000);
-            int position = 0;
+            char* position = robot_grid;
             for (int x = 0; x < x_max + 1; x++) {
-                memcpy(robot_grid + position, "<tr class='tr-robot-grid'>", sizeof "<tr class='tr-robot-grid'>");
-                position += sizeof "<tr class='tr-robot-grid'>" - 1;
+                position = stpcpy(position, "<tr class='tr-robot-grid'>");
                 for (int y = 0; y < y_max + 1; y++) {
                     if ((x == *x_coord) && (y == *y_coord)) {
-                        memcpy(robot_grid + position, "<td class='td-robot-grid'><img src='data/robot.png' alt='Robot' class='image-responsive'></td>", sizeof "<td class='td-robot-grid'><img src='data/robot.png' alt='Robot' class='image-responsive'></td>");
-                        position += sizeof "<td class='td-robot-grid'><img src='data/robot.png' alt='Robot' class='image-responsive'></td>" - 1;
+                        position = stpcpy(position, "<td class='td-robot-grid'><img src='data/robot.png' alt='Robot' class='image-responsive'></td>");
                     } else {
-                        memcpy(robot_grid + position, "<td class='td-robot-grid'></td>", sizeof "<td class='td-robot-grid'></td>");
-                        position += sizeof "<td class='td-robot-grid'></td>" - 1;
+                        position = stpcpy(position, "<td class='td-robot-grid'></td>");
                     }
                 }
-                memcpy(robot_grid + position, "</tr>", sizeof "</tr>");
-                position += sizeof "</tr>" - 1;
+                position = stpcpy(position, "</tr>");
             }
-            robot_grid[position] = 0;
             
             // Create HTML response
             content_type = "text/html";
