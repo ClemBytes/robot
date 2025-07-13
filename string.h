@@ -10,3 +10,5 @@ void string_deinit(struct string* s);
 void string_print(struct string* s);
 void string_append_with_size(struct string* s, char* following, size_t len_following);
 void string_append(struct string* s, char* following);
+
+#define string_append_literal(x, y) string_append_with_size(x, y, (sizeof y) - 1)

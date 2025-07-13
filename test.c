@@ -51,7 +51,7 @@ void test_string(void) {
     string_print(s);
 
     // Append text
-    string_append(s, "Hello world"); // 11 chars + 0-term = 12 chars
+    string_append_literal(s, "Hello world"); // 11 chars + 0-term = 12 chars*
     string_print(s);
     if (s->start[s->size - 1] != 0) {
         printf("%s:%d - string is not zero-terminated!\n", __FILE__, __LINE__);
