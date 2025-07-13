@@ -9,3 +9,4 @@ void string_init(struct string* s);
 void string_deinit(struct string* s);
 void string_print(struct string* s);
 void string_append(struct string* s, char* following, size_t len_following);
+void string_append_macro(struct string* s, char* following);

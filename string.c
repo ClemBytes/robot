@@ -30,3 +30,8 @@ void string_append(struct string* s, char* following, size_t len_following) {
     s->size += 1;
     // buffer at *start contains size - 1 characters, followed by 1 zero
 }
+
+void string_append_macro(struct string* s, char* following) {
+    size_t len_following = strlen(following);
+    string_append(s, following, len_following);
+}

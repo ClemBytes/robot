@@ -36,6 +36,7 @@ void test_base64(void) {
     }
     printf("PNG image:\n%s\n", res_png);
     free(res_png);
+    printf("\n--- BASE64 tests OK! ---\n");
     printf("---------------------------\n");
 }
 
@@ -50,7 +51,7 @@ void test_string(void) {
     string_print(s);
 
     // Append text
-    string_append(s, "Hello world", strlen("Hello world")); // 11 chars + 0-term = 12 chars
+    string_append_macro(s, "Hello world"); // 11 chars + 0-term = 12 chars
     string_print(s);
     if (s->start[s->size - 1] != 0) {
         printf("%s:%d - string is not zero-terminated!\n", __FILE__, __LINE__);
@@ -67,7 +68,7 @@ void test_string(void) {
 
 
     // Append more text
-    string_append(s, " + Coucou", strlen(" + Coucou")); // 11 chars + 9 chars + 0-term = 21 chars
+    string_append_macro(s, " + Coucou"); // 11 chars + 9 chars + 0-term = 21 chars
     string_print(s);
     if (s->start[s->size - 1] != 0) {
         printf("%s:%d - string is not zero-terminated!\n", __FILE__, __LINE__);
@@ -84,6 +85,7 @@ void test_string(void) {
 
     // Free memory
     string_deinit(s);
+    printf("\n--- STRING tests OK! ---\n");
     printf("---------------------------\n");
 }
 
