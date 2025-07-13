@@ -18,7 +18,7 @@ void string_print(struct string* s) {
     printf("String: %s - start: %p - size: %zu\n", s->start, s->start, s->size);
 }
 
-void string_append(struct string* s, char* following, size_t len_following) {
+void string_append_with_size(struct string* s, char* following, size_t len_following) {
     s->start = realloc(s->start, s->size + len_following);
     // buffer at *start contains size - 1 characters, followed by 1 zero
     memcpy(s->start + s->size - 1, following, len_following);
@@ -31,7 +31,7 @@ void string_append(struct string* s, char* following, size_t len_following) {
     // buffer at *start contains size - 1 characters, followed by 1 zero
 }
 
-void string_append_macro(struct string* s, char* following) {
+void string_append(struct string* s, char* following) {
     size_t len_following = strlen(following);
-    string_append(s, following, len_following);
-}
+    string_append_with_size(s, following, len_following);
+} 
