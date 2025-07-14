@@ -51,9 +51,9 @@ void test_string(void) {
     string_print(s);
 
     // Append text
-    string_append_literal(s, "Hello world"); // 11 chars + 0-term = 12 chars*
+    string_append_literal(s, "Hello world"); // 11 chars + 0-term = 12 chars
     string_print(s);
-    if (s->start[s->size - 1] != 0) {
+    if (s->start[s->used_size - 1] != 0) {
         printf("%s:%d - string is not zero-terminated!\n", __FILE__, __LINE__);
         exit(1);
     }
@@ -61,8 +61,8 @@ void test_string(void) {
         printf("%s:%d - string does not have right size (WITHOUT 0-term)! Should be %zu and is %zu\n", __FILE__, __LINE__, strlen("Hello world"), strlen(s->start));
         exit(1);
     }
-    if (s->size != sizeof "Hello world") {
-        printf("%s:%d - string does not have right size (WITH 0-term)! Should be %zu and is %zu\n", __FILE__, __LINE__, sizeof "Hello world", s->size);
+    if (s->used_size != sizeof "Hello world") {
+        printf("%s:%d - string does not have right size (WITH 0-term)! Should be %zu and is %zu\n", __FILE__, __LINE__, sizeof "Hello world", s->used_size);
         exit(1);
     }
 
@@ -70,7 +70,7 @@ void test_string(void) {
     // Append more text
     string_append(s, " + Coucou"); // 11 chars + 9 chars + 0-term = 21 chars
     string_print(s);
-    if (s->start[s->size - 1] != 0) {
+    if (s->start[s->used_size - 1] != 0) {
         printf("%s:%d - string is not zero-terminated!\n", __FILE__, __LINE__);
         exit(1);
     }
@@ -78,8 +78,8 @@ void test_string(void) {
         printf("%s:%d - string does not have right size (WITHOUT 0-term)! Should be %zu and is %zu\n", __FILE__, __LINE__, strlen("Hello world + Coucou"), strlen(s->start));
         exit(1);
     }
-    if (s->size != sizeof "Hello world + Coucou") {
-        printf("%s:%d - string does not have right size (WITH 0-term)! Should be %zu and is %zu\n", __FILE__, __LINE__, sizeof "Hello world + Coucou", s->size);
+    if (s->used_size != sizeof "Hello world + Coucou") {
+        printf("%s:%d - string does not have right size (WITH 0-term)! Should be %zu and is %zu\n", __FILE__, __LINE__, sizeof "Hello world + Coucou", s->used_size);
         exit(1);
     }
 

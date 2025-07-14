@@ -2,7 +2,8 @@
 
 struct string {
     char* start;
-    size_t size; // number of characters including final 0
+    size_t size; // number of characters disponible (including already written and final 0)
+    size_t used_size; // number of characters including final 0
 };
 
 void string_init(struct string* s);
