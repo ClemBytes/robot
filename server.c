@@ -73,23 +73,18 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, in
         int content_length;
         char* content_type;
         char* content;
-        // struct string _content;
-        // struct string* content = &_content;
-        // string_init(content);
 
         // Generate response depending on request
         if (strcmp(method, "GET") == 0 && strcmp(path, "/data/template.css") == 0) {
             // Request for CSS file
             content_length = css_template_size;
             content_type = "text/css";
-            // string_append(content, css_template);
             content = malloc(content_length);
             memcpy(content, css_template, content_length);
         } else if (strcmp(method, "GET") == 0 && strcmp(path, "/data/robot.png") == 0) {
             // Request for robot PNG file
             content_length = robot_png_size;
             content_type = "image/png";
-            // string_append(content, robot_png);
             content = malloc(content_length);
             memcpy(content, robot_png, content_length);
         } else {
@@ -145,7 +140,6 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, in
             if (content_length < 0) {
                 perror("snprinft() for content_length failed");
                 free(content);
-                // string_deinit(content);
                 string_deinit(robot_grid);
                 break;
             }
@@ -154,14 +148,12 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, in
             if (h < 0) {
                 perror("snprintf() for html failed");
                 free(content);
-                // string_deinit(content);
                 string_deinit(robot_grid);
                 break;
             } else if (h >= content_length + 1) {
                 printf(content);
                 printf("%s:%d - Size of HTML response is not enough: %d given and needs %d!\n", __FILE__, __LINE__, h, content_length + 1);
                 free(content);
-                // string_deinit(content);
                 string_deinit(robot_grid);
                 break;
             }
