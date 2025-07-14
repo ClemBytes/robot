@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "base64.h"
+#include "string.h"
 
 int handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, int* y_coord, char* favicon_data, char* html_template, char* css_template, size_t css_template_size, char* robot_png, size_t robot_png_size) {
     // Get client IP address in '0.0.0.0' format for printing
@@ -68,21 +69,27 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, in
         printf("Version: %s\n", version);
         printf("-------------------------------------\n");
 
+        // Init response content
         int content_length;
         char* content_type;
         char* content;
+        // struct string _content;
+        // struct string* content = &_content;
+        // string_init(content);
 
         // Generate response depending on request
         if (strcmp(method, "GET") == 0 && strcmp(path, "/data/template.css") == 0) {
             // Request for CSS file
             content_length = css_template_size;
             content_type = "text/css";
+            // string_append(content, css_template);
             content = malloc(content_length);
             memcpy(content, css_template, content_length);
         } else if (strcmp(method, "GET") == 0 && strcmp(path, "/data/robot.png") == 0) {
             // Request for robot PNG file
             content_length = robot_png_size;
             content_type = "image/png";
+            // string_append(content, robot_png);
             content = malloc(content_length);
             memcpy(content, robot_png, content_length);
         } else {
@@ -117,44 +124,48 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, in
             }
 
             // Generate HTML table
-            char* robot_grid = malloc(100000);
-            char* position = robot_grid;
+            struct string _robot_grid;
+            struct string* robot_grid = &_robot_grid;
+            string_init(robot_grid);
             for (int x = 0; x < x_max + 1; x++) {
-                position = stpcpy(position, "<tr class='tr-robot-grid'>");
+                string_append(robot_grid, "<tr class='tr-robot-grid'>");
                 for (int y = 0; y < y_max + 1; y++) {
                     if ((x == *x_coord) && (y == *y_coord)) {
-                        position = stpcpy(position, "<td class='td-robot-grid'><img src='data/robot.png' alt='Robot' class='image-responsive'></td>");
+                        string_append(robot_grid, "<td class='td-robot-grid'><img src='data/robot.png' alt='Robot' class='image-responsive'></td>");
                     } else {
-                        position = stpcpy(position, "<td class='td-robot-grid'></td>");
+                        string_append(robot_grid, "<td class='td-robot-grid'></td>");
                     }
                 }
-                position = stpcpy(position, "</tr>");
+                string_append(robot_grid, "</tr>");
             }
             
             // Create HTML response
             content_type = "text/html";
-            content_length = snprintf(NULL, 0, html_template, favicon_data, *x_coord, *y_coord, robot_grid);
+            content_length = snprintf(NULL, 0, html_template, favicon_data, *x_coord, *y_coord, robot_grid->start);
             if (content_length < 0) {
                 perror("snprinft() for content_length failed");
                 free(content);
-                free(robot_grid);
+                // string_deinit(content);
+                string_deinit(robot_grid);
                 break;
             }
             content = malloc(content_length + 1);
-            int h = snprintf(content, content_length + 1, html_template, favicon_data, *x_coord, *y_coord, robot_grid);
+            int h = snprintf(content, content_length + 1, html_template, favicon_data, *x_coord, *y_coord, robot_grid->start);
             if (h < 0) {
                 perror("snprintf() for html failed");
                 free(content);
-                free(robot_grid);
+                // string_deinit(content);
+                string_deinit(robot_grid);
                 break;
             } else if (h >= content_length + 1) {
                 printf(content);
                 printf("%s:%d - Size of HTML response is not enough: %d given and needs %d!\n", __FILE__, __LINE__, h, content_length + 1);
                 free(content);
-                free(robot_grid);
+                // string_deinit(content);
+                string_deinit(robot_grid);
                 break;
             }
-            free(robot_grid);
+            string_deinit(robot_grid);
         }
 
         // Create header for response
