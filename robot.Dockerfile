@@ -2,7 +2,9 @@ FROM debian:bookworm-slim AS gcc
 RUN apt-get update && apt-get --yes install gcc make && rm -rf /var/lib/apt/lists/*
 COPY server.c .
 COPY base64.c .
+COPY string.c .
 COPY base64.h .
+COPY string.h .
 COPY Makefile .
 RUN make LDFLAGS+=-static server
 
