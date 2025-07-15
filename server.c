@@ -108,30 +108,31 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
 
         // Get first line of request
         int i;
-        int first_line_size = 100;
-        char first_line[first_line_size];
+        struct string _first_line;
+        struct string* first_line = &_first_line;
+        string_init(first_line);
         for (i = 0; i < data_len; i++) {
             if (buf[i] == '\r'){
-                first_line[i] = '\r';
-                first_line[i+1] = '\n';
+                string_append_with_size(first_line, "\r", 1);
+                string_append_with_size(first_line, "\n", 1);
                 break;
             } else if (buf[i] == '\n') {
-                first_line[i] = '\r';
-                first_line[i+1] = '\n';
+                string_append_with_size(first_line, "\r", 1);
+                string_append_with_size(first_line, "\n", 1);
                 break;
             } else {
-                first_line[i] = buf[i];
+                string_append_with_size(first_line, &buf[i], 1);
             }
         }
-        if (i >= first_line_size - 1) {
-            printf("Size of first line is not enough: %d given and needs %d!\n", first_line_size, i);
+        if (i >= first_line->used_size - 1) {
+            printf("Size of first line is not enough: %d given and needs %d!\n", first_line->used_size, i);
             break;
         }
-        first_line[i] = 0;
+        string_append_with_size(first_line, "\0", 1);
 
         // Parse first line
         char method[16], path[1024], version[16];
-        int nb_match = sscanf(first_line, "%s %s %s", method, path, version);
+        int nb_match = sscanf(first_line->start, "%s %s %s", method, path, version);
         if (nb_match != 3) {
             printf("Uncomplete request first line\n");
             continue;
