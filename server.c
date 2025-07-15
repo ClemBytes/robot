@@ -10,13 +10,13 @@
 #include "base64.h"
 #include "string.h"
 
-int handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, int* y_coord, char* favicon_data, char* html_template, char* css_template, size_t css_template_size, char* robot_png, size_t robot_png_size) {
+void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, int* y_coord, char* favicon_data, char* html_template, char* css_template, size_t css_template_size, char* robot_png, size_t robot_png_size) {
     // Get client IP address in '0.0.0.0' format for printing
     char client_ip_address[16];
     const char* ret2 = inet_ntop(AF_INET, &client_addr.sin_addr, client_ip_address, sizeof client_ip_address);
     if (ret2 == NULL) {
         perror("inet_ntop() failed");
-        return 1;
+        return;
     }
     printf("Client IP address: %s\n", client_ip_address);
 
@@ -62,7 +62,7 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, in
             int r = poll(&client_pollfd, 1, 0); // timeout = 0 causes poll() to return immediately, even if no file descriptors are ready
             if (r < 0) {
                 perror("poll() failed");
-                return 0;
+                return;
             }
 
             if ((client_pollfd.revents & POLLIN) == 0) {
@@ -75,13 +75,13 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, in
                 printf("Client %d disconnected\n", clientfd);
                 printf("-------------------------------------\n");
                 printf("-------------------------------------\n");
-                return 0;
+                return;
             }
 
             if (n < 0) {
                 perror("read() failed");
                 free(buf);
-                return 0;
+                return;
             }
 
             data_len += n;
@@ -265,7 +265,7 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, in
             break;
         }
     }
-    return 0;
+    return;
 }
 
 
