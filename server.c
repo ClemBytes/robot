@@ -62,8 +62,7 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, in
             int r = poll(&client_pollfd, 1, 0); // timeout = 0 causes poll() to return immediately, even if no file descriptors are ready
             if (r < 0) {
                 perror("poll() failed");
-                exit(1);
-                // TODO
+                return 0;
             }
 
             if ((client_pollfd.revents & POLLIN) == 0) {
@@ -76,15 +75,13 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, in
                 printf("Client %d disconnected\n", clientfd);
                 printf("-------------------------------------\n");
                 printf("-------------------------------------\n");
-                exit(1);
-                // TODO
+                return 0;
             }
 
             if (n < 0) {
                 perror("read() failed");
                 free(buf);
-                exit(1);
-                // TODO
+                return 0;
             }
 
             data_len += n;
@@ -93,15 +90,13 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, in
                 // Buf is full, need to realloc
                 buf_size *= 2;
                 buf = realloc(buf, buf_size);
-                printf("REALLOC!! New size: %zu\n", buf_size);
+                // printf("REALLOC!! New size: %zu\n", buf_size);
             }
         }
         // Finally, last realloc to have the exact needed size and add final 0
         buf = realloc(buf, data_len + 1);
         buf_size = data_len + 1;
         buf[data_len] = 0;
-        printf("Request received:\n%s\n", buf);
-        printf("-------------------------------------\n");
 
         // Get first line of request
         int i;
