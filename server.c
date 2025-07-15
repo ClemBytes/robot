@@ -19,7 +19,7 @@ int read_client(int clientfd, char* buf, size_t* p_data_len, size_t* p_buf_size)
     Returns an int:
         0: client disconnected
         -1: fail
-        n: read response, number of read characters
+        n: read response, number of characters read
     */
     ssize_t n = read(clientfd, buf + *p_data_len, *p_buf_size - *p_data_len);
     if (n == 0) {
@@ -74,7 +74,7 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
             return;
         }
         if (n < 0) {
-            printf("%s:%d - read_client() failed\n", __FILE__, __LINE__);
+            fprintf(stderr, "%s:%d - read_client() failed\n", __FILE__, __LINE__);
             free(buf);
             return;
         }
@@ -96,7 +96,7 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
                 break;
             }
             if (n < 0) {
-                printf("%s:%d - read_client() failed\n", __FILE__, __LINE__);
+                fprintf(stderr, "%s:%d - read_client() failed\n", __FILE__, __LINE__);
                 free(buf);
                 break;
             }
@@ -125,7 +125,7 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
             }
         }
         if (i >= first_line->used_size - 1) {
-            printf("Size of first line is not enough: %d given and needs %d!\n", first_line->used_size, i);
+            fprintf(stderr, "Size of first line is not enough: %d given and needs %d!\n", first_line->used_size, i);
             break;
         }
         string_append_with_size(first_line, "\0", 1);
@@ -134,7 +134,7 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
         char method[16], path[1024], version[16];
         int nb_match = sscanf(first_line->start, "%s %s %s", method, path, version);
         if (nb_match != 3) {
-            printf("Uncomplete request first line\n");
+            fprintf(stderr, "Uncomplete request first line\n");
             continue;
         }
         printf("Method: %s\n", method);
@@ -192,9 +192,9 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
             } else if (strcmp(method, "GET") == 0 && strcmp(path, "/") == 0) {
                 // Request for head page
                 // Do nothing
-                printf("Request main page!\n");
+                fprintf(stderr, "Request main page!\n");
             } else {
-                printf("Invalid request!\n");
+                fprintf(stderr, "Invalid request!\n");
                 continue;
             }
 

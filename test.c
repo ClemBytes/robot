@@ -9,13 +9,13 @@ void test_base64_case(const char* input, const char* expected) {
     char res[100];
     size_t n = base64_str(input, res, sizeof res);
     if (n >= sizeof res) {
-        printf("Size of res buffer is not enough: %d given and needs %d!\n", sizeof res, n);
+        fprintf(stderr, "Size of res buffer is not enough: %d given and needs %d!\n", sizeof res, n);
         exit(1);
     }
     if (strcmp(res, expected) == 0) {
-        printf("%s: %s\n", input, res);
+        fprintf(stderr, "%s: %s\n", input, res);
     } else {
-        printf("UNEXPECTED RESULT!\nInitial: %s\nResult: %s\nExpected: %s\n", input, res, expected);
+        fprintf(stderr, "UNEXPECTED RESULT!\nInitial: %s\nResult: %s\nExpected: %s\n", input, res, expected);
         exit(1);
     }
 }
@@ -31,7 +31,7 @@ void test_base64(void) {
 
     char* res_png = base64_from_path("./data/favicon-16x16.png", NULL);
     if (res_png == NULL) {
-        printf("base64_from_path() failed!\n");
+        fprintf(stderr, "base64_from_path() failed!\n");
         exit(1);
     }
     printf("PNG image:\n%s\n", res_png);
@@ -54,15 +54,15 @@ void test_string(void) {
     string_append_literal(s, "Hello world"); // 11 chars + 0-term = 12 chars
     string_print(s);
     if (s->start[s->used_size - 1] != 0) {
-        printf("%s:%d - string is not zero-terminated!\n", __FILE__, __LINE__);
+        fprintf(stderr, "%s:%d - string is not zero-terminated!\n", __FILE__, __LINE__);
         exit(1);
     }
     if (strlen(s->start) != strlen("Hello world")) {
-        printf("%s:%d - string does not have right size (WITHOUT 0-term)! Should be %zu and is %zu\n", __FILE__, __LINE__, strlen("Hello world"), strlen(s->start));
+        fprintf(stderr, "%s:%d - string does not have right size (WITHOUT 0-term)! Should be %zu and is %zu\n", __FILE__, __LINE__, strlen("Hello world"), strlen(s->start));
         exit(1);
     }
     if (s->used_size != sizeof "Hello world") {
-        printf("%s:%d - string does not have right size (WITH 0-term)! Should be %zu and is %zu\n", __FILE__, __LINE__, sizeof "Hello world", s->used_size);
+        fprintf(stderr, "%s:%d - string does not have right size (WITH 0-term)! Should be %zu and is %zu\n", __FILE__, __LINE__, sizeof "Hello world", s->used_size);
         exit(1);
     }
 
@@ -71,15 +71,15 @@ void test_string(void) {
     string_append(s, " + Coucou"); // 11 chars + 9 chars + 0-term = 21 chars
     string_print(s);
     if (s->start[s->used_size - 1] != 0) {
-        printf("%s:%d - string is not zero-terminated!\n", __FILE__, __LINE__);
+        fprintf(stderr, "%s:%d - string is not zero-terminated!\n", __FILE__, __LINE__);
         exit(1);
     }
     if (strlen(s->start) != strlen("Hello world + Coucou")) {
-        printf("%s:%d - string does not have right size (WITHOUT 0-term)! Should be %zu and is %zu\n", __FILE__, __LINE__, strlen("Hello world + Coucou"), strlen(s->start));
+        fprintf(stderr, "%s:%d - string does not have right size (WITHOUT 0-term)! Should be %zu and is %zu\n", __FILE__, __LINE__, strlen("Hello world + Coucou"), strlen(s->start));
         exit(1);
     }
     if (s->used_size != sizeof "Hello world + Coucou") {
-        printf("%s:%d - string does not have right size (WITH 0-term)! Should be %zu and is %zu\n", __FILE__, __LINE__, sizeof "Hello world + Coucou", s->used_size);
+        fprintf(stderr, "%s:%d - string does not have right size (WITH 0-term)! Should be %zu and is %zu\n", __FILE__, __LINE__, sizeof "Hello world + Coucou", s->used_size);
         exit(1);
     }
 
