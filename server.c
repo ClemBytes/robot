@@ -13,7 +13,7 @@
 int read_client(int clientfd, char* buf, size_t* p_data_len, size_t* p_buf_size) {
     /*
     Reading of client buffer into buf at position data_len (data_len is the
-    size of already written data) for as much characters as possible (to fill
+    size of already written data) for as many characters as possible (to fill
     the buffer buf or to read everything).
 
     Returns an int:
@@ -31,7 +31,6 @@ int read_client(int clientfd, char* buf, size_t* p_data_len, size_t* p_buf_size)
 
     if (n < 0) {
         perror("read() failed");
-        free(buf);
         return -1;
     }
 
@@ -74,6 +73,11 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
         if (n == 0) {
             return;
         }
+        if (n < 0) {
+            printf("%s:%d - read_client() failed\n", __FILE__, __LINE__);
+            free(buf);
+            return;
+        }
 
         while (1) {
             int r = poll(&client_pollfd, 1, 0); // timeout = 0 causes poll() to return immediately, even if no file descriptors are ready
@@ -89,6 +93,11 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
             // Fill buf from where we stopped
             n = read_client(clientfd, buf, &data_len, &buf_size);
             if (n == 0) {
+                break;
+            }
+            if (n < 0) {
+                printf("%s:%d - read_client() failed\n", __FILE__, __LINE__);
+                free(buf);
                 break;
             }
         }
@@ -123,7 +132,6 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
         // Parse first line
         char method[16], path[1024], version[16];
         int nb_match = sscanf(first_line, "%s %s %s", method, path, version);
-        printf("nb_match: %d\n", nb_match);
         if (nb_match != 3) {
             printf("Uncomplete request first line\n");
             continue;
