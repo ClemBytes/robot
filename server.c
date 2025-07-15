@@ -54,7 +54,7 @@ int handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, in
             // Buf is full, need to realloc
             buf_size *= 2;
             buf = realloc(buf, buf_size);
-            printf("REALLOC!! New size: %zu\n", buf_size);
+            // printf("REALLOC!! New size: %zu\n", buf_size);
         }
 
 
