@@ -1,3 +1,4 @@
+.hidden
 # Ignore compiled files
 server
 test
