@@ -25,6 +25,10 @@ def main():
 
     with open("data/template.css", "r") as f:
         expected_css = f.read()
+    
+    if r_css.status_code != requests.codes.ok:
+        print(f"Bad status code: {r_css.status_code}")
+        flag = False
 
     if not check_diff(r_css.text, expected_css):
         print("Problem with CSS file")
@@ -52,6 +56,10 @@ def main():
     with open("data/robot.png", "rb") as f:
         expected_robot_png = f.read()
 
+    if r_png.status_code != requests.codes.ok:
+        print(f"Bad status code: {r_png.status_code}")
+        flag = False
+    
     if not check_diff(r_png.content, expected_robot_png):
         print("Problem with robot PNG file")
         flag2 = False
