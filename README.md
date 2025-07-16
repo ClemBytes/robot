@@ -7,6 +7,7 @@ On my website here: [robot.clembytes.fr](https://robot.clembytes.fr)
 ## Where can I follow the process
 
 On my blog here: [clembytes](https://clembytes.fr/)
+
 And more specifically the followinf articles: [clembytes.fr/category/robot](https://clembytes.fr/category/robot/)
 
 ## The idea
