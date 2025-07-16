@@ -1,65 +1,50 @@
-import socket
+import difflib
+import requests
 
-def diff_bytes(a, b):
-    min_len = min(len(a), len(b))
-    if len(a) != len(b):
-        print(f"Lengths differ: {len(a)} != {len(b)}")
-        return
-    for i in range(min_len):
-        if a[i] != b[i]:
-            print(f"Byte {i}: {a[i]:02x} != {b[i]:02x}")
+def check_diff(received, expected):
+    lr = len(received)
+    le = len(expected)
+    if lr != le:
+        print(f"Lengths differ: {lr} (received) != {le} (expected)")
+        return False
+    flag = True
+    for i in range(lr):
+        ri = received[i]
+        ei = expected[i]
+        if ri != ei:
+            print(f"Character {i}: {ri} (received) != {ei} (expected)")
+            flag = False
+    return flag
 
-# Create socket
-s = socket.socket()
+def main():
+    flag = True
+    print("------------------------------------------------------------------")
+    print("TEST 1 : CSS template")
+    print("---------------------")
+    r_css = requests.get('http://127.0.0.0:8000/data/template.css')
 
-# Connect to localhost
-s.connect(("127.0.0.0", 8000))
+    with open("data/template.css", "r") as f:
+        expected_css = f.read()
 
-print("-------------------------")
-print("1) Request CSS file")
-# Send request for CSS
-s.sendall(b"GET /data/template.css HTTP/1.1\r\n\r\n")
-with open("data/template.css", "r") as f:
-    css = f.read()
+    if not check_diff(r_css.text, expected_css):
+        print("Problem with CSS file")
+        flag = False
 
-css_expected = f"HTTP/1.0 200 OK\r\nContent-Type: text/css\r\nContent-Length: {len(css)}\r\n\r\n{css}"
+    ct = r_css.headers["Content-Type"]
+    if ct != "text/css":
+        print(f"Wrong Content-Type: {ct} (received) != text/css (expected)")
+        flag = False
 
-# Receive answer
-data_css = s.recv(10000)
+    cl = int(r_css.headers["Content-Length"])
+    lecss = len(expected_css)
+    if cl != lecss:
+        print(f"Wrong Content-Length: {cl} (received) != {lecss} (expected)")
+        flag = False
 
-if data_css.decode() == css_expected:
-    print("OK for CSS request")
-else:
-    print("ERROR for CSS request:")
-    print(f"Expected:")
-    print("----")
-    print(css_expected)
-    print("----")
-    print(f"Received:")
-    print("----")
-    print(data_css.decode())
-    print("----")
+    if flag:
+        print("OK!")
+    print("------------------------------------------------------------------")
+    return flag
 
-print("-------------------------")
-
-print("-------------------------")
-print("2) Request robot PNG file")
-# Send request for robot image
-s.sendall(b"GET /data/robot.png HTTP/1.1\r\n\r\n")
-with open("data/robot.png", "rb") as f:
-    robot_image = f.read()
-
-robot_image_expected = f"HTTP/1.0 200 OK\r\nContent-Type: image/png\r\nContent-Length: {len(robot_image)}\r\n\r\n".encode() + robot_image
-
-# Receive answer
-data_robot_image = s.recv(30000)
-
-if data_robot_image == robot_image_expected:
-    print("OK for robot PNG request")
-else:
-    print("ERROR for robot image request:")
-    diff_bytes(data_robot_image, robot_image_expected)
-
-print("-------------------")
-
-s.close()
+if __name__ == '__main__':
+    main()
