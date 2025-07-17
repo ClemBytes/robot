@@ -1,4 +1,4 @@
-import difflib
+from bs4 import BeautifulSoup
 import requests
 
 def check_diff(received, expected):
@@ -15,6 +15,30 @@ def check_diff(received, expected):
             print(f"Character {i}: {ri} (received) != {ei} (expected)")
             flag = False
     return flag
+
+def find_robot_grid(r):
+    soup = BeautifulSoup(r.text, "html.parser")
+    table_text = soup.find("table", class_="robot-grid")
+    table = []
+    for line in table_text.find_all("tr"):
+        l = []
+        for col in line.find_all("td"):
+            l.append(col)
+        table.append(l)
+    return table
+
+def find_image_in_grid(table):
+    found = False
+    for l, line in enumerate(table):
+        for c, col in enumerate(line):
+            if len(col.find_all("img")) == 1:
+                if not(found):
+                    found = True
+                    x = l
+                    y = c
+                else:
+                    raise(f"Image found twice! ({x}, {y}) and now ({l}, {c})")
+    return x, y
 
 def main():
     print("------------------------------------------------------------------")
@@ -78,7 +102,17 @@ def main():
     if flag2:
         print("OK!")
     print("------------------------------------------------------------------")
-    return flag1 and flag2
+    print("TEST 3 : main page")
+    print("------------------")
+    flag3 = True
+    r_main = requests.get('http://127.0.0.0:8000')
+    table_main = find_robot_grid(r_main)
+    print(find_image_in_grid(table_main))
+    
+    if flag3:
+        print("OK!")
+    print("------------------------------------------------------------------")
+    return flag1 and flag2 and flag3
 
 if __name__ == '__main__':
     main()
