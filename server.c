@@ -183,6 +183,9 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
                 } else {
                     (*y_coord)++;
                 }
+            } else if (strcmp(method, "POST") == 0 && strcmp(path, "/reset") == 0) {
+                (*x_coord) = 0;
+                (*y_coord) = 0;
             } else if (strcmp(method, "POST") == 0 && strcmp(path, "/left") == 0) {
                 if ((*y_coord) == 0) {
                     (*y_coord) = y_max;
