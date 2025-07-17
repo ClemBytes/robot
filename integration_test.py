@@ -106,8 +106,9 @@ def main():
     print("------------------")
     flag3 = True
     r_main = requests.get('http://127.0.0.0:8000')
-    table_main = find_robot_grid(r_main)
-    print(find_image_in_grid(table_main))
+    print(find_image_in_grid(find_robot_grid(r_main)))
+    r_main = requests.post('http://127.0.0.0:8000/right')
+    print(find_image_in_grid(find_robot_grid(r_main)))
     
     if flag3:
         print("OK!")
