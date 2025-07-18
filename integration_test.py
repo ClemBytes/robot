@@ -190,4 +190,6 @@ def main():
     return flag1 and flag2 and flag3
 
 if __name__ == '__main__':
-    main()
+    flag = main()
+    if flag:
+        print("All tests passed!")
