@@ -155,11 +155,29 @@ def main():
     print("----------------")
 
     moves_to_test = [
-        ["reset", "up", "up", "up"],
-        ["reset", "right", "right", "right"],
-        ["reset", "left", "left"],
-        ["reset", "down"],
-        ["reset", "up"]
+        ["reset", "up", "up", "up"], # Move up 3 times
+        ["reset", "right", "right", "right"], # Move right 3 times
+        ["reset", "left", "left"], # Move left 2 times
+        ["reset", "down"], # Move down once
+        ["reset", "up"], # Move up once
+        ["reset", "up", "up", "up", "up", "up", "up"], # Test top boundary wrap-around
+        ["reset", "right", "right", "right", "right", "right", "right"], # Test right boundary wrap-around
+        ["reset", "down", "down", "down", "down", "down", "down"], # Test bottom boundary wrap-around
+        ["reset", "left", "left", "left", "left", "left", "left"], # Test left boundary wrap-around
+        ["reset", "up", "right", "down", "left", "up", "up", "right", "down", "down", "left", "left"], # Long random path
+        ["reset", "up", "right", "down", "left"], # Full loop (back to origin)
+        ["reset", "up", "right", "up", "right", "down", "left", "down", "left"], # Zigzag pattern
+        ["reset", "right", "right", "left", "left"], # Horizontal back and forth
+        ["reset", "up", "up", "down", "down"], # Vertical back and forth
+        ["reset", "up", "right", "reset", "down", "left"], # Multiple resets (should always return to (0,0))
+        ["reset", "up", "up", "right", "right", "down", "down", "left", "left", "up", "up", "right", "down", "left"], # Random long path with multiple wrap-arounds
+        ["reset", "up", "down", "left", "right", "up", "up", "right", "down", "left"], # Random moves with redundant steps (tests stability)
+        ["reset", "up", "down", "right", "left", "down", "up", "left", "right"], # Stay in place (all moves cancel each other)
+        ["reset", "up", "right", "down", "left", "up", "right", "down", "left"], # Diagonal loop (simulate moving around corners)
+        ["reset", "up", "up", "up", "up", "up", "right", "right", "right", "right", "right",
+        "down", "down", "down", "down", "down", "left", "left", "left", "left", "left",
+        "up", "up", "up", "up", "up", "right", "right", "right", "right", "right",
+        "down", "down", "down", "down", "down", "left", "left", "left", "left", "left"] # Edge surfing (go around the grid in a square pattern twice)
     ]
 
     flag3 = True
