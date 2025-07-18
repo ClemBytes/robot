@@ -40,6 +40,42 @@ def find_image_in_grid(table):
                     raise(f"Image found twice! ({x}, {y}) and now ({l}, {c})")
     return x, y
 
+def final_position(moves, x_max = 4, y_max = 4):
+    """
+    Given a list of the moves, this function computes the final coordinates.
+    Important note: the list always needs to start with a 'reset' to ensure 
+    replicable tests!
+    """
+    if moves[0] != 'reset':
+        raise ValueError(f"moves should always start with 'reset' and not '{moves[0]}'")
+    
+    x = 0
+    y = 0
+    for m in moves:
+        if m == "reset":
+            x = 0
+            y = 0
+        elif m == "up":
+            x -= 1
+            if x == -1:
+                x = x_max
+        elif m == "down":
+            x += 1
+            if x == x_max + 1:
+                x = 0
+        elif m == "left":
+            y -= 1
+            if y == -1:
+                y = y_max
+        elif m == "right":
+            y += 1
+            if y == y_max + 1:
+                y = 0
+        else:
+            raise ValueError(f"Unknown move: {m}")
+    return x, y
+    
+
 def main():
     print("------------------------------------------------------------------")
     print("TEST 1 : CSS template")
@@ -109,6 +145,17 @@ def main():
     print(find_image_in_grid(find_robot_grid(r_main)))
     r_main = requests.post('http://127.0.0.0:8000/right')
     print(find_image_in_grid(find_robot_grid(r_main)))
+
+    l = ["reset", "up", "up", "up"]
+    print(f"Moves: {l} - final position: {final_position(l)}")
+    l = ["reset", "right", "right", "right"]
+    print(f"Moves: {l} - final position: {final_position(l)}")
+    l = ["reset", "left", "left"]
+    print(f"Moves: {l} - final position: {final_position(l)}")
+    l = ["reset", "down"]
+    print(f"Moves: {l} - final position: {final_position(l)}")
+    l = ["reset", "up"]
+    print(f"Moves: {l} - final position: {final_position(l)}")
     
     if flag3:
         print("OK!")
