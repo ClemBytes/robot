@@ -74,6 +74,19 @@ def final_position(moves, x_max = 4, y_max = 4):
         else:
             raise ValueError(f"Unknown move: {m}")
     return x, y
+
+def test_moves(moves):
+    expected_x, expected_y = final_position(moves)
+    for m in moves:
+        r = requests.post("http://127.0.0.0:8000/" + m)
+    final_x, final_y = find_image_in_grid(find_robot_grid(r))
+    if (final_x != expected_x) or (final_y != expected_y):
+        print("Final position doesn't match expected position!")
+        print(f"moves: {moves}")
+        print(f"expected x: {expected_x} | final x: {final_x}")
+        print(f"expected y: {expected_y} | final y: {final_y}")
+        return False
+    return True
     
 
 def main():
@@ -138,24 +151,20 @@ def main():
     if flag2:
         print("OK!")
     print("------------------------------------------------------------------")
-    print("TEST 3 : main page")
-    print("------------------")
-    flag3 = True
-    r_main = requests.get('http://127.0.0.0:8000')
-    print(find_image_in_grid(find_robot_grid(r_main)))
-    r_main = requests.post('http://127.0.0.0:8000/right')
-    print(find_image_in_grid(find_robot_grid(r_main)))
+    print("TEST 3 : moving!")
+    print("----------------")
 
-    l = ["reset", "up", "up", "up"]
-    print(f"Moves: {l} - final position: {final_position(l)}")
-    l = ["reset", "right", "right", "right"]
-    print(f"Moves: {l} - final position: {final_position(l)}")
-    l = ["reset", "left", "left"]
-    print(f"Moves: {l} - final position: {final_position(l)}")
-    l = ["reset", "down"]
-    print(f"Moves: {l} - final position: {final_position(l)}")
-    l = ["reset", "up"]
-    print(f"Moves: {l} - final position: {final_position(l)}")
+    moves_to_test = [
+        ["reset", "up", "up", "up"],
+        ["reset", "right", "right", "right"],
+        ["reset", "left", "left"],
+        ["reset", "down"],
+        ["reset", "up"]
+    ]
+
+    flag3 = True
+    for moves in moves_to_test:
+        flag3 = flag3 and test_moves(moves)
     
     if flag3:
         print("OK!")
