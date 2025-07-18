@@ -182,7 +182,8 @@ def main():
 
     flag3 = True
     for moves in moves_to_test:
-        flag3 = flag3 and test_moves(moves)
+        if not test_moves(moves):
+            flag3 = False
     
     if flag3:
         print("OK!")
