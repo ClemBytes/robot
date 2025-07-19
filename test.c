@@ -9,7 +9,7 @@ void test_base64_case(const char* input, const char* expected) {
     char res[100];
     size_t n = base64_str(input, res, sizeof res);
     if (n >= sizeof res) {
-        fprintf(stderr, "Size of res buffer is not enough: %d given and needs %d!\n", sizeof res, n);
+        fprintf(stderr, "Size of res buffer is not enough: %zu given and needs %zu!\n", sizeof res, n);
         exit(1);
     }
     if (strcmp(res, expected) == 0) {
