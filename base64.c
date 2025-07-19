@@ -8,7 +8,7 @@
 
 const char charset[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-size_t base64(const unsigned char* data, size_t len_data, char* res, size_t res_len) {
+size_t base64(const char* data, size_t len_data, char* res, size_t res_len) {
     size_t unpadded_len = (len_data*8 + 5) / 6; // ceil(data_nb_bits/6)
     size_t padding_len = (4 - unpadded_len) % 4;
     size_t size_needed = unpadded_len + padding_len;
@@ -48,7 +48,7 @@ size_t base64(const unsigned char* data, size_t len_data, char* res, size_t res_
 }
 
 size_t base64_str(const char* s, char* res, size_t res_len) {
-    base64(s, strlen(s), res, res_len);
+    return base64(s, strlen(s), res, res_len);
 }
 
 char* open_and_read(const char* path, size_t* file_size_out) {
