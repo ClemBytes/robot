@@ -28,11 +28,11 @@ size_t base64(const char* data, size_t len_data, char* res, size_t res_len) {
 
     if (len_data - j == 1) {
         res[i++] = charset[data[j + 0] >> 2];
-        res[i++] = charset[((data[j + 0] & 0x03) << 4) | (0 >> 4)];
+        res[i++] = charset[((data[j + 0] & 0x03) << 4)];
     } else if (len_data - j == 2) {
         res[i++] = charset[data[j + 0] >> 2];
         res[i++] = charset[((data[j + 0] & 0x03) << 4) | (data[j + 1] >> 4)];
-        res[i++] = charset[((data[j + 1] & 0x0F) << 2) | (0 >> 6)];
+        res[i++] = charset[((data[j + 1] & 0x0F) << 2)];
     }
 
     while (padding_len--) {

@@ -2,6 +2,7 @@ CFLAGS+=-Wall -Wextra -Wpedantic -Wshadow -Wformat-security
 
 server: server.o base64.o string.o
 test: test.o base64.o string.o
+	cppcheck --enable=all --inconclusive .
 
 .PHONY:
 run: server

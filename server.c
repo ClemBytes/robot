@@ -10,7 +10,7 @@
 #include "base64.h"
 #include "string.h"
 
-ssize_t read_client(int clientfd, char* buf, size_t* p_data_len, size_t* p_buf_size) {
+ssize_t read_client(int clientfd, char** p_buf, size_t* p_data_len, size_t* p_buf_size) {
     /*
     Reading of client buffer into buf at position data_len (data_len is the
     size of already written data) for as many characters as possible (to fill
@@ -21,7 +21,7 @@ ssize_t read_client(int clientfd, char* buf, size_t* p_data_len, size_t* p_buf_s
         -1: fail
         n: read response, number of characters read
     */
-    ssize_t n = read(clientfd, buf + *p_data_len, *p_buf_size - *p_data_len);
+    ssize_t n = read(clientfd, *p_buf + *p_data_len, *p_buf_size - *p_data_len);
     if (n == 0) {
         printf("Client %d disconnected\n", clientfd);
         printf("-------------------------------------\n");
@@ -39,7 +39,7 @@ ssize_t read_client(int clientfd, char* buf, size_t* p_data_len, size_t* p_buf_s
     if (*p_data_len == *p_buf_size) {
         // Buf is full, need to realloc
         *p_buf_size *= 2;
-        buf = realloc(buf, *p_buf_size);
+        *p_buf = realloc(*p_buf, *p_buf_size);
         // printf("REALLOC!! New size: %zu\n", buf_size);
     }
     return n;
@@ -57,7 +57,7 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
 
     // Read data sent from client
     size_t buf_size = 10;
-    size_t data_len = 0;
+    size_t data_len;
     char* buf = malloc(buf_size);
 
     // Repeat indefinitely for each new request from current client
@@ -69,7 +69,7 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
         client_pollfd.fd = clientfd;
         client_pollfd.events = POLLIN; // can I read?
 
-        ssize_t n = read_client(clientfd, buf, &data_len, &buf_size);
+        ssize_t n = read_client(clientfd, &buf, &data_len, &buf_size);
         if (n == 0) {
             return;
         }
@@ -91,7 +91,7 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
             }
 
             // Fill buf from where we stopped
-            n = read_client(clientfd, buf, &data_len, &buf_size);
+            n = read_client(clientfd, &buf, &data_len, &buf_size);
             if (n == 0) {
                 break;
             }
@@ -102,7 +102,14 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
             }
         }
         // Finally, last realloc to have the exact needed size and add final 0
-        buf = realloc(buf, data_len + 1);
+        void *tmp = realloc(buf, data_len + 1);
+        if (tmp == NULL) {
+            free(buf);
+            fprintf(stderr, "%s:%d - realloc() failed\n", __FILE__, __LINE__);
+            break;
+        } else {
+            buf = tmp;
+        }
         buf_size = data_len + 1;
         buf[data_len] = 0;
 
@@ -132,7 +139,7 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
 
         // Parse first line
         char method[16], path[1024], version[16];
-        int nb_match = sscanf(first_line->start, "%s %s %s", method, path, version);
+        int nb_match = sscanf(first_line->start, "%15s %1023s %15s", method, path, version);
         if (nb_match != 3) {
             fprintf(stderr, "Uncomplete request first line\n");
             continue;
@@ -222,7 +229,6 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
             content_length = snprintf(NULL, 0, html_template, favicon_data, *x_coord, *y_coord, robot_grid->start);
             if (content_length < 0) {
                 perror("snprinft() for content_length failed");
-                free(content);
                 string_deinit(robot_grid);
                 break;
             }
