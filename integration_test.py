@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
 import sys
+import subprocess
+import time
 
 def check_diff(received, expected):
     lr = len(received)
@@ -38,7 +40,7 @@ def find_image_in_grid(table):
                     x = l
                     y = c
                 else:
-                    raise(f"Image found twice! ({x}, {y}) and now ({l}, {c})")
+                    raise Exception(f"Image found twice! ({x}, {y}) and now ({l}, {c})")
     return x, y
 
 def final_position(moves, x_max = 4, y_max = 4):
@@ -192,7 +194,20 @@ def main():
     return flag1 and flag2 and flag3
 
 if __name__ == '__main__':
+    # open server
+    server = subprocess.Popen(["make", "run"])
+
+    # wait for server to start
+    time.sleep(1)
+
+    # launch tests
     flag = main()
+
+    # terminates server
+    server.terminate()
+    server.wait()
+
+    # return
     if flag:
         print("All tests passed!")
         sys.exit(0)
