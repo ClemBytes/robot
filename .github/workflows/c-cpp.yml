@@ -13,6 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Install cppcheck
+      run: sudo apt-get update && sudo apt-get install -y cppcheck
     - name: Install Python dependencies
       run: pip install -r python_requirements.txt
     - name: make tests
