@@ -125,7 +125,7 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
             }
         }
         if (i >= first_line->used_size - 1) {
-            fprintf(stderr, "Size of first line is not enough: %d given and needs %d!\n", first_line->used_size, i);
+            fprintf(stderr, "Size of first line is not enough: %zu given and needs %d!\n", first_line->used_size, i);
             break;
         }
         string_append_with_size(first_line, "\0", 1);
@@ -257,7 +257,7 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
             free(content);
             break;
         } else if (h >= sizeof header) {
-            printf("%s:%d - Size of HTML header is not enough: %d given and needs %d!\n", __FILE__, __LINE__, h, sizeof header);
+            printf("%s:%d - Size of HTML header is not enough: %d given and needs %zu!\n", __FILE__, __LINE__, h, sizeof header);
             free(content);
             break;
         }

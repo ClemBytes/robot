@@ -40,7 +40,7 @@ size_t base64(const unsigned char* data, size_t len_data, char* res, size_t res_
     }
     res[i] = 0;
     if (i != size_needed) {
-        printf("i: %d / size_needed: %d\n", i, size_needed);
+        printf("i: %zu / size_needed: %zu\n", i, size_needed);
         puts("wat");
         exit(1);
     }
@@ -85,7 +85,7 @@ char* open_and_read(const char* path, size_t* file_size_out) {
         return NULL;
     }
     if (bytes_read != file_size) {
-        printf("Bytes read (%d) doesn't match file size (%d)\n", bytes_read, file_size);
+        printf("Bytes read (%d) doesn't match file size (%zi)\n", bytes_read, file_size);
         close(fd);
         return NULL;
     }
