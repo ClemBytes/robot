@@ -1,4 +1,7 @@
+# Ignore file for hidden files in folder
 .hidden
+# Ignore server logs file
+server.log
 # Ignore compiled files
 server
 test

@@ -195,7 +195,12 @@ def main():
 
 if __name__ == '__main__':
     # open server
-    server = subprocess.Popen(["make", "run"])
+    with open("server.log", "w") as server_log_file:
+        server = subprocess.Popen(
+            ["make", "run"],
+            stdout=server_log_file, # Capture stdout
+            stderr=server_log_file  # Capture stderr
+        )
 
     # wait for server to start
     time.sleep(1)
