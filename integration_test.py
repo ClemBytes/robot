@@ -200,12 +200,17 @@ if __name__ == '__main__':
     # wait for server to start
     time.sleep(1)
 
-    # launch tests
-    flag = main()
-
-    # terminates server
-    server.terminate()
-    server.wait()
+    try:
+        # launch tests
+        flag = main()
+        # terminates server
+        server.terminate()
+        server.wait()
+    except Exception as e:
+        # terminates server
+        server.terminate()
+        server.wait()
+        raise e
 
     # return
     if flag:
