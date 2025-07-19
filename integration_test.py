@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
+import sys
 
 def check_diff(received, expected):
     lr = len(received)
@@ -194,3 +195,6 @@ if __name__ == '__main__':
     flag = main()
     if flag:
         print("All tests passed!")
+        sys.exit(0)
+    else:
+        sys.exit(1)
