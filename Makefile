@@ -8,6 +8,7 @@ run: server
 .PHONY:
 tests: test
 	./test
+	python3 integration_test.py
 
 .PHONY:
 clean:
