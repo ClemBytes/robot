@@ -206,11 +206,11 @@ if __name__ == '__main__':
         # terminates server
         server.terminate()
         server.wait()
-    except Exception as e:
+    except:
         # terminates server
         server.terminate()
         server.wait()
-        raise e
+        raise
 
     # return
     if flag:
