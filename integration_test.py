@@ -201,6 +201,7 @@ if __name__ == '__main__':
             stdout=server_log_file, # Capture stdout
             stderr=server_log_file  # Capture stderr
         )
+        print("--- SERVER OPENED! ---")
 
     # wait for server to start
     time.sleep(1)
@@ -212,6 +213,7 @@ if __name__ == '__main__':
         # terminates server
         server.terminate()
         server.wait()
+        print("--- SERVER CLOSED! ---")
 
     # return
     if flag:
