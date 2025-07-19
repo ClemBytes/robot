@@ -72,20 +72,20 @@ char* open_and_read(const char* path, size_t* file_size_out) {
         return NULL;
     }
     // Read file
-    char* data = malloc(file_size + 1);
+    char* data = malloc((size_t) file_size + 1);
     if (data == NULL) {
         perror("malloc() open_and_read failed");
         close(fd);
         return NULL;
     }
-    int bytes_read = read(fd, data, file_size);
+    ssize_t bytes_read = read(fd, data, (size_t) file_size);
     if (bytes_read < 0) {
         perror("read() failed");
         close(fd);
         return NULL;
     }
     if (bytes_read != file_size) {
-        printf("Bytes read (%d) doesn't match file size (%zi)\n", bytes_read, file_size);
+        printf("Bytes read (%zi) doesn't match file size (%zi)\n", bytes_read, file_size);
         close(fd);
         return NULL;
     }
@@ -97,7 +97,7 @@ char* open_and_read(const char* path, size_t* file_size_out) {
         return NULL;
     }
     if (file_size_out != NULL) {
-        *file_size_out = file_size;
+        *file_size_out = (size_t) file_size;
     }
     return data;
 }

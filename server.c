@@ -10,7 +10,7 @@
 #include "base64.h"
 #include "string.h"
 
-int read_client(int clientfd, char* buf, size_t* p_data_len, size_t* p_buf_size) {
+ssize_t read_client(int clientfd, char* buf, size_t* p_data_len, size_t* p_buf_size) {
     /*
     Reading of client buffer into buf at position data_len (data_len is the
     size of already written data) for as many characters as possible (to fill
@@ -34,7 +34,7 @@ int read_client(int clientfd, char* buf, size_t* p_data_len, size_t* p_buf_size)
         return -1;
     }
 
-    *p_data_len += n;
+    *p_data_len += (size_t) n; // negative cases already dealt with
 
     if (*p_data_len == *p_buf_size) {
         // Buf is full, need to realloc
@@ -69,7 +69,7 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
         client_pollfd.fd = clientfd;
         client_pollfd.events = POLLIN; // can I read?
 
-        int n = read_client(clientfd, buf, &data_len, &buf_size);
+        ssize_t n = read_client(clientfd, buf, &data_len, &buf_size);
         if (n == 0) {
             return;
         }
@@ -264,13 +264,13 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
 
         // Concatenate header and data of response
         char str[header_size + content_length];
-        memcpy(str, header, header_size);
+        memcpy(str, header, (size_t) header_size);
         memcpy(str + header_size, content, content_length);
 
         free(content);
 
         // Send response to client (write to client file descriptor)
-        int ret = write(clientfd, str, sizeof str);
+        ssize_t ret = write(clientfd, str, sizeof str);
         if (ret < 0) {
             perror("write() failed");
             break;
