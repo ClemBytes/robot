@@ -20,19 +20,19 @@ size_t base64(const char* data, size_t len_data, char* res, size_t res_len) {
     size_t i = 0;
     while (j + 2 < len_data) {
         res[i++] = charset[data[j + 0] >> 2];
-        res[i++] = charset[((data[j + 0] & 0b00000011) << 4) | (data[j + 1] >> 4)];
-        res[i++] = charset[((data[j + 1] & 0b00001111) << 2) | (data[j + 2] >> 6)];
-        res[i++] = charset[data[j + 2] & 0b00111111];
+        res[i++] = charset[((data[j + 0] & 0x03) << 4) | (data[j + 1] >> 4)];
+        res[i++] = charset[((data[j + 1] & 0x0F) << 2) | (data[j + 2] >> 6)];
+        res[i++] = charset[data[j + 2] & 0x3F];
         j += 3;
     }
 
     if (len_data - j == 1) {
         res[i++] = charset[data[j + 0] >> 2];
-        res[i++] = charset[((data[j + 0] & 0b00000011) << 4) | (0 >> 4)];
+        res[i++] = charset[((data[j + 0] & 0x03) << 4) | (0 >> 4)];
     } else if (len_data - j == 2) {
         res[i++] = charset[data[j + 0] >> 2];
-        res[i++] = charset[((data[j + 0] & 0b00000011) << 4) | (data[j + 1] >> 4)];
-        res[i++] = charset[((data[j + 1] & 0b00001111) << 2) | (0 >> 6)];
+        res[i++] = charset[((data[j + 0] & 0x03) << 4) | (data[j + 1] >> 4)];
+        res[i++] = charset[((data[j + 1] & 0x0F) << 2) | (0 >> 6)];
     }
 
     while (padding_len--) {

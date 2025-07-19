@@ -1,4 +1,4 @@
-CFLAGS+=-Wall -Wextra
+CFLAGS+=-Wall -Wextra -Wpedantic
 
 server: server.o base64.o string.o
 test: test.o base64.o string.o
