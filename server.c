@@ -234,7 +234,6 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
                 string_deinit(robot_grid);
                 break;
             } else if (h >= content_length + 1) {
-                printf(content);
                 printf("%s:%d - Size of HTML response is not enough: %d given and needs %d!\n", __FILE__, __LINE__, h, content_length + 1);
                 free(content);
                 string_deinit(robot_grid);
