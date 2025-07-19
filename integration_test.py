@@ -203,14 +203,10 @@ if __name__ == '__main__':
     try:
         # launch tests
         flag = main()
+    finally:
         # terminates server
         server.terminate()
         server.wait()
-    except:
-        # terminates server
-        server.terminate()
-        server.wait()
-        raise
 
     # return
     if flag:
