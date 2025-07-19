@@ -209,6 +209,15 @@ if __name__ == '__main__':
     try:
         # launch tests
         flag = main()
+    except:
+        print("\n------------------------------------------------------------------")
+        print("EXCEPTION RAISED!\nServer logs:")
+        print("-------------------------------")
+        with open("server.log", "r") as server_log_file:
+            print(server_log_file.read())
+        print("------------------------------------------------------------------")
+        print("\n")
+        raise
     finally:
         # terminates server
         server.terminate()
