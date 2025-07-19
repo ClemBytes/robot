@@ -16,4 +16,4 @@ jobs:
     - name: Install Python dependencies
       run: pip install -r python_requirements.txt
     - name: make tests
-      run: make tests
+      run: CFLAGS+=-Werror make tests
