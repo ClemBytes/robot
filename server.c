@@ -107,7 +107,7 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
         buf[data_len] = 0;
 
         // Get first line of request
-        int i;
+        size_t i;
         struct string _first_line;
         struct string* first_line = &_first_line;
         string_init(first_line);
@@ -125,7 +125,7 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
             }
         }
         if (i >= first_line->used_size - 1) {
-            fprintf(stderr, "Size of first line is not enough: %zu given and needs %d!\n", first_line->used_size, i);
+            fprintf(stderr, "Size of first line is not enough: %zu given and needs %zu!\n", first_line->used_size, i);
             break;
         }
         string_append_with_size(first_line, "\0", 1);
@@ -256,7 +256,7 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
             perror("snprintf() for header failed");
             free(content);
             break;
-        } else if (h >= sizeof header) {
+        } else if (h >= (int)sizeof header) { // (int) to convert sizeof header which is a size_t into int for comparison
             printf("%s:%d - Size of HTML header is not enough: %d given and needs %zu!\n", __FILE__, __LINE__, h, sizeof header);
             free(content);
             break;
