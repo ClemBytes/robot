@@ -8,7 +8,7 @@ On my website here: [robot.clembytes.fr](https://robot.clembytes.fr)
 
 On my blog here: [clembytes](https://clembytes.fr/)
 
-And more specifically the followinf articles: [clembytes.fr/category/robot](https://clembytes.fr/category/robot/)
+And more specifically the following articles: [clembytes.fr/category/robot](https://clembytes.fr/category/robot/)
 
 ## The idea
 
@@ -21,8 +21,9 @@ You can contact me about this project or my work at <clembytes@proton.me>.
 ## Roadmap
 
 Here is what I plan to do in the future on this project:
-- Work on CI/CD
-- 
+- Add cookies for managing different clients
+- Use some JavaScript for more interactivity
+- Add possibility to write a small list of instructions to follow
 
 ## Project status
 
