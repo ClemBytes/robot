@@ -1,0 +1,30 @@
+name: Deployment
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+    env:
+        namespace_name: ${{secrets.NAMESPACE_NAME}}
+        container_registry_password: ${{secrets.CONTAINER_REGISTRY_PASSWORD}}
+        container_id: ${{secrets.CONTAINER_ID}}
+        scaleway_config: ${{secrets.SCALEWAY_CONFIG}}
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Copy scaleway config file
+      run: |
+        mkdir -p ~/.config/scw
+        printf "%s" "$scaleway_config" > ~/.config/scw/config.yaml
+    - name: Build docker image
+      run: docker build -f robot.Dockerfile -t robot -t rg.fr-par.scw.cloud/$namespace_name/robot:latest .
+    - name: Login to Scaleway's container registry
+      run: docker login rg.fr-par.scw.cloud/$namespace_name -u nologin --password-stdin <<< $container_registry_password
+    - name: Push docker image
+      run: docker push rg.fr-par.scw.cloud/$namespace_name/robot:latest
+    - name: Deploy docker image on Scaleway container
+      run: scw container container deploy $container_id
