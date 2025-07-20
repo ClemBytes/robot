@@ -1,12 +1,29 @@
-name: Deployment
+name: Robot CI/CD
 
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
-  deploy:
+  build:
+    runs-on: ubuntu-latest
 
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install cppcheck
+      run: sudo apt-get update && sudo apt-get install -y cppcheck
+    - name: Check cppcheck version
+      run: cppcheck --version
+    - name: Install Python dependencies
+      run: pip install -r python_requirements.txt
+    - name: make tests
+      run: CFLAGS+=-Werror make tests
+  
+      
+  deploy:
+    needs: build
     runs-on: ubuntu-latest
     env:
         namespace_name: ${{secrets.NAMESPACE_NAME}}
