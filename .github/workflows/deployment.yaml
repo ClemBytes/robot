@@ -16,6 +16,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Install Scaleway
+      run: curl -s https://raw.githubusercontent.com/scaleway/scaleway-cli/master/scripts/get.sh | sh
     - name: Copy scaleway config file
       run: |
         mkdir -p ~/.config/scw
