@@ -113,6 +113,9 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
         buf_size = data_len + 1;
         buf[data_len] = 0;
 
+        // Print client's request
+        fprintf(stderr, "%s\n", buf);
+
         // Get first line of request
         size_t i;
         struct string _first_line;
@@ -153,6 +156,7 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
         int content_length;
         char* content_type;
         char* content;
+        char* cookie;
 
         // Generate response depending on request
         if (strcmp(method, "GET") == 0 && strcmp(path, "/data/template.css") == 0) {
@@ -161,12 +165,14 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
             content_type = "text/css";
             content = malloc(content_length);
             memcpy(content, css_template, content_length);
+            cookie = "";
         } else if (strcmp(method, "GET") == 0 && strcmp(path, "/data/robot.png") == 0) {
             // Request for robot PNG file
             content_length = robot_png_size;
             content_type = "image/png";
             content = malloc(content_length);
             memcpy(content, robot_png, content_length);
+            cookie = "";
         } else {
             // Other requests
             // Update coordinates
@@ -207,6 +213,24 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
                 fprintf(stderr, "Invalid request!\n");
                 continue;
             }
+
+            int cookie_len = snprintf(NULL, 0, "Set-Cookie: x=%d\r\nSet-Cookie: y=%d\r\n", *x_coord, *y_coord);
+            if (cookie_len < 0) {
+                perror("snprinft() for cookie_len failed");
+                break;
+            }
+            cookie = malloc(cookie_len + 1);
+            int d = snprintf(cookie, cookie_len + 1, "Set-Cookie: x=%d\r\nSet-Cookie: y=%d\r\n", *x_coord, *y_coord);
+            if (d < 0) {
+                perror("snprintf() for cookie failed");
+                free(cookie);
+                break;
+            } else if (d >= cookie_len + 1) { // (int) to convert sizeof header which is a size_t into int for comparison
+                printf("%s:%d - Size of cookie is not enough: %d given and needs %d!\n", __FILE__, __LINE__, d, cookie_len + 1);
+                free(cookie);
+                break;
+            }
+
 
             // Generate HTML table
             struct string _robot_grid;
@@ -249,14 +273,14 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
         }
 
         // Create header for response
-        int header_size = snprintf(NULL, 0, "HTTP/1.0 200 OK\r\nContent-Type: %s\r\nContent-Length: %d\r\n\r\n", content_type, content_length);
+        int header_size = snprintf(NULL, 0, "HTTP/1.0 200 OK\r\nContent-Type: %s\r\nContent-Length: %d\r\n%s\r\n", content_type, content_length, cookie);
         if (header_size < 0) {
             perror("snprintf() for header_size failed");
             free(content);
             break;
         }
         char header[header_size + 1];
-        int h = snprintf(header, sizeof header, "HTTP/1.0 200 OK\r\nContent-Type: %s\r\nContent-Length: %d\r\n\r\n", content_type, content_length);
+        int h = snprintf(header, sizeof header, "HTTP/1.0 200 OK\r\nContent-Type: %s\r\nContent-Length: %d\r\n%s\r\n", content_type, content_length, cookie);
         if (h < 0) {
             perror("snprintf() for header failed");
             free(content);
