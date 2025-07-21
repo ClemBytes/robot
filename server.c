@@ -81,6 +81,7 @@ void parse_client_request(char* client_request, size_t data_len, char* method, c
     printf("Path: %s\n", path);
     printf("Version: %s\n", version);
     printf("-------------------------------------\n");
+    fflush(stdout);
 
     // Parse following lines to get cookies
     (*p_cookie_found) = 0;
@@ -90,8 +91,10 @@ void parse_client_request(char* client_request, size_t data_len, char* method, c
     string_init(new_line);
     while (i < data_len) {
         // Detect end of line
-        if (client_request[i] == '\n') {
+        if ((client_request[i] == '\r') || (client_request[i] == '\n')){
+            string_append_with_size(new_line, "\r", 1);
             string_append_with_size(new_line, "\n", 1);
+            string_append_with_size(new_line, "\0", 1);
             
             // End of line detected: check if cookies
             int nb_match_cookies = sscanf(new_line->start, "Cookie: x=%d; y=%d\r\n", p_cookie_x, p_cookie_y);
@@ -111,7 +114,7 @@ void parse_client_request(char* client_request, size_t data_len, char* method, c
         i++;
     }
     if (!(*p_cookie_found)) {
-        fprintf(stderr, "Cookies NOT found!\n");
+        printf("%s:%d - Cookies NOT found!\n", __FILE__, __LINE__);
     }
 }
 
@@ -183,6 +186,8 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, char* favicon_d
         buf_size = data_len + 1;
         buf[data_len] = 0;
 
+        fprintf(stderr, "Client's request:\n%s\n", buf);
+
         // Parse client's request
         char method[16], path[1024], version[16];
         int cookie_x, cookie_y, cookie_found;
@@ -196,10 +201,10 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, char* favicon_d
             y_coord = cookie_y;
         } else {
             // No previous values, init to 0
-            fprintf(stderr, "No cookies found, init to (0, 0)\n");
             x_coord = 0;
             y_coord = 0;
         }
+        fprintf(stderr, "Coords: x=%d, y=%d\n", x_coord, y_coord);
 
         // Init response content
         int content_length;
@@ -222,6 +227,10 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, char* favicon_d
             content = malloc(content_length);
             memcpy(content, robot_png, content_length);
             cookie = "";
+        } else if (strcmp(method, "GET") == 0 && strcmp(path, "/.well-known/appspecific/com.chrome.devtools.json") == 0) {
+            // Google Chrome is to curious…
+            cookie = "";
+            // Do nothing
         } else {
             // Other requests
             // Update coordinates

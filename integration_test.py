@@ -80,8 +80,9 @@ def final_position(moves, x_max = 4, y_max = 4):
 
 def test_moves(moves):
     expected_x, expected_y = final_position(moves)
+    session = requests.Session()
     for m in moves:
-        r = requests.post("http://127.0.0.0:8000/" + m)
+        r = session.post("http://127.0.0.0:8000/" + m)
     final_x, final_y = find_image_in_grid(find_robot_grid(r))
     if (final_x != expected_x) or (final_y != expected_y):
         print("Final position doesn't match expected position!")
