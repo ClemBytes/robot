@@ -45,6 +45,43 @@ ssize_t read_client(int clientfd, char** p_buf, size_t* p_data_len, size_t* p_bu
     return n;
 }
 
+void parse_client_request(char* client_request, size_t data_len, char* method, char* path, char* version) {
+    // Get first line of request
+    size_t i;
+    struct string _first_line;
+    struct string* first_line = &_first_line;
+    string_init(first_line);
+    for (i = 0; i < data_len; i++) {
+        if (client_request[i] == '\r'){
+            string_append_with_size(first_line, "\r", 1);
+            string_append_with_size(first_line, "\n", 1);
+            break;
+        } else if (client_request[i] == '\n') {
+            string_append_with_size(first_line, "\r", 1);
+            string_append_with_size(first_line, "\n", 1);
+            break;
+        } else {
+            string_append_with_size(first_line, &client_request[i], 1);
+        }
+    }
+    if (i >= first_line->used_size - 1) {
+        fprintf(stderr, "Size of first line is not enough: %zu given and needs %zu!\n", first_line->used_size, i);
+        return;
+    }
+    string_append_with_size(first_line, "\0", 1);
+
+    // Parse first line
+    int nb_match = sscanf(first_line->start, "%15s %1023s %15s", method, path, version);
+    if (nb_match != 3) {
+        fprintf(stderr, "Uncomplete request first line\n");
+        return;
+    }
+    printf("Method: %s\n", method);
+    printf("Path: %s\n", path);
+    printf("Version: %s\n", version);
+    printf("-------------------------------------\n");
+}
+
 void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, int* y_coord, char* favicon_data, char* html_template, char* css_template, size_t css_template_size, char* robot_png, size_t robot_png_size) {
     // Get client IP address in '0.0.0.0' format for printing
     char client_ip_address[16];
@@ -116,41 +153,9 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
         // Print client's request
         fprintf(stderr, "%s\n", buf);
 
-        // Get first line of request
-        size_t i;
-        struct string _first_line;
-        struct string* first_line = &_first_line;
-        string_init(first_line);
-        for (i = 0; i < data_len; i++) {
-            if (buf[i] == '\r'){
-                string_append_with_size(first_line, "\r", 1);
-                string_append_with_size(first_line, "\n", 1);
-                break;
-            } else if (buf[i] == '\n') {
-                string_append_with_size(first_line, "\r", 1);
-                string_append_with_size(first_line, "\n", 1);
-                break;
-            } else {
-                string_append_with_size(first_line, &buf[i], 1);
-            }
-        }
-        if (i >= first_line->used_size - 1) {
-            fprintf(stderr, "Size of first line is not enough: %zu given and needs %zu!\n", first_line->used_size, i);
-            break;
-        }
-        string_append_with_size(first_line, "\0", 1);
-
-        // Parse first line
+        // Parse client's request
         char method[16], path[1024], version[16];
-        int nb_match = sscanf(first_line->start, "%15s %1023s %15s", method, path, version);
-        if (nb_match != 3) {
-            fprintf(stderr, "Uncomplete request first line\n");
-            continue;
-        }
-        printf("Method: %s\n", method);
-        printf("Path: %s\n", path);
-        printf("Version: %s\n", version);
-        printf("-------------------------------------\n");
+        parse_client_request(buf, data_len, method, path, version);
 
         // Init response content
         int content_length;
