@@ -45,7 +45,7 @@ ssize_t read_client(int clientfd, char** p_buf, size_t* p_data_len, size_t* p_bu
     return n;
 }
 
-void parse_client_request(char* client_request, size_t data_len, char* method, char* path, char* version) {
+void parse_client_request(char* client_request, size_t data_len, char* method, char* path, char* version, int* p_cookie_x, int* p_cookie_y) {
     // Get first line of request
     size_t i;
     struct string _first_line;
@@ -76,10 +76,45 @@ void parse_client_request(char* client_request, size_t data_len, char* method, c
         fprintf(stderr, "Uncomplete request first line\n");
         return;
     }
+    printf("-------------------------------------\n");
     printf("Method: %s\n", method);
     printf("Path: %s\n", path);
     printf("Version: %s\n", version);
     printf("-------------------------------------\n");
+
+    // Parse following lines to get cookies
+    int cookie_found = 0;
+    // Initialize new line
+    struct string _new_line;
+    struct string* new_line = &_new_line;
+    string_init(new_line);
+    while (i < data_len) {
+        // Detect end of line
+        if (client_request[i] == '\n') {
+            string_append_with_size(new_line, "\n", 1);
+            
+            // End of line detected: check if cookies
+            int nb_match_cookies = sscanf(new_line->start, "Cookie: x=%d; y=%d\r\n", p_cookie_x, p_cookie_y);
+            if (nb_match_cookies == 2) {
+                // Cookies detected!
+                cookie_found = 1;
+                fprintf(stderr, "Cookies found: x: %d | y: %d\n", *p_cookie_x, *p_cookie_y);
+                break;
+            } else {
+                // Re-init for new line
+                string_init(new_line);
+            }
+
+        } else {
+            string_append_with_size(new_line, &client_request[i], 1);
+        }
+        i++;
+    }
+    if (!cookie_found) {
+        p_cookie_x = NULL;
+        p_cookie_y = NULL;
+        fprintf(stderr, "Cookies NOT found!\n");
+    }
 }
 
 void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, int* y_coord, char* favicon_data, char* html_template, char* css_template, size_t css_template_size, char* robot_png, size_t robot_png_size) {
@@ -150,12 +185,10 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
         buf_size = data_len + 1;
         buf[data_len] = 0;
 
-        // Print client's request
-        fprintf(stderr, "%s\n", buf);
-
         // Parse client's request
         char method[16], path[1024], version[16];
-        parse_client_request(buf, data_len, method, path, version);
+        int cookie_x, cookie_y;
+        parse_client_request(buf, data_len, method, path, version, &cookie_x, &cookie_y);
 
         // Init response content
         int content_length;
