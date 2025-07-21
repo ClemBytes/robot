@@ -19,7 +19,7 @@ void string_print(struct string* s) {
     printf("String: %s - start: %p - used size: %zu - size: %zu\n", s->start, s->start, s->used_size, s->size);
 }
 
-void string_append_with_size(struct string* s, char* following, size_t len_following) {
+void string_append_with_size(struct string* s, const char* following, size_t len_following) {
     while (s->used_size + len_following > s->size) {
         s->start = realloc(s->start, 2*s->size);
         s->size = 2*s->size;
@@ -36,7 +36,7 @@ void string_append_with_size(struct string* s, char* following, size_t len_follo
     // buffer at *start contains size - 1 characters, followed by 1 zero
 }
 
-void string_append(struct string* s, char* following) {
+void string_append(struct string* s, const char* following) {
     size_t len_following = strlen(following);
     string_append_with_size(s, following, len_following);
 } 

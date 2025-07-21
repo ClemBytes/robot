@@ -45,7 +45,7 @@ ssize_t read_client(int clientfd, char** p_buf, size_t* p_data_len, size_t* p_bu
     return n;
 }
 
-void parse_client_request(char* client_request, size_t data_len, char* method, char* path, char* version, int* p_cookie_x, int* p_cookie_y, int* p_cookie_found) {
+void parse_client_request(const char* client_request, size_t data_len, char* method, char* path, char* version, int* p_cookie_x, int* p_cookie_y, int* p_cookie_found) {
     // Get first line of request
     size_t i;
     struct string _first_line;
@@ -101,14 +101,14 @@ void parse_client_request(char* client_request, size_t data_len, char* method, c
             if (nb_match_cookies == 2) {
                 // Cookies detected!
                 (*p_cookie_found) = 1;
-                fprintf(stderr, "Cookies found: x: %d | y: %d\r\n", *p_cookie_x, *p_cookie_y);
+                fprintf(stderr, "%s:%d - Cookies found: x: %d | y: %d\r\n", __FILE__, __LINE__, *p_cookie_x, *p_cookie_y);
                 break;
             } else {
-                int nb_match_cookies = sscanf(new_line->start, "Cookie: y=%d; x=%d\r\n", p_cookie_y, p_cookie_x);
+                nb_match_cookies = sscanf(new_line->start, "Cookie: y=%d; x=%d\r\n", p_cookie_y, p_cookie_x);
                 if (nb_match_cookies == 2) {
                     // Cookies detected!
                     (*p_cookie_found) = 1;
-                    fprintf(stderr, "Cookies found: x: %d | y: %d\r\n", *p_cookie_x, *p_cookie_y);
+                    fprintf(stderr, "%s:%d - Cookies found: x: %d | y: %d\r\n", __FILE__, __LINE__, *p_cookie_x, *p_cookie_y);
                     break;
                 } else {
                     // Re-init for new line
@@ -193,8 +193,6 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, char* favicon_d
         }
         buf_size = data_len + 1;
         buf[data_len] = 0;
-
-        fprintf(stderr, "Client's request:\n%s\n", buf);
 
         // Parse client's request
         char method[16], path[1024], version[16];
