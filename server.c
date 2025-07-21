@@ -45,7 +45,7 @@ ssize_t read_client(int clientfd, char** p_buf, size_t* p_data_len, size_t* p_bu
     return n;
 }
 
-void parse_client_request(char* client_request, size_t data_len, char* method, char* path, char* version, int* p_cookie_x, int* p_cookie_y) {
+void parse_client_request(char* client_request, size_t data_len, char* method, char* path, char* version, int* p_cookie_x, int* p_cookie_y, int* p_cookie_found) {
     // Get first line of request
     size_t i;
     struct string _first_line;
@@ -83,7 +83,7 @@ void parse_client_request(char* client_request, size_t data_len, char* method, c
     printf("-------------------------------------\n");
 
     // Parse following lines to get cookies
-    int cookie_found = 0;
+    (*p_cookie_found) = 0;
     // Initialize new line
     struct string _new_line;
     struct string* new_line = &_new_line;
@@ -97,8 +97,8 @@ void parse_client_request(char* client_request, size_t data_len, char* method, c
             int nb_match_cookies = sscanf(new_line->start, "Cookie: x=%d; y=%d\r\n", p_cookie_x, p_cookie_y);
             if (nb_match_cookies == 2) {
                 // Cookies detected!
-                cookie_found = 1;
-                fprintf(stderr, "Cookies found: x: %d | y: %d\n", *p_cookie_x, *p_cookie_y);
+                (*p_cookie_found) = 1;
+                fprintf(stderr, "Cookies found: x: %d | y: %d\r\n", *p_cookie_x, *p_cookie_y);
                 break;
             } else {
                 // Re-init for new line
@@ -110,14 +110,12 @@ void parse_client_request(char* client_request, size_t data_len, char* method, c
         }
         i++;
     }
-    if (!cookie_found) {
-        p_cookie_x = NULL;
-        p_cookie_y = NULL;
+    if (!(*p_cookie_found)) {
         fprintf(stderr, "Cookies NOT found!\n");
     }
 }
 
-void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, int* y_coord, char* favicon_data, char* html_template, char* css_template, size_t css_template_size, char* robot_png, size_t robot_png_size) {
+void handle_client(int clientfd, struct sockaddr_in client_addr, char* favicon_data, char* html_template, char* css_template, size_t css_template_size, char* robot_png, size_t robot_png_size) {
     // Get client IP address in '0.0.0.0' format for printing
     char client_ip_address[16];
     const char* ret2 = inet_ntop(AF_INET, &client_addr.sin_addr, client_ip_address, sizeof client_ip_address);
@@ -187,8 +185,21 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
 
         // Parse client's request
         char method[16], path[1024], version[16];
-        int cookie_x, cookie_y;
-        parse_client_request(buf, data_len, method, path, version, &cookie_x, &cookie_y);
+        int cookie_x, cookie_y, cookie_found;
+        parse_client_request(buf, data_len, method, path, version, &cookie_x, &cookie_y, &cookie_found);
+
+        // Init x_coord and y_coord
+        int x_coord, y_coord;
+        if (cookie_found) {
+            // init to cookie values
+            x_coord = cookie_x;
+            y_coord = cookie_y;
+        } else {
+            // No previous values, init to 0
+            fprintf(stderr, "No cookies found, init to (0, 0)\n");
+            x_coord = 0;
+            y_coord = 0;
+        }
 
         // Init response content
         int content_length;
@@ -217,31 +228,31 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
             int x_max = 4;
             int y_max = 4;
             if (strcmp(method, "POST") == 0 && strcmp(path, "/down") == 0) {
-                if ((*x_coord) == x_max) {
-                    (*x_coord) = 0;
+                if (x_coord == x_max) {
+                    x_coord = 0;
                 } else {
-                    (*x_coord)++;
+                    x_coord++;
                 }
             } else if (strcmp(method, "POST") == 0 && strcmp(path, "/up") == 0) {
-                if ((*x_coord) == 0) {
-                    (*x_coord) = x_max;
+                if (x_coord == 0) {
+                    x_coord = x_max;
                 } else {
-                    (*x_coord)--;
+                    x_coord--;
                 }
             } else if (strcmp(method, "POST") == 0 && strcmp(path, "/right") == 0) {
-                if ((*y_coord) == y_max) {
-                    (*y_coord) = 0;
+                if (y_coord == y_max) {
+                    y_coord = 0;
                 } else {
-                    (*y_coord)++;
+                    y_coord++;
                 }
             } else if (strcmp(method, "POST") == 0 && strcmp(path, "/reset") == 0) {
-                (*x_coord) = 0;
-                (*y_coord) = 0;
+                x_coord = 0;
+                y_coord = 0;
             } else if (strcmp(method, "POST") == 0 && strcmp(path, "/left") == 0) {
-                if ((*y_coord) == 0) {
-                    (*y_coord) = y_max;
+                if (y_coord == 0) {
+                    y_coord = y_max;
                 } else {
-                    (*y_coord)--;
+                    y_coord--;
                 }
             } else if (strcmp(method, "GET") == 0 && strcmp(path, "/") == 0) {
                 // Request for head page
@@ -252,13 +263,13 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
                 continue;
             }
 
-            int cookie_len = snprintf(NULL, 0, "Set-Cookie: x=%d\r\nSet-Cookie: y=%d\r\n", *x_coord, *y_coord);
+            int cookie_len = snprintf(NULL, 0, "Set-Cookie: x=%d\r\nSet-Cookie: y=%d\r\n", x_coord, y_coord);
             if (cookie_len < 0) {
                 perror("snprinft() for cookie_len failed");
                 break;
             }
             cookie = malloc(cookie_len + 1);
-            int d = snprintf(cookie, cookie_len + 1, "Set-Cookie: x=%d\r\nSet-Cookie: y=%d\r\n", *x_coord, *y_coord);
+            int d = snprintf(cookie, cookie_len + 1, "Set-Cookie: x=%d\r\nSet-Cookie: y=%d\r\n", x_coord, y_coord);
             if (d < 0) {
                 perror("snprintf() for cookie failed");
                 free(cookie);
@@ -277,7 +288,7 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
             for (int x = 0; x < x_max + 1; x++) {
                 string_append(robot_grid, "<tr class='tr-robot-grid'>");
                 for (int y = 0; y < y_max + 1; y++) {
-                    if ((x == *x_coord) && (y == *y_coord)) {
+                    if ((x == x_coord) && (y == y_coord)) {
                         string_append(robot_grid, "<td class='td-robot-grid'><img src='data/robot.png' alt='Robot' class='image-responsive'></td>");
                     } else {
                         string_append(robot_grid, "<td class='td-robot-grid'></td>");
@@ -288,14 +299,14 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, int* x_coord, i
             
             // Create HTML response
             content_type = "text/html";
-            content_length = snprintf(NULL, 0, html_template, favicon_data, *x_coord, *y_coord, robot_grid->start);
+            content_length = snprintf(NULL, 0, html_template, favicon_data, x_coord, y_coord, robot_grid->start);
             if (content_length < 0) {
                 perror("snprinft() for content_length failed");
                 string_deinit(robot_grid);
                 break;
             }
             content = malloc(content_length + 1);
-            int h = snprintf(content, content_length + 1, html_template, favicon_data, *x_coord, *y_coord, robot_grid->start);
+            int h = snprintf(content, content_length + 1, html_template, favicon_data, x_coord, y_coord, robot_grid->start);
             if (h < 0) {
                 perror("snprintf() for html failed");
                 free(content);
@@ -399,10 +410,6 @@ int main(void) {
         return 1;
     }
 
-    // Initialize button
-    int x_coord = 0;
-    int y_coord = 0;
-
     // Read favicon data:
     char* favicon_data = base64_from_path("./data/favicon-16x16.png", NULL);
 
@@ -428,7 +435,7 @@ int main(void) {
             return 1;
         }
         printf("\n --- NEW CONNEXION RECEIVED, clientfd: %d ---\n", clientfd);
-        handle_client(clientfd, client_addr, &x_coord, &y_coord, favicon_data, html_template, css_template, css_template_size, robot_png, robot_png_size);
+        handle_client(clientfd, client_addr, favicon_data, html_template, css_template, css_template_size, robot_png, robot_png_size);
     }
 
     free(favicon_data);
