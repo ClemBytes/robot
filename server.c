@@ -104,8 +104,16 @@ void parse_client_request(char* client_request, size_t data_len, char* method, c
                 fprintf(stderr, "Cookies found: x: %d | y: %d\r\n", *p_cookie_x, *p_cookie_y);
                 break;
             } else {
-                // Re-init for new line
-                string_init(new_line);
+                int nb_match_cookies = sscanf(new_line->start, "Cookie: y=%d; x=%d\r\n", p_cookie_y, p_cookie_x);
+                if (nb_match_cookies == 2) {
+                    // Cookies detected!
+                    (*p_cookie_found) = 1;
+                    fprintf(stderr, "Cookies found: x: %d | y: %d\r\n", *p_cookie_x, *p_cookie_y);
+                    break;
+                } else {
+                    // Re-init for new line
+                    string_init(new_line);
+                }
             }
 
         } else {
