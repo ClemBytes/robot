@@ -369,14 +369,14 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
             free(content);
             break;
         }
-        char header[header_size + 1];
-        int h = snprintf(header, sizeof header, "HTTP/1.0 200 OK\r\nContent-Type: %s\r\nContent-Length: %d\r\n%s\r\n", content_type, content_length, cookie);
+        char* header = malloc(header_size + 1);
+        int h = snprintf(header, header_size + 1, "HTTP/1.0 200 OK\r\nContent-Type: %s\r\nContent-Length: %d\r\n%s\r\n", content_type, content_length, cookie);
         if (h < 0) {
             perror("snprintf() for header failed");
             free(content);
             break;
-        } else if (h >= (int)sizeof header) { // (int) to convert sizeof header which is a size_t into int for comparison
-            printf("%s:%d - Size of HTML header is not enough: %d given and needs %zu!\n", __FILE__, __LINE__, h, sizeof header);
+        } else if (h >= header_size + 1) {
+            printf("%s:%d - Size of HTML header is not enough: %d given and needs %d!\n", __FILE__, __LINE__, h, header_size + 1);
             free(content);
             break;
         }
