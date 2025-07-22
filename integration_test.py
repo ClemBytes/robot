@@ -154,6 +154,9 @@ def main():
 
     if flag2:
         print("OK!")
+
+    # send request requests.get('http://127.0.0.0:8000/.well-known/appspecific/com.chrome.devtools.json')
+    # add unknown requests
     print("------------------------------------------------------------------")
     print("TEST 3 : moving!")
     print("----------------")
