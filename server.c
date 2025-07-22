@@ -129,11 +129,12 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
             y_coord = 0;
         }
         fprintf(stderr, "Coords: x=%d, y=%d\n", x_coord, y_coord);
+        // fprintf(stderr, "\nClient's request:\n%s\n", buf);
 
         // Init response content
-        int content_length = 0;
-        char* content_type = "";
-        char* content = "";
+        int content_length;
+        char* content_type;
+        char* content;
         char* cookie;
 
         // Generate response depending on request
@@ -153,6 +154,10 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
             cookie = "";
         } else if (strcmp(method, "GET") == 0 && strcmp(path, "/.well-known/appspecific/com.chrome.devtools.json") == 0) {
             // Google Chrome is to curious…
+            content_length = 1;
+            content_type = "text/html";
+            content = malloc(content_length);
+            memcpy(content, "", content_length);
             cookie = "";
             // Do nothing
         } else {
