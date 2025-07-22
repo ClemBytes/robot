@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 #include "base64.h"
-#include "string.h"
+#include "lib_server.h"
 
 void test_base64_case(const char* input, const char* expected) {
     char res[100];
