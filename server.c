@@ -149,6 +149,20 @@ void parse_client_request(const char* client_request, size_t data_len, char* met
     }
 }
 
+void generate_html_table(struct string* robot_grid, const int x_max, const int y_max, const int x_coord, const int y_coord) {
+    for (int x = 0; x < x_max + 1; x++) {
+        string_append(robot_grid, "<tr class='tr-robot-grid'>");
+        for (int y = 0; y < y_max + 1; y++) {
+            if ((x == x_coord) && (y == y_coord)) {
+                string_append(robot_grid, "<td class='td-robot-grid'><img src='data/robot.png' alt='Robot' class='image-responsive'></td>");
+            } else {
+                string_append(robot_grid, "<td class='td-robot-grid'></td>");
+            }
+        }
+        string_append(robot_grid, "</tr>");
+    }
+}
+
 void handle_client(int clientfd, struct sockaddr_in client_addr, struct templates* p_tem) {
     // Get client IP address in '0.0.0.0' format for printing
     char client_ip_address[16];
@@ -238,7 +252,7 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
         // Init response content
         int content_length = 0;
         char* content_type = "";
-        char* content;
+        char* content = "";
         char* cookie;
 
         // Generate response depending on request
@@ -318,30 +332,19 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
                 break;
             }
 
-
-            // Generate HTML table
+            // Generate robot grid (HTML table)
             struct string _robot_grid;
             struct string* robot_grid = &_robot_grid;
             string_init(robot_grid);
-            for (int x = 0; x < x_max + 1; x++) {
-                string_append(robot_grid, "<tr class='tr-robot-grid'>");
-                for (int y = 0; y < y_max + 1; y++) {
-                    if ((x == x_coord) && (y == y_coord)) {
-                        string_append(robot_grid, "<td class='td-robot-grid'><img src='data/robot.png' alt='Robot' class='image-responsive'></td>");
-                    } else {
-                        string_append(robot_grid, "<td class='td-robot-grid'></td>");
-                    }
-                }
-                string_append(robot_grid, "</tr>");
-            }
-            
+            generate_html_table(robot_grid, x_max, y_max, x_coord, y_coord);
+
             // Create HTML response
             content_type = "text/html";
             content_length = snprintf(NULL, 0, p_tem->html_template, p_tem->favicon_data, x_coord, y_coord, robot_grid->start);
             if (content_length < 0) {
                 perror("snprinft() for content_length failed");
                 string_deinit(robot_grid);
-                break;
+                return;
             }
             content = malloc(content_length + 1);
             int h = snprintf(content, content_length + 1, p_tem->html_template, p_tem->favicon_data, x_coord, y_coord, robot_grid->start);
@@ -349,12 +352,12 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
                 perror("snprintf() for html failed");
                 free(content);
                 string_deinit(robot_grid);
-                break;
+                return;
             } else if (h >= content_length + 1) {
                 printf("%s:%d - Size of HTML response is not enough: %d given and needs %d!\n", __FILE__, __LINE__, h, content_length + 1);
                 free(content);
                 string_deinit(robot_grid);
-                break;
+                return;
             }
             string_deinit(robot_grid);
         }
