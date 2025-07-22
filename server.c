@@ -344,7 +344,7 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
             if (content_length < 0) {
                 perror("snprinft() for content_length failed");
                 string_deinit(robot_grid);
-                return;
+                break;
             }
             content = malloc(content_length + 1);
             int h = snprintf(content, content_length + 1, p_tem->html_template, p_tem->favicon_data, x_coord, y_coord, robot_grid->start);
@@ -352,12 +352,12 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
                 perror("snprintf() for html failed");
                 free(content);
                 string_deinit(robot_grid);
-                return;
+                break;
             } else if (h >= content_length + 1) {
                 printf("%s:%d - Size of HTML response is not enough: %d given and needs %d!\n", __FILE__, __LINE__, h, content_length + 1);
                 free(content);
                 string_deinit(robot_grid);
-                return;
+                break;
             }
             string_deinit(robot_grid);
         }
