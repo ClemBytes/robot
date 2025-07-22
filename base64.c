@@ -8,7 +8,17 @@
 
 const char charset[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-size_t base64(const char* data, size_t len_data, char* res, size_t res_len) {
+size_t base64(const char* signed_data, size_t len_data, char* res, size_t res_len) {
+    /*
+    When doing x >> 4, we shift x by 4 bits to the right.
+    But if x is positive, the "new" bits on the left are 0s, and if x is negative, they are 1s.
+    So when x is unsigned, it's always 0s, whereas when x is signed, for all negative values
+    we insert 1s instead of 0s.
+
+    We want to insert 0s so we interpret the data as unsigned chars.
+    */
+    const unsigned char* data = (const unsigned char*) signed_data;
+
     size_t unpadded_len = (len_data*8 + 5) / 6; // ceil(data_nb_bits/6)
     size_t padding_len = (4 - unpadded_len) % 4;
     size_t size_needed = unpadded_len + padding_len;
