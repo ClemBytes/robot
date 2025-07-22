@@ -89,8 +89,308 @@ void test_string(void) {
     printf("---------------------------\n");
 }
 
+void test_parse_client_request(void) {
+    printf("---------------------------\n");
+    printf("Tests PARSE REQUEST:\n");
+    printf("--------------------\n");
+
+    char method[16], path[1024], version[16];
+    int cookie_x, cookie_y, cookie_found;
+    
+    // Request 1
+    size_t data_len1;
+    char* request1 = open_and_read("./data/test_parse/request1", &data_len1);
+    parse_client_request(request1, data_len1, method, path, version, &cookie_x, &cookie_y, &cookie_found);
+    if (strcmp(method, "GET") != 0) {
+        fprintf(stderr, "--- REQUEST 1 ---\n");
+        fprintf(stderr, "%s:%d - Wrong METHOD: parsed: %s | expected: GET\n", __FILE__, __LINE__, method);
+        exit(1);
+    }
+    if (strcmp(path, "/") != 0) {
+        fprintf(stderr, "--- REQUEST 1 ---\n");
+        fprintf(stderr, "%s:%d - Wrong PATH: parsed: %s | expected: /\n", __FILE__, __LINE__, path);
+        exit(1);
+    }
+    if (strcmp(version, "HTTP/1") != 0) {
+        fprintf(stderr, "--- REQUEST 1 ---\n");
+        fprintf(stderr, "%s:%d - Wrong METHOD: parsed: %s | expected: HTTP/1\n", __FILE__, __LINE__, version);
+        exit(1);
+    }
+    if (cookie_found != 0) {
+        fprintf(stderr, "--- REQUEST 1 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_FOUND: parsed: %d | expected: 0\n", __FILE__, __LINE__, cookie_found);
+        exit(1);
+    }
+    free(request1);
+    printf("> Request 1 OK\n");
+    
+    // Request 2
+    size_t data_len2;
+    char* request2 = open_and_read("./data/test_parse/request2", &data_len2);
+    parse_client_request(request2, data_len2, method, path, version, &cookie_x, &cookie_y, &cookie_found);
+    if (strcmp(method, "GET") != 0) {
+        fprintf(stderr, "--- REQUEST 2 ---\n");
+        fprintf(stderr, "%s:%d - Wrong METHOD: parsed: %s | expected: GET\n", __FILE__, __LINE__, method);
+        exit(1);
+    }
+    if (strcmp(path, "/data/template.css") != 0) {
+        fprintf(stderr, "--- REQUEST 2 ---\n");
+        fprintf(stderr, "%s:%d - Wrong PATH: parsed: %s | expected: /data/template.css\n", __FILE__, __LINE__, path);
+        exit(1);
+    }
+    if (strcmp(version, "HTTP/1") != 0) {
+        fprintf(stderr, "--- REQUEST 2 ---\n");
+        fprintf(stderr, "%s:%d - Wrong METHOD: parsed: %s | expected: HTTP/1\n", __FILE__, __LINE__, version);
+        exit(1);
+    }
+    if (cookie_found != 1) {
+        fprintf(stderr, "--- REQUEST 2 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_FOUND: parsed: %d | expected: 1\n", __FILE__, __LINE__, cookie_found);
+        exit(1);
+    }
+    if (cookie_x != 0) {
+        fprintf(stderr, "--- REQUEST 2 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_X: parsed: %d | expected: 0\n", __FILE__, __LINE__, cookie_x);
+        exit(1);
+    }
+    if (cookie_y != 0) {
+        fprintf(stderr, "--- REQUEST 2 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_Y: parsed: %d | expected: 0\n", __FILE__, __LINE__, cookie_y);
+        exit(1);
+    }
+    free(request2);
+    printf("> Request 2 OK\n");
+    
+    // Request 3
+    size_t data_len3;
+    char* request3 = open_and_read("./data/test_parse/request3", &data_len3);
+    parse_client_request(request3, data_len3, method, path, version, &cookie_x, &cookie_y, &cookie_found);
+    if (strcmp(method, "GET") != 0) {
+        fprintf(stderr, "--- REQUEST 3 ---\n");
+        fprintf(stderr, "%s:%d - Wrong METHOD: parsed: %s | expected: GET\n", __FILE__, __LINE__, method);
+        exit(1);
+    }
+    if (strcmp(path, "/data/robot.png") != 0) {
+        fprintf(stderr, "--- REQUEST 3 ---\n");
+        fprintf(stderr, "%s:%d - Wrong PATH: parsed: %s | expected: /data/robot.png\n", __FILE__, __LINE__, path);
+        exit(1);
+    }
+    if (strcmp(version, "HTTP/1") != 0) {
+        fprintf(stderr, "--- REQUEST 3 ---\n");
+        fprintf(stderr, "%s:%d - Wrong METHOD: parsed: %s | expected: HTTP/1\n", __FILE__, __LINE__, version);
+        exit(1);
+    }
+    if (cookie_found != 1) {
+        fprintf(stderr, "--- REQUEST 3 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_FOUND: parsed: %d | expected: 1\n", __FILE__, __LINE__, cookie_found);
+        exit(1);
+    }
+    if (cookie_x != 0) {
+        fprintf(stderr, "--- REQUEST 3 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_X: parsed: %d | expected: 0\n", __FILE__, __LINE__, cookie_x);
+        exit(1);
+    }
+    if (cookie_y != 0) {
+        fprintf(stderr, "--- REQUEST 3 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_Y: parsed: %d | expected: 0\n", __FILE__, __LINE__, cookie_y);
+        exit(1);
+    }
+    free(request3);
+    printf("> Request 3 OK\n");
+    
+    // Request 4
+    size_t data_len4;
+    char* request4 = open_and_read("./data/test_parse/request4", &data_len4);
+    parse_client_request(request4, data_len4, method, path, version, &cookie_x, &cookie_y, &cookie_found);
+    if (strcmp(method, "POST") != 0) {
+        fprintf(stderr, "--- REQUEST 4 ---\n");
+        fprintf(stderr, "%s:%d - Wrong METHOD: parsed: %s | expected: POST\n", __FILE__, __LINE__, method);
+        exit(1);
+    }
+    if (strcmp(path, "/reset") != 0) {
+        fprintf(stderr, "--- REQUEST 4 ---\n");
+        fprintf(stderr, "%s:%d - Wrong PATH: parsed: %s | expected: /reset\n", __FILE__, __LINE__, path);
+        exit(1);
+    }
+    if (strcmp(version, "HTTP/1") != 0) {
+        fprintf(stderr, "--- REQUEST 4 ---\n");
+        fprintf(stderr, "%s:%d - Wrong METHOD: parsed: %s | expected: HTTP/1\n", __FILE__, __LINE__, version);
+        exit(1);
+    }
+    if (cookie_found != 1) {
+        fprintf(stderr, "--- REQUEST 4 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_FOUND: parsed: %d | expected: 1\n", __FILE__, __LINE__, cookie_found);
+        exit(1);
+    }
+    if (cookie_x != 0) {
+        fprintf(stderr, "--- REQUEST 4 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_X: parsed: %d | expected: 0\n", __FILE__, __LINE__, cookie_x);
+        exit(1);
+    }
+    if (cookie_y != 0) {
+        fprintf(stderr, "--- REQUEST 4 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_Y: parsed: %d | expected: 0\n", __FILE__, __LINE__, cookie_y);
+        exit(1);
+    }
+    free(request4);
+    printf("> Request 4 OK\n");
+    
+    // Request 5
+    size_t data_len5;
+    char* request5 = open_and_read("./data/test_parse/request5", &data_len5);
+    parse_client_request(request5, data_len5, method, path, version, &cookie_x, &cookie_y, &cookie_found);
+    if (strcmp(method, "POST") != 0) {
+        fprintf(stderr, "--- REQUEST 5 ---\n");
+        fprintf(stderr, "%s:%d - Wrong METHOD: parsed: %s | expected: POST\n", __FILE__, __LINE__, method);
+        exit(1);
+    }
+    if (strcmp(path, "/left") != 0) {
+        fprintf(stderr, "--- REQUEST 5 ---\n");
+        fprintf(stderr, "%s:%d - Wrong PATH: parsed: %s | expected: /left\n", __FILE__, __LINE__, path);
+        exit(1);
+    }
+    if (strcmp(version, "HTTP/1") != 0) {
+        fprintf(stderr, "--- REQUEST 5 ---\n");
+        fprintf(stderr, "%s:%d - Wrong METHOD: parsed: %s | expected: HTTP/1\n", __FILE__, __LINE__, version);
+        exit(1);
+    }
+    if (cookie_found != 1) {
+        fprintf(stderr, "--- REQUEST 5 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_FOUND: parsed: %d | expected: 1\n", __FILE__, __LINE__, cookie_found);
+        exit(1);
+    }
+    if (cookie_x != 2) {
+        fprintf(stderr, "--- REQUEST 5 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_X: parsed: %d | expected: 2\n", __FILE__, __LINE__, cookie_x);
+        exit(1);
+    }
+    if (cookie_y != 4) {
+        fprintf(stderr, "--- REQUEST 5 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_Y: parsed: %d | expected: 4\n", __FILE__, __LINE__, cookie_y);
+        exit(1);
+    }
+    free(request5);
+    printf("> Request 5 OK\n");
+    
+    // Request 6
+    size_t data_len6;
+    char* request6 = open_and_read("./data/test_parse/request6", &data_len6);
+    parse_client_request(request6, data_len6, method, path, version, &cookie_x, &cookie_y, &cookie_found);
+    if (strcmp(method, "GET") != 0) {
+        fprintf(stderr, "--- REQUEST 6 ---\n");
+        fprintf(stderr, "%s:%d - Wrong METHOD: parsed: %s | expected: GET\n", __FILE__, __LINE__, method);
+        exit(1);
+    }
+    if (strcmp(path, "/.well-known/appspecific/com.chrome.devtools.json") != 0) {
+        fprintf(stderr, "--- REQUEST 6 ---\n");
+        fprintf(stderr, "%s:%d - Wrong PATH: parsed: %s | expected: /.well-known/appspecific/com.chrome.devtools.json\n", __FILE__, __LINE__, path);
+        exit(1);
+    }
+    if (strcmp(version, "HTTP/1.1") != 0) {
+        fprintf(stderr, "--- REQUEST 6 ---\n");
+        fprintf(stderr, "%s:%d - Wrong METHOD: parsed: %s | expected: HTTP/1.1\n", __FILE__, __LINE__, version);
+        exit(1);
+    }
+    if (cookie_found != 1) {
+        fprintf(stderr, "--- REQUEST 6 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_FOUND: parsed: %d | expected: 1\n", __FILE__, __LINE__, cookie_found);
+        exit(1);
+    }
+    if (cookie_x != 0) {
+        fprintf(stderr, "--- REQUEST 6 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_X: parsed: %d | expected: 0\n", __FILE__, __LINE__, cookie_x);
+        exit(1);
+    }
+    if (cookie_y != 0) {
+        fprintf(stderr, "--- REQUEST 6 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_Y: parsed: %d | expected: 0\n", __FILE__, __LINE__, cookie_y);
+        exit(1);
+    }
+    free(request6);
+    printf("> Request 6 OK\n");
+    
+    // Request 7
+    size_t data_len7;
+    char* request7 = open_and_read("./data/test_parse/request7", &data_len7);
+    parse_client_request(request7, data_len7, method, path, version, &cookie_x, &cookie_y, &cookie_found);
+    if (strcmp(method, "GET") != 0) {
+        fprintf(stderr, "--- REQUEST 7 ---\n");
+        fprintf(stderr, "%s:%d - Wrong METHOD: parsed: %s | expected: GET\n", __FILE__, __LINE__, method);
+        exit(1);
+    }
+    if (strcmp(path, "/data/robot.png") != 0) {
+        fprintf(stderr, "--- REQUEST 7 ---\n");
+        fprintf(stderr, "%s:%d - Wrong PATH: parsed: %s | expected: /data/robot.png\n", __FILE__, __LINE__, path);
+        exit(1);
+    }
+    if (strcmp(version, "HTTP/1.1") != 0) {
+        fprintf(stderr, "--- REQUEST 7 ---\n");
+        fprintf(stderr, "%s:%d - Wrong METHOD: parsed: %s | expected: HTTP/1.1\n", __FILE__, __LINE__, version);
+        exit(1);
+    }
+    if (cookie_found != 1) {
+        fprintf(stderr, "--- REQUEST 7 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_FOUND: parsed: %d | expected: 1\n", __FILE__, __LINE__, cookie_found);
+        exit(1);
+    }
+    if (cookie_x != 2) {
+        fprintf(stderr, "--- REQUEST 7 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_X: parsed: %d | expected: 2\n", __FILE__, __LINE__, cookie_x);
+        exit(1);
+    }
+    if (cookie_y != 0) {
+        fprintf(stderr, "--- REQUEST 7 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_Y: parsed: %d | expected: 0\n", __FILE__, __LINE__, cookie_y);
+        exit(1);
+    }
+    free(request7);
+    printf("> Request 7 OK\n");
+    
+    // Request 8
+    size_t data_len8;
+    char* request8 = open_and_read("./data/test_parse/request8", &data_len8);
+    parse_client_request(request8, data_len8, method, path, version, &cookie_x, &cookie_y, &cookie_found);
+    if (strcmp(method, "POST") != 0) {
+        fprintf(stderr, "--- REQUEST 8 ---\n");
+        fprintf(stderr, "%s:%d - Wrong METHOD: parsed: %s | expected: POST\n", __FILE__, __LINE__, method);
+        exit(1);
+    }
+    if (strcmp(path, "/right") != 0) {
+        fprintf(stderr, "--- REQUEST 8 ---\n");
+        fprintf(stderr, "%s:%d - Wrong PATH: parsed: %s | expected: /right\n", __FILE__, __LINE__, path);
+        exit(1);
+    }
+    if (strcmp(version, "HTTP/1.1") != 0) {
+        fprintf(stderr, "--- REQUEST 8 ---\n");
+        fprintf(stderr, "%s:%d - Wrong METHOD: parsed: %s | expected: HTTP/1.1\n", __FILE__, __LINE__, version);
+        exit(1);
+    }
+    if (cookie_found != 1) {
+        fprintf(stderr, "--- REQUEST 8 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_FOUND: parsed: %d | expected: 1\n", __FILE__, __LINE__, cookie_found);
+        exit(1);
+    }
+    if (cookie_x != 2) {
+        fprintf(stderr, "--- REQUEST 8 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_X: parsed: %d | expected: 2\n", __FILE__, __LINE__, cookie_x);
+        exit(1);
+    }
+    if (cookie_y != 0) {
+        fprintf(stderr, "--- REQUEST 8 ---\n");
+        fprintf(stderr, "%s:%d - Wrong COOKIE_Y: parsed: %d | expected: 0\n", __FILE__, __LINE__, cookie_y);
+        exit(1);
+    }
+    free(request8);
+    printf("> Request 8 OK\n");
+
+    printf("\n--- PARSE REQUEST tests OK! ---\n");
+    printf("---------------------------\n");
+
+}
+
 int main(void) {
     test_base64();
     test_string();
+    test_parse_client_request();
     return 0;
 }

@@ -1,0 +1,11 @@
+GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1
+Host: 127.0.0.0:8000
+Connection: keep-alive
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: empty
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36
+Accept-Encoding: gzip, deflate, br, zstd
+Accept-Language: fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7
+Cookie: x=0; y=0
+

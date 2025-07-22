@@ -49,12 +49,12 @@ void parse_client_request(const char* client_request, size_t data_len, char* met
         fprintf(stderr, "Uncomplete request first line\n");
         return;
     }
-    printf("-------------------------------------\n");
-    printf("Method: %s\n", method);
-    printf("Path: %s\n", path);
-    printf("Version: %s\n", version);
-    printf("-------------------------------------\n");
-    fflush(stdout);
+    // printf("-------------------------------------\n");
+    // printf("Method: %s\n", method);
+    // printf("Path: %s\n", path);
+    // printf("Version: %s\n", version);
+    // printf("-------------------------------------\n");
+    // fflush(stdout);
 
     // Parse following lines to get cookies
     (*p_cookie_found) = 0;
