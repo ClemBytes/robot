@@ -81,11 +81,13 @@ char* open_and_read(const char* path, size_t* file_size_out) {
     ssize_t bytes_read = read(fd, data, (size_t) file_size);
     if (bytes_read < 0) {
         perror("read() failed");
+        free(data);
         close(fd);
         return NULL;
     }
     if (bytes_read != file_size) {
         printf("Bytes read (%zi) doesn't match file size (%zi)\n", bytes_read, file_size);
+        free(data);
         close(fd);
         return NULL;
     }
@@ -94,6 +96,7 @@ char* open_and_read(const char* path, size_t* file_size_out) {
     int e = close(fd);
     if (e < 0) {
         perror("close() failed");
+        free(data);
         return NULL;
     }
     if (file_size_out != NULL) {

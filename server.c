@@ -10,6 +10,29 @@
 #include "base64.h"
 #include "string.h"
 
+struct templates {
+    char* favicon_data;
+    char* html_template;
+    size_t css_template_size;
+    char* css_template;
+    size_t robot_png_size;
+    char* robot_png;
+};
+
+void templates_init(struct templates* p_tem) {
+    p_tem->favicon_data = base64_from_path("./data/favicon-16x16.png", NULL);
+    p_tem->html_template = open_and_read("./data/template.html", NULL);
+    p_tem->css_template = open_and_read("./data/template.css", &p_tem->css_template_size);
+    p_tem->robot_png = open_and_read("./data/robot.png", &p_tem->robot_png_size);
+}
+
+void templates_deinit(struct templates* p_tem) {
+    free(p_tem->favicon_data);
+    free(p_tem->html_template);
+    free(p_tem->css_template);
+    free(p_tem->robot_png);
+}
+
 ssize_t read_client(int clientfd, char** p_buf, size_t* p_data_len, size_t* p_buf_size) {
     /*
     Reading of client buffer into buf at position data_len (data_len is the
@@ -126,7 +149,7 @@ void parse_client_request(const char* client_request, size_t data_len, char* met
     }
 }
 
-void handle_client(int clientfd, struct sockaddr_in client_addr, char* favicon_data, char* html_template, char* css_template, size_t css_template_size, char* robot_png, size_t robot_png_size) {
+void handle_client(int clientfd, struct sockaddr_in client_addr, struct templates* p_tem) {
     // Get client IP address in '0.0.0.0' format for printing
     char client_ip_address[16];
     const char* ret2 = inet_ntop(AF_INET, &client_addr.sin_addr, client_ip_address, sizeof client_ip_address);
@@ -213,25 +236,25 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, char* favicon_d
         fprintf(stderr, "Coords: x=%d, y=%d\n", x_coord, y_coord);
 
         // Init response content
-        int content_length;
-        char* content_type;
+        int content_length = 0;
+        char* content_type = "";
         char* content;
         char* cookie;
 
         // Generate response depending on request
         if (strcmp(method, "GET") == 0 && strcmp(path, "/data/template.css") == 0) {
             // Request for CSS file
-            content_length = css_template_size;
+            content_length = p_tem->css_template_size;
             content_type = "text/css";
             content = malloc(content_length);
-            memcpy(content, css_template, content_length);
+            memcpy(content, p_tem->css_template, content_length);
             cookie = "";
         } else if (strcmp(method, "GET") == 0 && strcmp(path, "/data/robot.png") == 0) {
             // Request for robot PNG file
-            content_length = robot_png_size;
+            content_length = p_tem->robot_png_size;
             content_type = "image/png";
             content = malloc(content_length);
-            memcpy(content, robot_png, content_length);
+            memcpy(content, p_tem->robot_png, content_length);
             cookie = "";
         } else if (strcmp(method, "GET") == 0 && strcmp(path, "/.well-known/appspecific/com.chrome.devtools.json") == 0) {
             // Google Chrome is to curious…
@@ -314,14 +337,14 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, char* favicon_d
             
             // Create HTML response
             content_type = "text/html";
-            content_length = snprintf(NULL, 0, html_template, favicon_data, x_coord, y_coord, robot_grid->start);
+            content_length = snprintf(NULL, 0, p_tem->html_template, p_tem->favicon_data, x_coord, y_coord, robot_grid->start);
             if (content_length < 0) {
                 perror("snprinft() for content_length failed");
                 string_deinit(robot_grid);
                 break;
             }
             content = malloc(content_length + 1);
-            int h = snprintf(content, content_length + 1, html_template, favicon_data, x_coord, y_coord, robot_grid->start);
+            int h = snprintf(content, content_length + 1, p_tem->html_template, p_tem->favicon_data, x_coord, y_coord, robot_grid->start);
             if (h < 0) {
                 perror("snprintf() for html failed");
                 free(content);
@@ -425,19 +448,9 @@ int main(void) {
         return 1;
     }
 
-    // Read favicon data:
-    char* favicon_data = base64_from_path("./data/favicon-16x16.png", NULL);
-
-    // Read HTML template:
-    char* html_template = open_and_read("./data/template.html", NULL);
-
-    // Read CSS template:
-    size_t css_template_size;
-    char* css_template = open_and_read("./data/template.css", &css_template_size);
-
-    // Read robot PNG:
-    size_t robot_png_size;
-    char* robot_png = open_and_read("./data/robot.png", &robot_png_size);
+    // Read templates
+    struct templates tem;
+    templates_init(&tem);
 
     // Repeat indefinitely for each new client
     while (1) {
@@ -450,10 +463,8 @@ int main(void) {
             return 1;
         }
         printf("\n --- NEW CONNEXION RECEIVED, clientfd: %d ---\n", clientfd);
-        handle_client(clientfd, client_addr, favicon_data, html_template, css_template, css_template_size, robot_png, robot_png_size);
+        handle_client(clientfd, client_addr, &tem);
     }
-
-    free(favicon_data);
-    free(html_template);
-    free(css_template);
+    
+    templates_deinit(&tem);
 }
