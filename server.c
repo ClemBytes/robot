@@ -7,7 +7,6 @@
 #include <string.h>
 #include <poll.h>
 
-#include "base64.h"
 #include "lib_server.h"
 
 ssize_t read_client(int clientfd, char** p_buf, size_t* p_data_len, size_t* p_buf_size) {
