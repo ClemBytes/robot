@@ -185,7 +185,7 @@ void test_string_snprintf(void) {
         exit(1);
     }
     if (strcmp(s6->start, "Hey (null)") != 0) {
-        fprintf(stderr, "%s:%d - Test 6 (NULL as argument) failed!\nExpected: <>\nResult: <%s>\n", __FILE__, __LINE__, s6->start);
+        fprintf(stderr, "%s:%d - Test 6 (NULL as argument) failed!\nExpected: <Hey (null)>\nResult: <%s>\n", __FILE__, __LINE__, s6->start);
         exit(1);
     }
     string_deinit(s6);
@@ -206,6 +206,26 @@ void test_string_snprintf(void) {
     }
     string_deinit(s7);
     printf("> Test 7 OK: very long string\n");
+
+    // 8. String in string
+    struct string _s8;
+    struct string* s8 = &_s8;
+    string_init(s8);
+    struct string _s8_bis;
+    struct string* s8_bis = &_s8_bis;
+    string_init(s8_bis);
+    string_append_literal(s8_bis, "world");
+    r =  string_snprintf(s8, "Hello <%s> !", s8_bis->start);
+    if (r < 0) {
+        fprintf(stderr, "%s:%d - string_snprintf() test 8 (string in string) failed\n", __FILE__, __LINE__);
+        exit(1);
+    }
+    if (strcmp(s8->start, "Hello <world> !") != 0) {
+        fprintf(stderr, "%s:%d - Test 8 (string in string) failed!\nExpected: <Hello <world> !>\nResult: <%s>\n", __FILE__, __LINE__, s8->start);
+        exit(1);
+    }
+    string_deinit(s8);
+    printf("> Test 8 OK: string in string\n");
 
     printf("\n--- STRING SNPRINTF tests OK! ---\n");
     printf("-----------------------------------\n");
