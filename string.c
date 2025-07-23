@@ -7,7 +7,7 @@
 void string_init(struct string* s) {
     s->start = malloc(1); // (*s).start = NULL;
     s->start[0] = 0;
-    s->size = 1;
+    s->available_size = 1;
     s->used_size = 1;
 }
 
@@ -20,24 +20,24 @@ size_t string_len(struct string* s) {
 }
 
 void string_print(struct string* s) {
-    printf("String: %s - start: %p - used size: %zu - size: %zu\n", s->start, s->start, s->used_size, s->size);
+    printf("String: %s - start: %p - used size: %zu - size: %zu\n", s->start, s->start, s->used_size, s->available_size);
 }
 
 void string_append_with_size(struct string* s, const char* following, size_t len_following) {
-    while (s->used_size + len_following > s->size) {
-        s->start = realloc(s->start, 2*s->size);
-        s->size = 2*s->size;
-        // printf("REALLOC!! New size: %zu\n", s->size);
+    while (s->used_size + len_following > s->available_size) {
+        s->start = realloc(s->start, 2*s->available_size);
+        s->available_size = 2*s->available_size;
+        // printf("REALLOC!! New available_size: %zu\n", s->available_size);
     }
-    // buffer at *start contains size - 1 characters, followed by 1 zero
+    // buffer at *start contains available_size - 1 characters, followed by 1 zero
     memcpy(s->start + s->used_size - 1, following, len_following);
-    // buffer at *start contains size - 1 + len_following characters
+    // buffer at *start contains available_size - 1 + len_following characters
     s->used_size += len_following - 1;
-    // buffer at *start contains size characters
+    // buffer at *start contains available_size characters
     s->start[s->used_size] = 0;
-    // buffer at *start contains size characters, followed by 1 zero
+    // buffer at *start contains available_size characters, followed by 1 zero
     s->used_size += 1;
-    // buffer at *start contains size - 1 characters, followed by 1 zero
+    // buffer at *start contains available_size - 1 characters, followed by 1 zero
 }
 
 void string_append(struct string* s, const char* following) {
@@ -66,7 +66,7 @@ int string_snprintf(struct string* s, const char* format, ...) {
 
     // Allocate memory
     s->start = malloc(length + 1);
-    s->size = length + 1;
+    s->available_size = length + 1;
     s->used_size = length + 1;
 
     // Then do the format string
