@@ -15,6 +15,11 @@ void string_deinit(struct string* s) {
     free(s->start);
 }
 
+void string_clear(struct string* s) {
+    s->start[0] = 0;
+    s->used_size = 1;
+}
+
 size_t string_len(struct string* s) {
     return s->used_size - 1;
 }

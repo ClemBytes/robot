@@ -9,6 +9,7 @@ struct string {
 
 void string_init(struct string* s);
 void string_deinit(struct string* s);
+void string_clear(struct string* s);
 size_t string_len(struct string* s);
 void string_print(struct string* s);
 void string_append_with_size(struct string* s, const char* following, size_t len_following);
