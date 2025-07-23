@@ -83,6 +83,17 @@ void test_string(void) {
         exit(1);
     }
 
+    // Clear string
+    string_clear(s);
+    if (s->start[0] != 0) {
+        fprintf(stderr, "%s:%d - string is not cleared: %s\n", __FILE__, __LINE__, s->start);
+        exit(1);
+    }
+    if (string_len(s) != 0) {
+        fprintf(stderr, "%s:%d - string is not cleared: len should be 0 and is %zu\n", __FILE__, __LINE__, string_len(s));
+        exit(1);
+    }
+
     // Free memory
     string_deinit(s);
     printf("\n--- STRING tests OK! ---\n");
