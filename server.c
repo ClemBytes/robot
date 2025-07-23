@@ -59,6 +59,20 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
     size_t data_len;
     char* buf = malloc(buf_size);
 
+    // Init strings for response
+    struct string _content;
+    struct string* content = &_content;
+    string_init(content);
+    struct string _cookie;
+    struct string* cookie = &_cookie;
+    string_init(cookie);
+    struct string _robot_grid;
+    struct string* robot_grid = &_robot_grid;
+    string_init(robot_grid);
+    struct string _header;
+    struct string* header = &_header;
+    string_init(header);
+
     // Repeat indefinitely for each new request from current client
     while (1) {
         // Reinitialize data_len
@@ -70,11 +84,19 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
 
         ssize_t n = read_client(clientfd, &buf, &data_len, &buf_size);
         if (n == 0) {
+            string_deinit(cookie);
+            string_deinit(content);
+            string_deinit(header);
+            string_deinit(robot_grid);
             return;
         }
         if (n < 0) {
             fprintf(stderr, "%s:%d - read_client() failed\n", __FILE__, __LINE__);
             free(buf);
+            string_deinit(cookie);
+            string_deinit(content);
+            string_deinit(header);
+            string_deinit(robot_grid);
             return;
         }
 
@@ -82,6 +104,10 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
             int r = poll(&client_pollfd, 1, 0); // timeout = 0 causes poll() to return immediately, even if no file descriptors are ready
             if (r < 0) {
                 perror("poll() failed");
+                string_deinit(cookie);
+                string_deinit(content);
+                string_deinit(header);
+                string_deinit(robot_grid);
                 return;
             }
 
@@ -131,14 +157,9 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
         fprintf(stderr, "Coords: x=%d, y=%d\n", x_coord, y_coord);
         fprintf(stderr, "\nClient's request:\n%s\n", buf);
 
-        // Init response content
         char* content_type;
-        struct string _content;
-        struct string* content = &_content;
-        string_init(content);
-        struct string _cookie;
-        struct string* cookie = &_cookie;
-        string_init(cookie);
+        string_clear(content);
+        string_clear(cookie);
 
         // Generate response depending on request
         if (strcmp(method, "GET") == 0 && strcmp(path, "/data/template.css") == 0) {
@@ -196,41 +217,26 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
 
             int d = string_snprintf(cookie, "Set-Cookie: x=%d\r\nSet-Cookie: y=%d\r\n", x_coord, y_coord);
             if (d < 0) {
-                string_deinit(cookie);
                 break;
             }
 
             // Generate robot grid (HTML table)
-            struct string _robot_grid;
-            struct string* robot_grid = &_robot_grid;
-            string_init(robot_grid);
+            string_clear(robot_grid);
             generate_html_table(robot_grid, x_max, y_max, x_coord, y_coord);
 
             // Create HTML response
             content_type = "text/html";
             d = string_snprintf(content, p_tem->html_template, p_tem->favicon_data, x_coord, y_coord, robot_grid->start);
             if (d < 0) {
-                string_deinit(robot_grid);
-                string_deinit(cookie);
-                string_deinit(content);
                 break;
             }
-            string_deinit(robot_grid);
         }
 
         // Create header for response
-        struct string _header;
-        struct string* header = &_header;
-        string_init(header);
         int h = string_snprintf(header, "HTTP/1.0 200 OK\r\nContent-Type: %s\r\nContent-Length: %zu\r\n%s\r\n", content_type, string_len(content), cookie->start);
         if (h < 0) {
-            string_deinit(cookie);
-            string_deinit(content);
-            string_deinit(header);
             break;
         }
-
-        string_deinit(cookie);
 
         // Concatenate header and data of response
         struct string _str;
@@ -238,21 +244,18 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
         string_init(str);
         string_append_with_size(str, header->start, string_len(header));
         string_append_with_size(str, content->start, string_len(content));
-        // string_print(str);
-
-        string_deinit(content);
-        string_deinit(header);
 
         // Send response to client (write to client file descriptor)
         ssize_t ret = write(clientfd, str->start, string_len(str));
         if (ret < 0) {
             perror("write() failed");
-            string_deinit(str);
             break;
         }
-        string_deinit(str);
     }
-    return;
+    string_deinit(cookie);
+    string_deinit(content);
+    string_deinit(header);
+    string_deinit(robot_grid);
 }
 
 
