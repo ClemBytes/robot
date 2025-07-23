@@ -21,7 +21,7 @@ void test_base64_case(const char* input, const char* expected) {
 }
 
 void test_base64(void) {
-    printf("---------------------------\n");
+    printf("-----------------------------------\n");
     printf("Tests BASE64:\n");
     printf("-------------\n");
     test_base64_case("Many hands make light work.", "TWFueSBoYW5kcyBtYWtlIGxpZ2h0IHdvcmsu");
@@ -37,11 +37,11 @@ void test_base64(void) {
     printf("PNG image:\n%s\n", res_png);
     free(res_png);
     printf("\n--- BASE64 tests OK! ---\n");
-    printf("---------------------------\n");
+    printf("-----------------------------------\n");
 }
 
 void test_string(void) {
-    printf("---------------------------\n");
+    printf("-----------------------------------\n");
     printf("Tests STRING:\n");
     printf("-------------\n");
     // Init
@@ -86,11 +86,133 @@ void test_string(void) {
     // Free memory
     string_deinit(s);
     printf("\n--- STRING tests OK! ---\n");
-    printf("---------------------------\n");
+    printf("-----------------------------------\n");
+}
+
+void test_string_snprintf(void) {
+    printf("-----------------------------------\n");
+    printf("Tests STRING SNPRINTF:\n");
+    printf("----------------------\n");
+    int r;
+
+    // 1. One argument
+    struct string _s1;
+    struct string* s1 = &_s1;
+    string_init(s1);
+    r =  string_snprintf(s1, "Value: %d", 42);
+    if (r < 0) {
+        fprintf(stderr, "%s:%d - string_snprintf() test 1 (one argument) failed\n", __FILE__, __LINE__);
+        exit(1);
+    }
+    if (strcmp(s1->start, "Value: 42") != 0) {
+        fprintf(stderr, "%s:%d - Test 1 (one argument) failed!\nExpected: <Value: 42>\nResult: <%s>\n", __FILE__, __LINE__, s1->start);
+        exit(1);
+    }
+    string_deinit(s1);
+    printf("> Test 1 OK: one argument\n");
+
+    // 2. No arguments
+    struct string _s2;
+    struct string* s2 = &_s2;
+    string_init(s2);
+    r =  string_snprintf(s2, "Hello");
+    if (r < 0) {
+        fprintf(stderr, "%s:%d - string_snprintf() test 2 (no arguments) failed\n", __FILE__, __LINE__);
+        exit(1);
+    }
+    if (strcmp(s2->start, "Hello") != 0) {
+        fprintf(stderr, "%s:%d - Test 2 (no arguments) failed!\nExpected: <Hello>\nResult: <%s>\n", __FILE__, __LINE__, s2->start);
+        exit(1);
+    }
+    string_deinit(s2);
+    printf("> Test 2 OK: no arguments\n");
+
+    // 3. Insert char*
+    struct string _s3;
+    struct string* s3 = &_s3;
+    string_init(s3);
+    r =  string_snprintf(s3, "Hi %s", "world");
+    if (r < 0) {
+        fprintf(stderr, "%s:%d - string_snprintf() test 3 (insert char*) failed\n", __FILE__, __LINE__);
+        exit(1);
+    }
+    if (strcmp(s3->start, "Hi world") != 0) {
+        fprintf(stderr, "%s:%d - Test 3 (insert char*) failed!\nExpected: <Hi world>\nResult: <%s>\n", __FILE__, __LINE__, s3->start);
+        exit(1);
+    }
+    string_deinit(s3);
+    printf("> Test 3 OK: insert char*\n");
+
+    // 4. Insert several types
+    struct string _s4;
+    struct string* s4 = &_s4;
+    string_init(s4);
+    r =  string_snprintf(s4, "%s %d %.2f", "Test", 42, 3.14);
+    if (r < 0) {
+        fprintf(stderr, "%s:%d - string_snprintf() test 4 (insert several types) failed\n", __FILE__, __LINE__);
+        exit(1);
+    }
+    if (strcmp(s4->start, "Test 42 3.14") != 0) {
+        fprintf(stderr, "%s:%d - Test 4 (insert several types) failed!\nExpected: <Test 42 3.14>\nResult: <%s>\n", __FILE__, __LINE__, s4->start);
+        exit(1);
+    }
+    string_deinit(s4);
+    printf("> Test 4 OK: insert several types\n");
+
+    // 5. Empty string
+    struct string _s5;
+    struct string* s5 = &_s5;
+    string_init(s5);
+    r =  string_snprintf(s5, "");
+    if (r < 0) {
+        fprintf(stderr, "%s:%d - string_snprintf() test 5 (empty string) failed\n", __FILE__, __LINE__);
+        exit(1);
+    }
+    if (strcmp(s5->start, "") != 0) {
+        fprintf(stderr, "%s:%d - Test 5 (empty string) failed!\nExpected: <>\nResult: <%s>\n", __FILE__, __LINE__, s5->start);
+        exit(1);
+    }
+    string_deinit(s5);
+    printf("> Test 5 OK: empty string\n");
+
+    // 6. NULL as argument
+    struct string _s6;
+    struct string* s6 = &_s6;
+    string_init(s6);
+    r =  string_snprintf(s6, "Hey %s", NULL);
+    if (r < 0) {
+        fprintf(stderr, "%s:%d - string_snprintf() test 6 (NULL as argument) failed\n", __FILE__, __LINE__);
+        exit(1);
+    }
+    if (strcmp(s6->start, "Hey (null)") != 0) {
+        fprintf(stderr, "%s:%d - Test 6 (NULL as argument) failed!\nExpected: <>\nResult: <%s>\n", __FILE__, __LINE__, s6->start);
+        exit(1);
+    }
+    string_deinit(s6);
+    printf("> Test 6 OK: NULL as argument\n");
+
+    // 7. Very long string
+    struct string _s7;
+    struct string* s7 = &_s7;
+    string_init(s7);
+    r =  string_snprintf(s7, "A%01000d", 1);
+    if (r < 0) {
+        fprintf(stderr, "%s:%d - string_snprintf() test 7 (very long string) failed\n", __FILE__, __LINE__);
+        exit(1);
+    }
+    if (s7->used_size <= 1000) {
+        fprintf(stderr, "%s:%d - Test 7 (very long string) failed! Too short!\nLength expected > 1000\nResult's length: <%zu>\n", __FILE__, __LINE__, s7->used_size);
+        exit(1);
+    }
+    string_deinit(s7);
+    printf("> Test 7 OK: very long string\n");
+
+    printf("\n--- STRING SNPRINTF tests OK! ---\n");
+    printf("-----------------------------------\n");
 }
 
 void test_parse_client_request(void) {
-    printf("---------------------------\n");
+    printf("-----------------------------------\n");
     printf("Tests PARSE REQUEST:\n");
     printf("--------------------\n");
 
@@ -384,13 +506,14 @@ void test_parse_client_request(void) {
     printf("> Request 8 OK\n");
 
     printf("\n--- PARSE REQUEST tests OK! ---\n");
-    printf("---------------------------\n");
+    printf("-----------------------------------\n");
 
 }
 
 int main(void) {
     test_base64();
     test_string();
+    test_string_snprintf();
     test_parse_client_request();
     return 0;
 }

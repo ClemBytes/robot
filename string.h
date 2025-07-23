@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <stdarg.h>
 
 struct string {
     char* start;
@@ -11,5 +12,6 @@ void string_deinit(struct string* s);
 void string_print(struct string* s);
 void string_append_with_size(struct string* s, const char* following, size_t len_following);
 void string_append(struct string* s, const char* following);
+int string_snprintf(struct string* s, const char* format, ...);
 
 #define string_append_literal(x, y) string_append_with_size(x, y, (sizeof y) - 1)

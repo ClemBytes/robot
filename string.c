@@ -39,4 +39,49 @@ void string_append_with_size(struct string* s, const char* following, size_t len
 void string_append(struct string* s, const char* following) {
     size_t len_following = strlen(following);
     string_append_with_size(s, following, len_following);
-} 
+}
+
+int string_snprintf(struct string* s, const char* format, ...) {
+    // Initialize variable argument list
+    va_list args;
+    va_start(args, format);
+    // Copy for second use
+    va_list args_copy;
+    va_copy(args_copy, args);
+    
+    // Get length of result
+    int length = vsnprintf(NULL, 0, format, args);
+    if (length < 0) {
+        perror("vsnprintf() for string_snprintf() failed");
+        string_deinit(s);
+        va_end(args);
+        va_end(args_copy);
+        return length;
+    }
+    va_end(args);
+
+    // Allocate memory
+    s->start = malloc(length + 1);
+    s->size = length + 1;
+    s->used_size = length + 1;
+
+    // Then do the format string
+    int r = vsnprintf(s->start, length + 1, format, args_copy);
+    if (r < 0) {
+        perror("vsnprintf() for string_snprintf() failed");
+        va_end(args_copy);
+        string_deinit(s);
+        return r;
+    } else if (r >= length + 1) {
+        printf("%s:%d - Size of string is not enough: %d given and needs %d!\n", __FILE__, __LINE__, length + 1, r);
+        string_deinit(s);
+        va_end(args_copy);
+        return -1;
+    }
+
+    // Free memory used by va_list
+    va_end(args_copy);
+
+    // Return result of vsnprintf
+    return r;
+}
