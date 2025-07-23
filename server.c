@@ -144,11 +144,11 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
         if (strcmp(method, "GET") == 0 && strcmp(path, "/data/template.css") == 0) {
             // Request for CSS file
             content_type = "text/css";
-            string_append(content, p_tem->css_template);
+            string_append_with_size(content, p_tem->css_template, p_tem->css_template_size);
         } else if (strcmp(method, "GET") == 0 && strcmp(path, "/data/robot.png") == 0) {
             // Request for robot PNG file
             content_type = "image/png";
-            string_append(content, p_tem->robot_png);
+            string_append_with_size(content, p_tem->robot_png, p_tem->robot_png_size);
         } else if (strcmp(method, "GET") == 0 && strcmp(path, "/.well-known/appspecific/com.chrome.devtools.json") == 0) {
             // Google Chrome is to curious…
             content_type = "text/html";
@@ -196,7 +196,6 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
 
             int d = string_snprintf(cookie, "Set-Cookie: x=%d\r\nSet-Cookie: y=%d\r\n", x_coord, y_coord);
             if (d < 0) {
-                perror("string_snprinft() for cookie failed");
                 string_deinit(cookie);
                 break;
             }
@@ -211,7 +210,6 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
             content_type = "text/html";
             d = string_snprintf(content, p_tem->html_template, p_tem->favicon_data, x_coord, y_coord, robot_grid->start);
             if (d < 0) {
-                perror("string_snprinft() for cookie failed");
                 string_deinit(robot_grid);
                 string_deinit(cookie);
                 string_deinit(content);
@@ -226,7 +224,6 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
         string_init(header);
         int h = string_snprintf(header, "HTTP/1.0 200 OK\r\nContent-Type: %s\r\nContent-Length: %zu\r\n%s\r\n", content_type, string_len(content), cookie->start);
         if (h < 0) {
-            perror("snprintf() for header failed");
             string_deinit(cookie);
             string_deinit(content);
             string_deinit(header);
