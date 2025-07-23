@@ -15,6 +15,10 @@ void string_deinit(struct string* s) {
     free(s->start);
 }
 
+size_t string_len(struct string* s) {
+    return s->used_size - 1;
+}
+
 void string_print(struct string* s) {
     printf("String: %s - start: %p - used size: %zu - size: %zu\n", s->start, s->start, s->used_size, s->size);
 }

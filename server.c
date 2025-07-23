@@ -129,12 +129,13 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
             y_coord = 0;
         }
         fprintf(stderr, "Coords: x=%d, y=%d\n", x_coord, y_coord);
-        // fprintf(stderr, "\nClient's request:\n%s\n", buf);
+        fprintf(stderr, "\nClient's request:\n%s\n", buf);
 
         // Init response content
-        int content_length;
         char* content_type;
-        char* content;
+        struct string _content;
+        struct string* content = &_content;
+        string_init(content);
         struct string _cookie;
         struct string* cookie = &_cookie;
         string_init(cookie);
@@ -142,22 +143,15 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
         // Generate response depending on request
         if (strcmp(method, "GET") == 0 && strcmp(path, "/data/template.css") == 0) {
             // Request for CSS file
-            content_length = p_tem->css_template_size;
             content_type = "text/css";
-            content = malloc(content_length);
-            memcpy(content, p_tem->css_template, content_length);
+            string_append(content, p_tem->css_template);
         } else if (strcmp(method, "GET") == 0 && strcmp(path, "/data/robot.png") == 0) {
             // Request for robot PNG file
-            content_length = p_tem->robot_png_size;
             content_type = "image/png";
-            content = malloc(content_length);
-            memcpy(content, p_tem->robot_png, content_length);
+            string_append(content, p_tem->robot_png);
         } else if (strcmp(method, "GET") == 0 && strcmp(path, "/.well-known/appspecific/com.chrome.devtools.json") == 0) {
             // Google Chrome is to curious…
-            content_length = 1;
             content_type = "text/html";
-            content = malloc(content_length);
-            memcpy(content, "", content_length);
             // Do nothing
         } else {
             // Other requests
@@ -203,6 +197,7 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
             int d = string_snprintf(cookie, "Set-Cookie: x=%d\r\nSet-Cookie: y=%d\r\n", x_coord, y_coord);
             if (d < 0) {
                 perror("string_snprinft() for cookie failed");
+                string_deinit(cookie);
                 break;
             }
 
@@ -214,60 +209,51 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
 
             // Create HTML response
             content_type = "text/html";
-            content_length = snprintf(NULL, 0, p_tem->html_template, p_tem->favicon_data, x_coord, y_coord, robot_grid->start);
-            if (content_length < 0) {
-                perror("snprinft() for content_length failed");
+            d = string_snprintf(content, p_tem->html_template, p_tem->favicon_data, x_coord, y_coord, robot_grid->start);
+            if (d < 0) {
+                perror("string_snprinft() for cookie failed");
                 string_deinit(robot_grid);
-                break;
-            }
-            content = malloc(content_length + 1);
-            int h = snprintf(content, content_length + 1, p_tem->html_template, p_tem->favicon_data, x_coord, y_coord, robot_grid->start);
-            if (h < 0) {
-                perror("snprintf() for html failed");
-                free(content);
-                string_deinit(robot_grid);
-                break;
-            } else if (h >= content_length + 1) {
-                printf("%s:%d - Size of HTML response is not enough: %d given and needs %d!\n", __FILE__, __LINE__, h, content_length + 1);
-                free(content);
-                string_deinit(robot_grid);
+                string_deinit(cookie);
+                string_deinit(content);
                 break;
             }
             string_deinit(robot_grid);
         }
 
         // Create header for response
-        int header_size = snprintf(NULL, 0, "HTTP/1.0 200 OK\r\nContent-Type: %s\r\nContent-Length: %d\r\n%s\r\n", content_type, content_length, cookie->start);
-        if (header_size < 0) {
-            perror("snprintf() for header_size failed");
-            free(content);
-            break;
-        }
-        char* header = malloc(header_size + 1);
-        int h = snprintf(header, header_size + 1, "HTTP/1.0 200 OK\r\nContent-Type: %s\r\nContent-Length: %d\r\n%s\r\n", content_type, content_length, cookie->start);
+        struct string _header;
+        struct string* header = &_header;
+        string_init(header);
+        int h = string_snprintf(header, "HTTP/1.0 200 OK\r\nContent-Type: %s\r\nContent-Length: %zu\r\n%s\r\n", content_type, string_len(content), cookie->start);
         if (h < 0) {
             perror("snprintf() for header failed");
-            free(content);
-            break;
-        } else if (h >= header_size + 1) {
-            printf("%s:%d - Size of HTML header is not enough: %d given and needs %d!\n", __FILE__, __LINE__, h, header_size + 1);
-            free(content);
+            string_deinit(cookie);
+            string_deinit(content);
+            string_deinit(header);
             break;
         }
+
+        string_deinit(cookie);
 
         // Concatenate header and data of response
-        char str[header_size + content_length];
-        memcpy(str, header, (size_t) header_size);
-        memcpy(str + header_size, content, content_length);
+        struct string _str;
+        struct string* str = &_str;
+        string_init(str);
+        string_append_with_size(str, header->start, string_len(header));
+        string_append_with_size(str, content->start, string_len(content));
+        // string_print(str);
 
-        free(content);
+        string_deinit(content);
+        string_deinit(header);
 
         // Send response to client (write to client file descriptor)
-        ssize_t ret = write(clientfd, str, sizeof str);
+        ssize_t ret = write(clientfd, str->start, string_len(str));
         if (ret < 0) {
             perror("write() failed");
+            string_deinit(str);
             break;
         }
+        string_deinit(str);
     }
     return;
 }
