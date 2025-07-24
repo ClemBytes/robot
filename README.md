@@ -42,6 +42,14 @@ make run
 ```
 Then see `127.0.0.0:8000`.
 
+## Documentation
+
+The full API documentation is generated with [Doxygen](https://www.doxygen.nl/index.html) and available here:  
+TODO
+<!---
+👉 [robot.clembytes.fr/docs](https://robot.clembytes.fr/docs) (work in progress)
+--->
+
 ## Support
 
 You can contact me about this project or my work at <clembytes@proton.me>.
