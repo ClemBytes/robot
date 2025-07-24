@@ -68,8 +68,8 @@ void parse_client_request(const char* client_request, size_t data_len, char* met
  *        given coordinates.
  * 
  * @param robot_grid Pointer for the result.
- * @param x_max Value max for x (so number of lines in the grid).
- * @param y_max Value max for y (so number of columns in the grid).
+ * @param x_max Value max for x (so number of lines in the grid - 1).
+ * @param y_max Value max for y (so number of columns in the grid - 1).
  * @param x_coord Robot's x coordinate.
  * @param y_coord Robot's y coordinate.
  */

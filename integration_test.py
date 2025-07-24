@@ -5,6 +5,18 @@ import subprocess
 import time
 
 def check_diff(received, expected):
+    """
+    Checks difference between two strings.
+    First compares the lengths. If they are equal, compares character by
+    character.
+
+    Args:
+        received (string): Received string.
+        expected (string): Expected string.
+    
+    Returns:
+        flag (boolean) : True if strings differ, False otherwise.
+    """
     lr = len(received)
     le = len(expected)
     if lr != le:
@@ -20,6 +32,16 @@ def check_diff(received, expected):
     return flag
 
 def find_robot_grid(r):
+    """
+    Find the table containing the robot using BeautifulSoup.
+    Table should have the class 'robot-grid'.
+
+    Args:
+        r (request): request containing the table to analyze.
+
+    Returns:
+        table (list): table as a list of lists.
+    """
     soup = BeautifulSoup(r.text, "html.parser")
     table_text = soup.find("table", class_="robot-grid")
     table = []
@@ -31,6 +53,16 @@ def find_robot_grid(r):
     return table
 
 def find_image_in_grid(table):
+    """
+    Find the robot in the grid parsed using find_robot_grid().
+
+    Args:
+        table (list): see result of find_robot_grid().
+
+    Returns:
+        x (int): robot's x coordinate in the table.
+        y (int): robot's y coordinate in the table.
+    """
     found = False
     for l, line in enumerate(table):
         for c, col in enumerate(line):
@@ -48,6 +80,22 @@ def final_position(moves, x_max = 4, y_max = 4):
     Given a list of the moves, this function computes the final coordinates.
     Important note: the list always needs to start with a 'reset' to ensure 
     replicable tests!
+
+    Args:
+        moves (list): list of moves done by the robot. Always start with
+            'reset', and can contain the following elements in any order
+            (and repeated as many times as you want):
+            - 'reset'
+            - 'up'
+            - 'down'
+            - 'left'
+            - 'right'
+        x_max (int): Value max for x (so number of lines in the grid - 1).
+        y_max (int): Value max for y (so number of columns in the grid - 1).
+    
+    Returns:
+        x (int): robot's final x coordinate in the table.
+        y (int): robot's final y coordinate in the table.
     """
     if moves[0] != 'reset':
         raise ValueError(f"moves should always start with 'reset' and not '{moves[0]}'")
@@ -79,6 +127,24 @@ def final_position(moves, x_max = 4, y_max = 4):
     return x, y
 
 def test_moves(moves):
+    """
+    Test a sequence of moves by sending the matching requests to the
+    server, finind the robot in the final response, and comparing it to the
+    theorical answer.
+
+    Args:
+        moves (list): list of moves done by the robot. Always start with
+            'reset', and can contain the following elements in any order
+            (and repeated as many times as you want):
+            - 'reset'
+            - 'up'
+            - 'down'
+            - 'left'
+            - 'right'
+    
+    Returns:
+        (boolean): True if last position matches the expected one.
+    """
     expected_x, expected_y = final_position(moves)
     session = requests.Session()
     for m in moves:
@@ -94,6 +160,16 @@ def test_moves(moves):
     
 
 def main():
+    """
+    Integration tests.
+    With previously opened server:
+    - TEST 1: ask for CSS template and check if matches the saved one.
+    - TEST 2: ask for PNG robot image and check if matches the saved one.
+    - TEST 3: tries many moves sequences.
+
+    Returns:
+        (boolean): True if all tests passed, otherwise False.
+    """
     print("------------------------------------------------------------------")
     print("TEST 1 : CSS template")
     print("---------------------")

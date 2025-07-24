@@ -1,5 +1,6 @@
 <map id="string.h" name="string.h">
-<area shape="rect" id="node1" title=" " alt="" coords="57,5,122,32"/>
-<area shape="rect" id="node2" href="$lib__server_8h.html" title=" " alt="" coords="5,80,93,107"/>
-<area shape="rect" id="node3" href="$server_8c.html" title=" " alt="" coords="55,155,123,181"/>
+<area shape="rect" id="node1" title=" " alt="" coords="69,5,135,32"/>
+<area shape="rect" id="node2" href="$lib__server_8h.html" title=" " alt="" coords="58,80,146,107"/>
+<area shape="rect" id="node3" href="$server_8c.html" title=" " alt="" coords="5,155,73,181"/>
+<area shape="rect" id="node4" href="$test_8c.html" title=" " alt="" coords="136,155,191,181"/>
 </map>

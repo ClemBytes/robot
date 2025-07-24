@@ -117,7 +117,17 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<pre class="fragment">Checks difference between two strings.
+First compares the lengths. If they are equal, compares character by
+character.
 
+Args:
+    received (string): Received string.
+    expected (string): Expected string.
+
+Returns:
+    flag (boolean) : True if strings differ, False otherwise.
+</pre> 
 </div>
 </div>
 <a id="ac29b277ae3da8e21ed2b7f390de2ae65" name="ac29b277ae3da8e21ed2b7f390de2ae65"></a>
@@ -154,6 +164,22 @@ Variables</h2></td></tr>
 <pre class="fragment">Given a list of the moves, this function computes the final coordinates.
 Important note: the list always needs to start with a 'reset' to ensure 
 replicable tests!
+
+Args:
+    moves (list): list of moves done by the robot. Always start with
+        'reset', and can contain the following elements in any order
+        (and repeated as many times as you want):
+        - 'reset'
+        - 'up'
+        - 'down'
+        - 'left'
+        - 'right'
+    x_max (int): Value max for x (so number of lines in the grid - 1).
+    y_max (int): Value max for y (so number of columns in the grid - 1).
+
+Returns:
+    x (int): robot's final x coordinate in the table.
+    y (int): robot's final y coordinate in the table.
 </pre> 
 </div>
 </div>
@@ -172,7 +198,15 @@ replicable tests!
         </tr>
       </table>
 </div><div class="memdoc">
+<pre class="fragment">Find the robot in the grid parsed using find_robot_grid().
 
+Args:
+    table (list): see result of find_robot_grid().
+
+Returns:
+    x (int): robot's x coordinate in the table.
+    y (int): robot's y coordinate in the table.
+</pre> 
 </div>
 </div>
 <a id="a6eefb06a7fe27eb48df2b0378ddc2e2a" name="a6eefb06a7fe27eb48df2b0378ddc2e2a"></a>
@@ -190,7 +224,15 @@ replicable tests!
         </tr>
       </table>
 </div><div class="memdoc">
+<pre class="fragment">Find the table containing the robot using BeautifulSoup.
+Table should have the class 'robot-grid'.
 
+Args:
+    r (request): request containing the table to analyze.
+
+Returns:
+    table (list): table as a list of lists.
+</pre> 
 </div>
 </div>
 <a id="a95a3224fa2493b743068ffaa4cb6a68d" name="a95a3224fa2493b743068ffaa4cb6a68d"></a>
@@ -208,7 +250,15 @@ replicable tests!
         </tr>
       </table>
 </div><div class="memdoc">
+<pre class="fragment">Integration tests.
+With previously opened server:
+- TEST 1: ask for CSS template and check if matches the saved one.
+- TEST 2: ask for PNG robot image and check if matches the saved one.
+- TEST 3: tries many moves sequences.
 
+Returns:
+    (boolean): True if all tests passed, otherwise False.
+</pre> 
 </div>
 </div>
 <a id="a0a643e070f3b60bb70032dd126d26615" name="a0a643e070f3b60bb70032dd126d26615"></a>
@@ -226,7 +276,23 @@ replicable tests!
         </tr>
       </table>
 </div><div class="memdoc">
+<pre class="fragment">Test a sequence of moves by sending the matching requests to the
+server, finind the robot in the final response, and comparing it to the
+theorical answer.
 
+Args:
+    moves (list): list of moves done by the robot. Always start with
+        'reset', and can contain the following elements in any order
+        (and repeated as many times as you want):
+        - 'reset'
+        - 'up'
+        - 'down'
+        - 'left'
+        - 'right'
+
+Returns:
+    (boolean): True if last position matches the expected one.
+</pre> 
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
