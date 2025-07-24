@@ -162,6 +162,8 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
         string_clear(content);
         string_clear(cookie);
 
+        int cx, cy;
+
         // Generate response depending on request
         if (strcmp(method, "GET") == 0 && strcmp(path, "/data/template.css") == 0) {
             // Request for CSS file
@@ -212,8 +214,13 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
                 // Do nothing
                 fprintf(stderr, "Request main page!\n");
             } else {
-                fprintf(stderr, "Invalid request!\n");
-                continue;
+                if (strcmp(method, "GET") == 0 && sscanf(path, "/coords/%d/%d", &cx, &cy) == 2) {
+                    x_coord = cx;
+                    y_coord = cy;
+                } else {
+                    fprintf(stderr, "Invalid request!\n");
+                    continue;
+                }
             }
 
             int d = string_snprintf(cookie, "Set-Cookie: x=%d\r\nSet-Cookie: y=%d\r\n", x_coord, y_coord);

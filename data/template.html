@@ -3,7 +3,7 @@
 <head>
     <title>Just a robot</title>
     <link rel="icon" href="data:image/png;base64,%s">
-    <link rel="stylesheet" href="data/template.css">
+    <link rel="stylesheet" href="/data/template.css">
 </head>
 <body>
     <h1>Welcome to my robot page!</h1>
@@ -83,7 +83,7 @@
         function onClick(event) {
             const x = event.target.dataset.x;
             const y = event.target.dataset.y;
-            console.log(x, y);
+            document.location = "/coords/" + x + "/" + y;
         }
         const robot_grid = document.getElementById("robot-grid");
         robot_grid.addEventListener("click", onClick);

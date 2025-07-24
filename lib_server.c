@@ -107,7 +107,7 @@ void generate_html_table(struct string* robot_grid, const int x_max, const int y
         string_append(robot_grid, "<tr>");
         for (int y = 0; y < y_max + 1; y++) {
             if ((x == x_coord) && (y == y_coord)) {
-                string_snprintf(td, "<td data-x='%d' data-y='%d'><img src='data/robot.png' alt='Robot' class='image-responsive'></td>", x, y);
+                string_snprintf(td, "<td data-x='%d' data-y='%d'><img src='/data/robot.png' alt='Robot' class='image-responsive'></td>", x, y);
                 string_append(robot_grid, td->start);
                 string_clear(td);
             } else {
