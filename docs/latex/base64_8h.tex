@@ -1,0 +1,141 @@
+\hypertarget{base64_8h}{}\doxysection{base64.\+h File Reference}
+\label{base64_8h}\index{base64.h@{base64.h}}
+{\ttfamily \#include $<$stddef.\+h$>$}\newline
+Include dependency graph for base64.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=136pt]{base64_8h__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t \mbox{\hyperlink{base64_8h_a4879a02461a295c64bb3dbc35122719a}{base64}} (const char $\ast$signed\+\_\+data, size\+\_\+t len\+\_\+data, char $\ast$res, size\+\_\+t res\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Implementation of base64 algorithm for binaries in general. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{base64_8h_acab24dd63977f729b08cf29d1df0f882}{base64\+\_\+str}} (const char $\ast$s, char $\ast$res, size\+\_\+t res\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Implementation of base64 algorithm for strings. \end{DoxyCompactList}\item 
+char $\ast$ \mbox{\hyperlink{base64_8h_a556f21fd5815d02a4f37a0a955078448}{open\+\_\+and\+\_\+read}} (const char $\ast$path, size\+\_\+t $\ast$file\+\_\+size\+\_\+out)
+\begin{DoxyCompactList}\small\item\em Open and read files. \end{DoxyCompactList}\item 
+char $\ast$ \mbox{\hyperlink{base64_8h_a7f10bfa05ab011933a3237251a340106}{base64\+\_\+alloc}} (const char $\ast$data, size\+\_\+t size, size\+\_\+t $\ast$res\+\_\+size\+\_\+out)
+\begin{DoxyCompactList}\small\item\em Allocates memory and applies base64 algorithm. \end{DoxyCompactList}\item 
+char $\ast$ \mbox{\hyperlink{base64_8h_ae45408e8e07878042735956c0c5d4b00}{base64\+\_\+from\+\_\+path}} (const char $\ast$path, size\+\_\+t $\ast$res\+\_\+size\+\_\+out)
+\begin{DoxyCompactList}\small\item\em Uses \mbox{\hyperlink{base64_8h_a556f21fd5815d02a4f37a0a955078448}{open\+\_\+and\+\_\+read()}} and \mbox{\hyperlink{base64_8h_a7f10bfa05ab011933a3237251a340106}{base64\+\_\+alloc()}} to perform base64 algorithm. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{base64_8h_a4879a02461a295c64bb3dbc35122719a}\label{base64_8h_a4879a02461a295c64bb3dbc35122719a}} 
+\index{base64.h@{base64.h}!base64@{base64}}
+\index{base64@{base64}!base64.h@{base64.h}}
+\doxysubsubsection{\texorpdfstring{base64()}{base64()}}
+{\footnotesize\ttfamily size\+\_\+t base64 (\begin{DoxyParamCaption}\item[{const char $\ast$}]{signed\+\_\+data,  }\item[{size\+\_\+t}]{len\+\_\+data,  }\item[{char $\ast$}]{res,  }\item[{size\+\_\+t}]{res\+\_\+len }\end{DoxyParamCaption})}
+
+
+
+Implementation of base64 algorithm for binaries in general. 
+
+Binary-\/to-\/text encoding into a set of 64 unique characters. Dource is taken 6 bits at a time, in this group of 6 is mapped to one of 64 unique characters. See\+: \href{https://en.wikipedia.org/wiki/Base64}{\texttt{ https\+://en.\+wikipedia.\+org/wiki/\+Base64}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Pointer to the binary to encode. \\
+\hline
+{\em len\+\_\+data} & Length of binary to encode. \\
+\hline
+{\em res} & Pointer to the result. \\
+\hline
+{\em res\+\_\+len} & Max-\/size of result. Needs to be enough.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Size of final result. If \texorpdfstring{$>$}{>} to res\+\_\+len, you have you given enough space to res. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{base64_8h_a7f10bfa05ab011933a3237251a340106}\label{base64_8h_a7f10bfa05ab011933a3237251a340106}} 
+\index{base64.h@{base64.h}!base64\_alloc@{base64\_alloc}}
+\index{base64\_alloc@{base64\_alloc}!base64.h@{base64.h}}
+\doxysubsubsection{\texorpdfstring{base64\_alloc()}{base64\_alloc()}}
+{\footnotesize\ttfamily char $\ast$ base64\+\_\+alloc (\begin{DoxyParamCaption}\item[{const char $\ast$}]{data,  }\item[{size\+\_\+t}]{size,  }\item[{size\+\_\+t $\ast$}]{res\+\_\+size\+\_\+out }\end{DoxyParamCaption})}
+
+
+
+Allocates memory and applies base64 algorithm. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Pointer to the binary to encode. \\
+\hline
+{\em size} & Length of binary to encode. \\
+\hline
+{\em res\+\_\+size\+\_\+out} & Pointer to the size of result.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer to the result. Does malloc()! So you should free later. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{base64_8h_ae45408e8e07878042735956c0c5d4b00}\label{base64_8h_ae45408e8e07878042735956c0c5d4b00}} 
+\index{base64.h@{base64.h}!base64\_from\_path@{base64\_from\_path}}
+\index{base64\_from\_path@{base64\_from\_path}!base64.h@{base64.h}}
+\doxysubsubsection{\texorpdfstring{base64\_from\_path()}{base64\_from\_path()}}
+{\footnotesize\ttfamily char $\ast$ base64\+\_\+from\+\_\+path (\begin{DoxyParamCaption}\item[{const char $\ast$}]{path,  }\item[{size\+\_\+t $\ast$}]{res\+\_\+size\+\_\+out }\end{DoxyParamCaption})}
+
+
+
+Uses \mbox{\hyperlink{base64_8h_a556f21fd5815d02a4f37a0a955078448}{open\+\_\+and\+\_\+read()}} and \mbox{\hyperlink{base64_8h_a7f10bfa05ab011933a3237251a340106}{base64\+\_\+alloc()}} to perform base64 algorithm. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em path} & Pointer to the binary to encode. \\
+\hline
+{\em res\+\_\+size\+\_\+out} & Pointer to the size of result.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer to the result. Does malloc()! So you should free later. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{base64_8h_acab24dd63977f729b08cf29d1df0f882}\label{base64_8h_acab24dd63977f729b08cf29d1df0f882}} 
+\index{base64.h@{base64.h}!base64\_str@{base64\_str}}
+\index{base64\_str@{base64\_str}!base64.h@{base64.h}}
+\doxysubsubsection{\texorpdfstring{base64\_str()}{base64\_str()}}
+{\footnotesize\ttfamily size\+\_\+t base64\+\_\+str (\begin{DoxyParamCaption}\item[{const char $\ast$}]{s,  }\item[{char $\ast$}]{res,  }\item[{size\+\_\+t}]{res\+\_\+len }\end{DoxyParamCaption})}
+
+
+
+Implementation of base64 algorithm for strings. 
+
+Just gets the data length by using strlen().
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Pointer to the binary to encode. \\
+\hline
+{\em res} & Pointer to the result. \\
+\hline
+{\em res\+\_\+len} & Max-\/size of result. Needs to be enough.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Size of final result. If \texorpdfstring{$>$}{>} to res\+\_\+len, you have you given enough space to res. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{base64_8h_a556f21fd5815d02a4f37a0a955078448}\label{base64_8h_a556f21fd5815d02a4f37a0a955078448}} 
+\index{base64.h@{base64.h}!open\_and\_read@{open\_and\_read}}
+\index{open\_and\_read@{open\_and\_read}!base64.h@{base64.h}}
+\doxysubsubsection{\texorpdfstring{open\_and\_read()}{open\_and\_read()}}
+{\footnotesize\ttfamily char $\ast$ open\+\_\+and\+\_\+read (\begin{DoxyParamCaption}\item[{const char $\ast$}]{path,  }\item[{size\+\_\+t $\ast$}]{file\+\_\+size\+\_\+out }\end{DoxyParamCaption})}
+
+
+
+Open and read files. 
+
+Deals with errors and allocates required size.
+
+
+\begin{DoxyParams}{Parameters}
+{\em path} & Pointer to the file name. \\
+\hline
+{\em file\+\_\+size\+\_\+out} & Pointer to the size of result.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer to the result. Does malloc()! So you should free later. 
+\end{DoxyReturn}
