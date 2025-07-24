@@ -25,16 +25,16 @@
 var NAVTREE =
 [
   [ "Robot", "index.html", [
-    [ "Robot project", "index.html", [
-      [ "Where can I see what it does?", "index.html#autotoc_md1", null ],
-      [ "Where can I follow the process", "index.html#autotoc_md2", null ],
-      [ "The idea", "index.html#autotoc_md3", null ],
-      [ "Project structure", "index.html#autotoc_md4", null ],
-      [ "Build & run", "index.html#autotoc_md5", null ],
-      [ "Documentation", "index.html#autotoc_md6", null ],
-      [ "Support", "index.html#autotoc_md7", null ],
-      [ "Roadmap", "index.html#autotoc_md8", null ],
-      [ "Project status", "index.html#autotoc_md9", null ]
+    [ "🤖 Robot project", "index.html", [
+      [ "🌐 Where can I see what it does?", "index.html#autotoc_md1", null ],
+      [ "✍️ Where can I follow the process", "index.html#autotoc_md2", null ],
+      [ "💡 The idea", "index.html#autotoc_md3", null ],
+      [ "📁 Project structure", "index.html#autotoc_md4", null ],
+      [ "⚙️ Build & run", "index.html#autotoc_md5", null ],
+      [ "📚 Documentation", "index.html#autotoc_md6", null ],
+      [ "💌 Support", "index.html#autotoc_md7", null ],
+      [ "🗺️ Roadmap", "index.html#autotoc_md8", null ],
+      [ "📈 Project status", "index.html#autotoc_md9", null ]
     ] ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
