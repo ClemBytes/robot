@@ -46,9 +46,6 @@ Then see `127.0.0.0:8000`.
 
 The full API documentation is generated with [Doxygen](https://www.doxygen.nl/index.html) and available here:  
 TODO
-<!---
-👉 [robot.clembytes.fr/docs](https://robot.clembytes.fr/docs) (work in progress)
---->
 
 ## Support
 
