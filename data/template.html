@@ -46,7 +46,7 @@
     </table>
     <p>Now you can also use the arrow keys (and backspace for reset)!</p>
 
-    <table class="robot-grid">
+    <table id="robot-grid">
         <tbody>
             %s
         </tbody>
@@ -55,31 +55,38 @@
     <script>
         function onKeyDown(event) {
             if (event.key == "ArrowRight") {
-                button_right = document.getElementById("right");
+                const button_right = document.getElementById("right");
                 button_right.click();
                 event.preventDefault();
             } else if (event.key == "ArrowLeft") {
-                button_left = document.getElementById("left");
+                const button_left = document.getElementById("left");
                 button_left.click();
                 event.preventDefault();
             } else if (event.key == "ArrowUp") {
-                button_up = document.getElementById("up");
+                const button_up = document.getElementById("up");
                 button_up.click();
                 event.preventDefault();
             } else if (event.key == "ArrowDown") {
-                button_down = document.getElementById("down");
+                const button_down = document.getElementById("down");
                 button_down.click();
                 event.preventDefault();
             } else if (event.key == "Backspace") {
-                button_reset = document.getElementById("reset");
+                const button_reset = document.getElementById("reset");
                 button_reset.click();
                 event.preventDefault();
             } else {
                 console.log(event);
             }
         }
-
         document.addEventListener("keydown", onKeyDown);
+
+        function onClick(event) {
+            const x = event.target.dataset.x;
+            const y = event.target.dataset.y;
+            console.log(x, y);
+        }
+        const robot_grid = document.getElementById("robot-grid");
+        robot_grid.addEventListener("click", onClick);
     </script>
 </body>
 </html>

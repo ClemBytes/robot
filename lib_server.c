@@ -100,15 +100,23 @@ void parse_client_request(const char* client_request, size_t data_len, char* met
 }
 
 void generate_html_table(struct string* robot_grid, const int x_max, const int y_max, const int x_coord, const int y_coord) {
+    struct string _td;
+    struct string* td = &_td;
+    string_init(td);
     for (int x = 0; x < x_max + 1; x++) {
-        string_append(robot_grid, "<tr class='tr-robot-grid'>");
+        string_append(robot_grid, "<tr>");
         for (int y = 0; y < y_max + 1; y++) {
             if ((x == x_coord) && (y == y_coord)) {
-                string_append(robot_grid, "<td class='td-robot-grid'><img src='data/robot.png' alt='Robot' class='image-responsive'></td>");
+                string_snprintf(td, "<td data-x='%d' data-y='%d'><img src='data/robot.png' alt='Robot' class='image-responsive'></td>", x, y);
+                string_append(robot_grid, td->start);
+                string_clear(td);
             } else {
-                string_append(robot_grid, "<td class='td-robot-grid'></td>");
+                string_snprintf(td, "<td data-x='%d' data-y='%d'></td>", x, y);
+                string_append(robot_grid, td->start);
+                string_clear(td);
             }
         }
         string_append(robot_grid, "</tr>");
     }
+    string_deinit(td);
 }
