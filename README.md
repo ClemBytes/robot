@@ -1,5 +1,7 @@
 # Robot project
 
+![Preview of robot project](./data/ex_readme.jpg)
+
 ## Where can I see what it does?
 
 On my website here: [robot.clembytes.fr](https://robot.clembytes.fr)
