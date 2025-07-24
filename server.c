@@ -154,8 +154,9 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
             x_coord = 0;
             y_coord = 0;
         }
-        fprintf(stderr, "Coords: x=%d, y=%d\n", x_coord, y_coord);
-        fprintf(stderr, "\nClient's request:\n%s\n", buf);
+        // fprintf(stderr, "Coords: x=%d, y=%d\n", x_coord, y_coord);
+        // fprintf(stderr, "\nClient's request:\n%s\n", buf);
+        fprintf(stderr, "\nClient's request:\n%s %s\n", method, path);
 
         char* content_type;
         string_clear(content);
@@ -223,6 +224,10 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
             // Generate robot grid (HTML table)
             string_clear(robot_grid);
             generate_html_table(robot_grid, x_max, y_max, x_coord, y_coord);
+
+            // Reload HTML template at each request to see the changes
+            // free(p_tem->html_template);
+            // p_tem->html_template = open_and_read("./data/template.html", NULL);
 
             // Create HTML response
             content_type = "text/html";
@@ -327,6 +332,13 @@ int main(void) {
         }
         printf("\n --- NEW CONNEXION RECEIVED, clientfd: %d ---\n", clientfd);
         handle_client(clientfd, client_addr, &tem);
+        
+        // Close client file descriptor
+        int r = close(clientfd);
+        if (r < 0) {
+            perror("close() failed");
+            return 1;
+        }
     }
     
     templates_deinit(&tem);
