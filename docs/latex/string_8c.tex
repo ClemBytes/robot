@@ -1,0 +1,183 @@
+\hypertarget{string_8c}{}\doxysection{string.\+c File Reference}
+\label{string_8c}\index{string.c@{string.c}}
+{\ttfamily \#include \char`\"{}string.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+Include dependency graph for string.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=296pt]{string_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{string_8c_ab8797b39781c717797c07caeba11220b}{string\+\_\+init}} (struct \mbox{\hyperlink{structstring}{string}} $\ast$s)
+\begin{DoxyCompactList}\small\item\em Initializes a string structure with an empty string. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{string_8c_aeadfee23f0ab7ed8d97769cb1e664d1e}{string\+\_\+deinit}} (struct \mbox{\hyperlink{structstring}{string}} $\ast$s)
+\begin{DoxyCompactList}\small\item\em Frees (de-\/initializes) memory used by a string structure. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{string_8c_a0fec54b319794d75d99ae3d9cc63b562}{string\+\_\+clear}} (struct \mbox{\hyperlink{structstring}{string}} $\ast$s)
+\begin{DoxyCompactList}\small\item\em Clears the contents of the string, making it empty. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{string_8c_a593da46260f9d15e91e18935f9b506be}{string\+\_\+len}} (struct \mbox{\hyperlink{structstring}{string}} $\ast$s)
+\begin{DoxyCompactList}\small\item\em Returns the length of the string (excluding the final \textquotesingle{}\textbackslash{}0\textquotesingle{}). \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{string_8c_a45fd3b28b427fba6511f8713a4c3d032}{string\+\_\+print}} (struct \mbox{\hyperlink{structstring}{string}} $\ast$s)
+\begin{DoxyCompactList}\small\item\em Prints the string\textquotesingle{}s content and internal data (pointers and sizes). \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{string_8c_a118dfafb4be2b960c1a510d02e2a6107}{string\+\_\+append\+\_\+with\+\_\+size}} (struct \mbox{\hyperlink{structstring}{string}} $\ast$s, const char $\ast$following, size\+\_\+t len\+\_\+following)
+\begin{DoxyCompactList}\small\item\em Append a const char$\ast$ to the string\textquotesingle{}s content (size of following given). \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{string_8c_a485ed3b77c7f525d87a2ebabf471d3eb}{string\+\_\+append}} (struct \mbox{\hyperlink{structstring}{string}} $\ast$s, const char $\ast$following)
+\begin{DoxyCompactList}\small\item\em Append a const char$\ast$ to the string\textquotesingle{}s content. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{string_8c_aa29b8736af37315e6011f8ab76b7c3cf}{string\+\_\+snprintf}} (struct \mbox{\hyperlink{structstring}{string}} $\ast$s, const char $\ast$format,...)
+\begin{DoxyCompactList}\small\item\em Formats a string and stores the result in a dynamically allocated string struct. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{string_8c_a485ed3b77c7f525d87a2ebabf471d3eb}\label{string_8c_a485ed3b77c7f525d87a2ebabf471d3eb}} 
+\index{string.c@{string.c}!string\_append@{string\_append}}
+\index{string\_append@{string\_append}!string.c@{string.c}}
+\doxysubsubsection{\texorpdfstring{string\_append()}{string\_append()}}
+{\footnotesize\ttfamily void string\+\_\+append (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structstring}{string}} $\ast$}]{s,  }\item[{const char $\ast$}]{following }\end{DoxyParamCaption})}
+
+
+
+Append a const char$\ast$ to the string\textquotesingle{}s content. 
+
+Size of following is computed using strlen!
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & Pointer to the string structure. \\
+\hline
+{\em following} & Pointer to the const char$\ast$ we want to append at the end of our string. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{string_8c_a118dfafb4be2b960c1a510d02e2a6107}\label{string_8c_a118dfafb4be2b960c1a510d02e2a6107}} 
+\index{string.c@{string.c}!string\_append\_with\_size@{string\_append\_with\_size}}
+\index{string\_append\_with\_size@{string\_append\_with\_size}!string.c@{string.c}}
+\doxysubsubsection{\texorpdfstring{string\_append\_with\_size()}{string\_append\_with\_size()}}
+{\footnotesize\ttfamily void string\+\_\+append\+\_\+with\+\_\+size (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structstring}{string}} $\ast$}]{s,  }\item[{const char $\ast$}]{following,  }\item[{size\+\_\+t}]{len\+\_\+following }\end{DoxyParamCaption})}
+
+
+
+Append a const char$\ast$ to the string\textquotesingle{}s content (size of following given). 
+
+Reallocates memory when necessary and keeps used and available sizes up to date.
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & Pointer to the string structure. \\
+\hline
+{\em following} & Pointer to the const char$\ast$ we want to append at the end of our string. \\
+\hline
+{\em len\+\_\+following} & Size of following. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{string_8c_a0fec54b319794d75d99ae3d9cc63b562}\label{string_8c_a0fec54b319794d75d99ae3d9cc63b562}} 
+\index{string.c@{string.c}!string\_clear@{string\_clear}}
+\index{string\_clear@{string\_clear}!string.c@{string.c}}
+\doxysubsubsection{\texorpdfstring{string\_clear()}{string\_clear()}}
+{\footnotesize\ttfamily void string\+\_\+clear (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structstring}{string}} $\ast$}]{s }\end{DoxyParamCaption})}
+
+
+
+Clears the contents of the string, making it empty. 
+
+Sets the first character to the null terminator and resets the used size. Does not free or reallocate memory.
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & Pointer to the string structure to clear. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{string_8c_aeadfee23f0ab7ed8d97769cb1e664d1e}\label{string_8c_aeadfee23f0ab7ed8d97769cb1e664d1e}} 
+\index{string.c@{string.c}!string\_deinit@{string\_deinit}}
+\index{string\_deinit@{string\_deinit}!string.c@{string.c}}
+\doxysubsubsection{\texorpdfstring{string\_deinit()}{string\_deinit()}}
+{\footnotesize\ttfamily void string\+\_\+deinit (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structstring}{string}} $\ast$}]{s }\end{DoxyParamCaption})}
+
+
+
+Frees (de-\/initializes) memory used by a string structure. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & Pointer to the string structure to de-\/initialize. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{string_8c_ab8797b39781c717797c07caeba11220b}\label{string_8c_ab8797b39781c717797c07caeba11220b}} 
+\index{string.c@{string.c}!string\_init@{string\_init}}
+\index{string\_init@{string\_init}!string.c@{string.c}}
+\doxysubsubsection{\texorpdfstring{string\_init()}{string\_init()}}
+{\footnotesize\ttfamily void string\+\_\+init (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structstring}{string}} $\ast$}]{s }\end{DoxyParamCaption})}
+
+
+
+Initializes a string structure with an empty string. 
+
+Allocates memory for a string containing only the null terminator. Sets available and used sizes to 1.
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & Pointer to the string structure to initialize. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{string_8c_a593da46260f9d15e91e18935f9b506be}\label{string_8c_a593da46260f9d15e91e18935f9b506be}} 
+\index{string.c@{string.c}!string\_len@{string\_len}}
+\index{string\_len@{string\_len}!string.c@{string.c}}
+\doxysubsubsection{\texorpdfstring{string\_len()}{string\_len()}}
+{\footnotesize\ttfamily size\+\_\+t string\+\_\+len (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structstring}{string}} $\ast$}]{s }\end{DoxyParamCaption})}
+
+
+
+Returns the length of the string (excluding the final \textquotesingle{}\textbackslash{}0\textquotesingle{}). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & Pointer to the string structure.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The number of characters in the string, excluding the final \textquotesingle{}\textbackslash{}0\textquotesingle{}. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{string_8c_a45fd3b28b427fba6511f8713a4c3d032}\label{string_8c_a45fd3b28b427fba6511f8713a4c3d032}} 
+\index{string.c@{string.c}!string\_print@{string\_print}}
+\index{string\_print@{string\_print}!string.c@{string.c}}
+\doxysubsubsection{\texorpdfstring{string\_print()}{string\_print()}}
+{\footnotesize\ttfamily void string\+\_\+print (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structstring}{string}} $\ast$}]{s }\end{DoxyParamCaption})}
+
+
+
+Prints the string\textquotesingle{}s content and internal data (pointers and sizes). 
+
+Outputs the string, its memory address, used size (including null terminator), and available size to stdout.
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & Pointer to the string structure. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{string_8c_aa29b8736af37315e6011f8ab76b7c3cf}\label{string_8c_aa29b8736af37315e6011f8ab76b7c3cf}} 
+\index{string.c@{string.c}!string\_snprintf@{string\_snprintf}}
+\index{string\_snprintf@{string\_snprintf}!string.c@{string.c}}
+\doxysubsubsection{\texorpdfstring{string\_snprintf()}{string\_snprintf()}}
+{\footnotesize\ttfamily int string\+\_\+snprintf (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structstring}{string}} $\ast$}]{s,  }\item[{const char $\ast$}]{format,  }\item[{}]{... }\end{DoxyParamCaption})}
+
+
+
+Formats a string and stores the result in a dynamically allocated string struct. 
+
+This function formats a string using a {\ttfamily printf}-\/like format string and variadic arguments, allocates memory for the result inside the provided {\ttfamily struct string$\ast$}, and stores the formatted string in it.
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & Pointer to the string structure. \\
+\hline
+{\em format} & The format string (as in {\ttfamily printf}). \\
+\hline
+{\em ...} & Variadic arguments to format into the string.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The number of characters written (excluding the null terminator), or a negative value if an error occurred. 
+\end{DoxyReturn}
