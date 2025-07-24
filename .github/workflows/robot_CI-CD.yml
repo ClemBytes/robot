@@ -33,8 +33,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Install Scaleway
-      run: curl -s https://raw.githubusercontent.com/scaleway/scaleway-cli/master/scripts/get.sh | sh
+    - name: Install Scaleway CLI
+      run: |
+        wget https://github.com/scaleway/scaleway-cli/releases/download/v2.42.0/scaleway-cli_2.42.0_linux_amd64 -O /usr/local/bin/scw
+        chmod +x /usr/local/bin/scw
     - name: Copy scaleway config file
       run: |
         mkdir -p ~/.config/scw
