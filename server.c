@@ -173,6 +173,10 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
             // Request for robot PNG file
             content_type = "image/png";
             string_append_with_size(content, p_tem->robot_png, p_tem->robot_png_size);
+        } else if (strcmp(method, "GET") == 0 && strcmp(path, "/data/robot.js") == 0) {
+            // Request for robot PNG file
+            content_type = "application/javascript";
+            string_append_with_size(content, p_tem->js_script, p_tem->js_script_size);
         } else if (strcmp(method, "GET") == 0 && strcmp(path, "/.well-known/appspecific/com.chrome.devtools.json") == 0) {
             // Google Chrome is to curious…
             content_type = "text/html";

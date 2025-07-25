@@ -9,6 +9,7 @@ void templates_init(struct templates* p_tem) {
     p_tem->html_template = open_and_read("./data/template.html", NULL);
     p_tem->css_template = open_and_read("./data/template.css", &p_tem->css_template_size);
     p_tem->robot_png = open_and_read("./data/robot.png", &p_tem->robot_png_size);
+    p_tem->js_script = open_and_read("./data/robot.js", &p_tem->js_script_size);
 }
 
 void templates_deinit(struct templates* p_tem) {

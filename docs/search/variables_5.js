@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['server_0',['server',['../namespaceintegration__test.html#acf2ec5f76986afb7d0982ee8a1259682',1,'integration_test']]],
-  ['start_1',['start',['../structstring.html#af5a7f431c860d58f8dfced6878ee8660',1,'string']]]
+  ['robot_5fgrid_0',['robot_grid',['../robot_8js.html#a70ea461a521d1ba77a9f27e36a615057',1,'robot.js']]],
+  ['robot_5fpng_1',['robot_png',['../structtemplates.html#a6f3a2eb8e563195a8f7c21dee975220e',1,'templates']]],
+  ['robot_5fpng_5fsize_2',['robot_png_size',['../structtemplates.html#ad865bc924bb48c23a3d18593163a0d94',1,'templates']]]
 ];

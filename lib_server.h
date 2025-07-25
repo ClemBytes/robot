@@ -13,6 +13,8 @@
  * - css_template: pointer to the css template text.
  * - robot_png_size: size of the robot PNG file.
  * - robot_png: pointer to the robot PNG file binary.
+ * - js_script_size: size of the JavaScript file.
+ * - js_script: pointer to the JavaScript text.
  */
 struct templates {
     char* favicon_data;
@@ -21,6 +23,8 @@ struct templates {
     char* css_template;
     size_t robot_png_size;
     char* robot_png;
+    size_t js_script_size;
+    char* js_script;
 };
 
 /**

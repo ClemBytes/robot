@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['main_0',['main',['../namespaceintegration__test.html#a95a3224fa2493b743068ffaa4cb6a68d',1,'integration_test.main()'],['../server_8c.html#a840291bc02cba5474a4cb46a9b9566fe',1,'main(void):&#160;server.c'],['../test_8c.html#a840291bc02cba5474a4cb46a9b9566fe',1,'main(void):&#160;test.c']]]
+  ['handle_5fclient_0',['handle_client',['../server_8c.html#a679b3c257edc78213596828b027b05d6',1,'server.c']]]
 ];

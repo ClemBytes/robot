@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['handle_5fclient_0',['handle_client',['../server_8c.html#a679b3c257edc78213596828b027b05d6',1,'server.c']]]
+  ['generate_5fhtml_5ftable_0',['generate_html_table',['../lib__server_8h.html#ab429e46461d7a56f9644c07db5609430',1,'lib_server.h']]]
 ];

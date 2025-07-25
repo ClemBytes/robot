@@ -173,17 +173,19 @@ def main():
     """
     Integration tests.
     With previously opened server:
-    - TEST 1: ask for CSS template and check if matches the saved one.
-    - TEST 2: ask for PNG robot image and check if matches the saved one.
+    - TEST 1: ask for CSS template, PNG robot image, JS script and check if
+              matches the saved ones.
+    - TEST 2: ask for random requests.
     - TEST 3: tries many moves sequences.
 
     Returns:
         (boolean): True if all tests passed, otherwise False.
     """
     print("------------------------------------------------------------------")
-    print("TEST 1 : CSS template")
-    print("---------------------")
-    flag1 = True
+    print("TEST 1 : templates")
+    print("------------------")
+    # CSS template
+    flag11 = True
     r_css = requests.get('http://127.0.0.0:8000/data/template.css')
 
     with open("data/template.css", "r") as f:
@@ -191,29 +193,28 @@ def main():
     
     if r_css.status_code != requests.codes.ok:
         print(f"Bad status code: {r_css.status_code}")
-        flag1 = False
+        flag11 = False
 
     if not check_diff(r_css.text, expected_css):
         print("Problem with CSS file")
-        flag1 = False
+        flag11 = False
 
     ct = r_css.headers["Content-Type"]
     if ct != "text/css":
         print(f"Wrong Content-Type: {ct} (received) != text/css (expected)")
-        flag1 = False
+        flag11 = False
 
     cl = int(r_css.headers["Content-Length"])
     lecss = len(expected_css)
     if cl != lecss:
         print(f"Wrong Content-Length: {cl} (received) != {lecss} (expected)")
-        flag1 = False
+        flag11 = False
 
-    if flag1:
-        print("OK!")
-    print("------------------------------------------------------------------")
-    print("TEST 2 : robot PNG image")
-    print("------------------------")
-    flag2 = True
+    if flag11:
+        print("> CSS template OK!")
+    
+    # Robot PNG image
+    flag12 = True
     r_png = requests.get('http://127.0.0.0:8000/data/robot.png')
 
     with open("data/robot.png", "rb") as f:
@@ -221,28 +222,81 @@ def main():
 
     if r_png.status_code != requests.codes.ok:
         print(f"Bad status code: {r_png.status_code}")
-        flag2 = False
+        flag12 = False
     
     if not check_diff(r_png.content, expected_robot_png):
         print("Problem with robot PNG file")
-        flag2 = False
+        flag12 = False
 
     ct = r_png.headers["Content-Type"]
     if ct != "image/png":
         print(f"Wrong Content-Type: {ct} (received) != image/png (expected)")
-        flag2 = False
+        flag12 = False
 
     cl = int(r_png.headers["Content-Length"])
     lecss = len(expected_robot_png)
     if cl != lecss:
         print(f"Wrong Content-Length: {cl} (received) != {lecss} (expected)")
+        flag12 = False
+
+    if flag12:
+        print("> Robot PNG image OK!")
+
+    # JS script
+    flag13 = True
+    r_js = requests.get('http://127.0.0.0:8000/data/robot.js')
+
+    with open("data/robot.js", "rb") as f:
+        expected_js = f.read()
+
+    if r_js.status_code != requests.codes.ok:
+        print(f"Bad status code: {r_js.status_code}")
+        flag13 = False
+    
+    if not check_diff(r_js.content, expected_js):
+        print("Problem with JavaScript file")
+        flag13 = False
+
+    ct = r_js.headers["Content-Type"]
+    if ct != "application/javascript":
+        print(f"Wrong Content-Type: {ct} (received) != application/javascript (expected)")
+        flag13 = False
+
+    cl = int(r_js.headers["Content-Length"])
+    lecss = len(expected_js)
+    if cl != lecss:
+        print(f"Wrong Content-Length: {cl} (received) != {lecss} (expected)")
+        flag13 = False
+
+    if flag13:
+        print("> JS script OK!")
+
+    flag1 = flag11 and flag12 and flag13
+    if flag1:
+        print("OK!")
+    print("------------------------------------------------------------------")
+
+    print("------------------------------------------------------------------")
+    print("TEST 2 : Random requests")
+    print("------------------------")
+    flag2 = True
+    r_rand = requests.get('http://127.0.0.0:8000/.well-known/appspecific/com.chrome.devtools.json')
+    
+    if r_rand.status_code != requests.codes.ok:
+        print(f"Bad status code: {r_rand.status_code}")
+        flag2 = False
+
+    ct = r_rand.headers["Content-Type"]
+    if ct != "text/html":
+        print(f"Wrong Content-Type: {ct} (received) != text/html (expected)")
         flag2 = False
 
     if flag2:
         print("OK!")
+    
+    # TODO: add unknown requests
+    print("------------------------------------------------------------------")
 
-    # send request requests.get('http://127.0.0.0:8000/.well-known/appspecific/com.chrome.devtools.json')
-    # add unknown requests
     print("------------------------------------------------------------------")
     print("TEST 3 : moving!")
     print("----------------")
