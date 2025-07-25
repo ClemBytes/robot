@@ -1,9 +1,16 @@
 body {
   background-color: #6e6a86;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 p, h1, h2 {
   color: #faf4ed;
+}
+
+h1 {
+  font-size: 1.7rem;
 }
 
 #robot-grid {
@@ -14,13 +21,9 @@ p, h1, h2 {
   border-spacing: 5px; /* Adds spacing between table cells */
 }
 
-.button-grid {
-    display: grid;
-    grid-template-areas:
-        "up up"
-        "left right"
-        "down down";
-    gap: 10px; /* Space between buttons */
+#button-grid {
+  padding: 0px; /* Adds space inside the table's border */
+  border-spacing: 0px; /* Adds spacing between table cells */
 }
 
 .image-responsive {
@@ -56,13 +59,13 @@ button:hover {
 
 button {
   width: 100px;
-  padding: 10px; /* Adds space inside the button */
-  margin: 5px; /* Adds space outside the button */
+  padding: 8px; /* Adds space inside the button */
+  margin: 2px; /* Adds space outside the button */
   border: 2px outset #b4637a; /* Adds a solid border around the button */
   border-radius: 8px; /* Rounds the button's corners */
   background-color: #ebbcba; /* Sets the button's background color */
   color: #575279; /* Sets the button's text color */
-  font-size: 16px; /* Sets the size of the button's text */
+  font-size: 14px; /* Sets the size of the button's text */
   font-weight: bold; /* Makes the button's text bold */
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Adds a shadow to the button */
   cursor: pointer; /* Changes the cursor to a pointer on hover */
