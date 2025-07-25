@@ -7,3 +7,5 @@ server
 test
 string
 *.o
+# Ignore .vscode
+.vscode
