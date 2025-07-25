@@ -9,17 +9,26 @@
 
 #include "lib_server.h"
 
+/**
+ * @brief Reading client's buffer at given position.
+ * 
+ * Reading of client buffer into buf at position data_len (data_len is the
+ * size of already written data) for as many characters as possible (to fill
+ * the buffer buf or to read everything).
+ * 
+ * Performs realloc when receiving buffer is full (double size).
+ * 
+ * @param clientfd Client's file descriptor.
+ * @param p_buf Pointer to beginning of the receiving buffer.
+ * @param p_data_len Pointer to the size of already written data.
+ * @param p_buf_size Pointer to the maximum size of the receiving buffer.
+ * 
+ * @return Integer:
+ *          0: client disconnected
+ *         -1: fail
+ *          n: read response, number of characters read
+ */
 ssize_t read_client(int clientfd, char** p_buf, size_t* p_data_len, size_t* p_buf_size) {
-    /*
-    Reading of client buffer into buf at position data_len (data_len is the
-    size of already written data) for as many characters as possible (to fill
-    the buffer buf or to read everything).
-
-    Returns an int:
-        0: client disconnected
-        -1: fail
-        n: read response, number of characters read
-    */
     ssize_t n = read(clientfd, *p_buf + *p_data_len, *p_buf_size - *p_data_len);
     if (n == 0) {
         printf("Client %d disconnected\n", clientfd);
@@ -44,6 +53,13 @@ ssize_t read_client(int clientfd, char** p_buf, size_t* p_data_len, size_t* p_bu
     return n;
 }
 
+/**
+ * @brief Handles a given client.
+ * 
+ * @param clientfd Client's file descriptor.
+ * @param client_addr Client's address.
+ * @param p_tem Pointer to the structure containing all template data.
+ */
 void handle_client(int clientfd, struct sockaddr_in client_addr, struct templates* p_tem) {
     // Get client IP address in '0.0.0.0' format for printing
     char client_ip_address[16];
@@ -275,6 +291,21 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
 }
 
 
+/**
+ * @brief Creates server and accept clients' connexions.
+ * 
+ * - Creates a socket and get its file descriptor.
+ * - Define IP address and port.
+ * - Attaches socket to the previously defined address and port.
+ * - Marks the socket as ready to receive entry connexions.
+ * - Reads all necessary templates files.
+ * - Get clients connexion address.
+ * - Calls handle_client().
+ * - Closes client's file descriptor.
+ * 
+ * See https://clembytes.fr/2025/07/17/robot-episode-1-create-a-server-in-c/
+ * for details.
+ */
 int main(void) {
     /*
     Create a socket and get its file descriptor.
