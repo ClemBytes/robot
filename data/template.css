@@ -27,8 +27,8 @@ h1 {
 }
 
 .image-responsive {
-    width: 100%; /* Image takes 100% of container space */
-    height: auto; /* keeps proportions */
+  width: 90px; /* Image width is 90px */
+  height: auto; /* keeps proportions */
 }
 
 td {
