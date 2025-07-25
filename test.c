@@ -5,6 +5,12 @@
 #include "base64.h"
 #include "lib_server.h"
 
+/**
+ * @brief Tests one exemple of base64.
+ * 
+ * @param input Pointer to the input buffer to encode.
+ * @param expected Pointer to the encoded result for comparison.
+ */
 void test_base64_case(const char* input, const char* expected) {
     char res[100];
     size_t n = base64_str(input, res, sizeof res);
@@ -20,6 +26,12 @@ void test_base64_case(const char* input, const char* expected) {
     }
 }
 
+/**
+ * @brief Performs base64 implementation tests.
+ * 
+ * Class test_base64_case(). 
+ * Exemples are from https://en.wikipedia.org/wiki/Base64.
+ */
 void test_base64(void) {
     printf("-----------------------------------\n");
     printf("Tests BASE64:\n");
@@ -40,6 +52,9 @@ void test_base64(void) {
     printf("-----------------------------------\n");
 }
 
+/**
+ * @brief Performs string structure implementation tests.
+ */
 void test_string(void) {
     printf("-----------------------------------\n");
     printf("Tests STRING:\n");
@@ -100,6 +115,9 @@ void test_string(void) {
     printf("-----------------------------------\n");
 }
 
+/**
+ * @brief Performs string_snprintf() implementation tests.
+ */
 void test_string_snprintf(void) {
     printf("-----------------------------------\n");
     printf("Tests STRING SNPRINTF:\n");
@@ -242,6 +260,9 @@ void test_string_snprintf(void) {
     printf("-----------------------------------\n");
 }
 
+/**
+ * @brief Performs parse_client_request() implementation tests.
+ */
 void test_parse_client_request(void) {
     printf("-----------------------------------\n");
     printf("Tests PARSE REQUEST:\n");
@@ -541,6 +562,14 @@ void test_parse_client_request(void) {
 
 }
 
+/**
+ * @brief Launches unitary tests.
+ * 
+ * - Calls test_base64();
+ * - Calls test_string();
+ * - Calls test_string_snprintf();
+ * - Calls test_parse_client_request();
+ */
 int main(void) {
     test_base64();
     test_string();
