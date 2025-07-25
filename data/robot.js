@@ -50,3 +50,15 @@ function onClick(event) {
 }
 const robot_grid = document.getElementById("robot-grid");
 robot_grid.addEventListener("click", onClick);
+
+/**
+ * @brief TESTS
+ */
+function readCookies() {
+    const cookies_array = document.cookie.split("; ");
+    x = cookies_array.find((row) => row.startsWith("x=")).split("=")[1];
+    x = cookies_array.find((row) => row.startsWith("y=")).split("=")[1];
+    console.log("x: " + x);
+    console.log("y: " + y);
+}
+fetch("/right", { method: "POST" }).then(readCookies);
