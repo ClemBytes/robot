@@ -223,7 +223,7 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
                 }
             }
 
-            int d = string_snprintf(cookie, "Set-Cookie: x=%d\r\nSet-Cookie: y=%d\r\n", x_coord, y_coord);
+            int d = string_snprintf(cookie, "Set-Cookie: x=%d; Path=/\r\nSet-Cookie: y=%d; Path=/\r\n", x_coord, y_coord);
             if (d < 0) {
                 break;
             }
