@@ -81,9 +81,11 @@
         document.addEventListener("keydown", onKeyDown);
 
         function onClick(event) {
-            const x = event.target.dataset.x;
-            const y = event.target.dataset.y;
-            document.location = "/coords/" + x + "/" + y;
+            if (event.target.localName == "td") {
+                const x = event.target.dataset.x;
+                const y = event.target.dataset.y;
+                document.location = "/coords/" + x + "/" + y;
+            }
         }
         const robot_grid = document.getElementById("robot-grid");
         robot_grid.addEventListener("click", onClick);

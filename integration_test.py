@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+import re
 import requests
 import sys
 import subprocess
@@ -90,6 +91,7 @@ def final_position(moves, x_max = 4, y_max = 4):
             - 'down'
             - 'left'
             - 'right'
+            - 'coords/x/y' with x and y as integers
         x_max (int): Value max for x (so number of lines in the grid - 1).
         y_max (int): Value max for y (so number of columns in the grid - 1).
     
@@ -122,6 +124,10 @@ def final_position(moves, x_max = 4, y_max = 4):
             y += 1
             if y == y_max + 1:
                 y = 0
+        elif re.search("coords/[0-9]+/[0-9]+", m):
+            l = re.split("coords/([0-9]+)/([0-9]+)", m)
+            x = int(l[1])
+            y = int(l[2])
         else:
             raise ValueError(f"Unknown move: {m}")
     return x, y
@@ -141,14 +147,18 @@ def test_moves(moves):
             - 'down'
             - 'left'
             - 'right'
-    
+            - 'coords/x/y' with x and y as integers
+
     Returns:
         (boolean): True if last position matches the expected one.
     """
     expected_x, expected_y = final_position(moves)
     session = requests.Session()
     for m in moves:
-        r = session.post("http://127.0.0.0:8000/" + m)
+        if re.search("coords", m):
+            r = session.get("http://127.0.0.0:8000/" + m)
+        else:
+            r = session.post("http://127.0.0.0:8000/" + m)
     final_x, final_y = find_image_in_grid(find_robot_grid(r))
     if (final_x != expected_x) or (final_y != expected_y):
         print("Final position doesn't match expected position!")
@@ -260,7 +270,25 @@ def main():
         ["reset", "up", "up", "up", "up", "up", "right", "right", "right", "right", "right",
         "down", "down", "down", "down", "down", "left", "left", "left", "left", "left",
         "up", "up", "up", "up", "up", "right", "right", "right", "right", "right",
-        "down", "down", "down", "down", "down", "left", "left", "left", "left", "left"] # Edge surfing (go around the grid in a square pattern twice)
+        "down", "down", "down", "down", "down", "left", "left", "left", "left", "left"], # Edge surfing (go around the grid in a square pattern twice)
+        ["reset", "coords/2/3"],  # Simple click move
+        ["reset", "coords/2/3", "up", "left"],  # Click then move
+        ["reset", "up", "right", "coords/0/0"],  # Move then click back to origin
+        ["reset", "coords/1/1", "coords/1/1"],  # Click same spot twice (should stay)
+        ["reset", "coords/3/3", "coords/0/0", "coords/2/2"],  # Multiple clicks
+        ["reset", "coords/4/4", "left", "left", "coords/3/1"],  # Click then move then click
+        ["reset", "coords/2/2", "down", "right", "coords/1/1", "left", "coords/0/0"],  # Mixed path
+        ["reset", "coords/0/1", "coords/1/1", "coords/1/0", "coords/0/0"],  # Clockwise around center
+        ["reset", "coords/4/4", "coords/4/0", "coords/0/0"],  # Wrap-around via clicks
+        ["reset", "coords/2/2", "reset", "coords/3/3"],  # Reset between clicks
+        ["reset", "coords/0/0", "coords/0/0", "coords/0/0", "right", "right",
+         "right", "right", "right", "coords/5/0", "down", "down", "down",
+         "coords/5/3", "coords/5/3", "left", "left", "up", "reset",
+         "coords/2/2", "right", "coords/3/2", "down", "coords/3/3", "reset",
+         "coords/1/1", "right", "right", "down", "down", "left", "up",
+         "coords/2/2", "coords/2/2", "coords/2/2", "reset", "right", "right",
+         "right", "right", "down", "down", "coords/4/2", "up", "left", "left",
+         "coords/2/1",] # ALL
     ]
 
     flag3 = True
