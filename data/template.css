@@ -42,7 +42,7 @@ td {
   transition: background-color 0.2s ease, border 0.2s ease, transform 0.2s ease; /* Adds smooth transitions for hover effects */
 }
 
-#robot-grid tr:hover, #robot-grid td:hover {
+#robot-grid td:hover {
   transform: scale(1.1); /* Slightly enlarges the hovered cell */
   background-color: #56949f; /* Sets the background color of the hovered cell */
 }
