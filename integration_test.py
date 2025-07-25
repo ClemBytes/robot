@@ -43,7 +43,7 @@ def find_robot_grid(r):
         table (list): table as a list of lists.
     """
     soup = BeautifulSoup(r.text, "html.parser")
-    table_text = soup.find("table", class_="robot-grid")
+    table_text = soup.find("table", id="robot-grid")
     table = []
     for line in table_text.find_all("tr"):
         l = []
