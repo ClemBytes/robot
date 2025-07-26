@@ -4,7 +4,7 @@
  */
 
 /**
- * Handle keydown events for moving robot.
+ * @brief Handle keydown events for moving robot.
  * 
  * @param {KeyboardEvent} event - The keydown event.
  */
@@ -30,7 +30,7 @@ function onKeyDown(event) {
 document.addEventListener("keydown", onKeyDown);
 
 /**
- * Handle click events (on grid or buttons).
+ * @brief Handle click events (on grid or buttons).
  * 
  * @param {MouseEvent} event - The click event.
  */
