@@ -95,9 +95,9 @@ function readCookies() {
  */
 function generateGrid(x_coord, y_coord, x_max=5, y_max=5) {
     let grid = "";
-    for (let x=0; x<x_max; x++) {
+    for (let x = 0; x < x_max; x++) {
         grid += "<tr>";
-        for (y=0; y<y_max; y++) {
+        for (let y = 0; y < y_max; y++) {
             if (x == x_coord && y == y_coord) {
                 grid += `<td data-x='${x}' data-y='${y}'><img src='/data/robot.png' alt='Robot' class='image-responsive'></td>`;
             } else {
