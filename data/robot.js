@@ -119,6 +119,12 @@ function generateGrid(x_coord, y_coord, x_max=5, y_max=5) {
     document.getElementById("robot-grid").innerHTML = grid;
 }
 
+/**
+ * @brief Updates coordinates written on top of page.
+ * 
+ * @param {int} x_coord Robot's x coordinate.
+ * @param {int} y_coord Robot's y coordinate.
+ */
 function updateCoords(x_coord, y_coord) {
     document.getElementById("coords").outerHTML = `<p id="coords">Current coordinates: (${x_coord}, ${y_coord})</p>`;
 }
