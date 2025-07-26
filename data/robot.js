@@ -4,7 +4,7 @@
  */
 
 /**
- * Handle keydown events to simulate button clicks.
+ * Handle keydown events for moving robot.
  * 
  * @param {KeyboardEvent} event - The keydown event.
  */
@@ -32,7 +32,7 @@ document.addEventListener("keydown", onKeyDown);
 
 /**
  * Handle click events on the grid.
- * Redirects to the corresponding cell coordinates.
+ * Teleports robot to the corresponding cell coordinates.
  * 
  * @param {MouseEvent} event - The click event.
  */
@@ -40,7 +40,7 @@ function onClick(event) {
     if (event.target.localName == "td") {
         const x = event.target.dataset.x;
         const y = event.target.dataset.y;
-        document.location = "/coords/" + x + "/" + y;
+        fetch(`/coords/${x}/${y}`, { method: "GET" }).then(replaceGrid);
     }
 }
 const robot_grid = document.getElementById("robot-grid");
