@@ -24,7 +24,7 @@ function onKeyDown(event) {
         console.log(event);
         return;
     }
-    promise.then(replaceGrid);
+    promise.then(replaceGrid).catch(() => { alert("Could not reach server!"); });
     event.preventDefault();
 }
 document.addEventListener("keydown", onKeyDown);
@@ -54,7 +54,7 @@ function onClick(event) {
         console.log(event);
         return;
     }
-    promise.then(replaceGrid);
+    promise.then(replaceGrid).catch(() => { alert("Could not reach server!"); });
     event.preventDefault();
 }
 const robot_grid = document.getElementById("robot-grid");
