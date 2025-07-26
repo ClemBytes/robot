@@ -53,6 +53,33 @@ ssize_t read_client(int clientfd, char** p_buf, size_t* p_data_len, size_t* p_bu
     return n;
 }
 
+char* generate_content(int x_coord, int y_coord, int x_max, int y_max,
+    struct string* content, struct string* robot_grid, struct string* cookie,
+    struct templates* p_tem) {
+    int d = string_snprintf(
+        cookie,
+        "Set-Cookie: x=%d; Path=/\r\nSet-Cookie: y=%d; Path=/\r\n",
+        x_coord, y_coord
+    );
+    if (d < 0) {
+        return "text/html";
+    }
+
+    // Generate robot grid (HTML table)
+    string_clear(robot_grid);
+    generate_html_table(robot_grid, x_max, y_max, x_coord, y_coord);
+
+    // Create HTML response
+    d = string_snprintf(
+        content, p_tem->html_template, p_tem->favicon_data,
+        x_coord, y_coord, robot_grid->start
+    );
+    if (d < 0) {
+        return "text/html";
+    }
+    return "text/html";
+}
+
 /**
  * @brief Handles a given client.
  * 
@@ -170,6 +197,9 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
             x_coord = 0;
             y_coord = 0;
         }
+        // Declare grid size
+        int x_max = 4;
+        int y_max = 4;
         // fprintf(stderr, "Coords: x=%d, y=%d\n", x_coord, y_coord);
         // fprintf(stderr, "\nClient's request:\n%s\n", buf);
         fprintf(stderr, "\nClient's request:\n%s %s\n", method, path);
@@ -197,71 +227,64 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
             // Google Chrome is to curious…
             content_type = "text/html";
             // Do nothing
-        } else {
-            // Other requests
-            // Update coordinates
-            int x_max = 4;
-            int y_max = 4;
-            if (strcmp(method, "POST") == 0 && strcmp(path, "/down") == 0) {
-                if (x_coord == x_max) {
-                    x_coord = 0;
-                } else {
-                    x_coord++;
-                }
-            } else if (strcmp(method, "POST") == 0 && strcmp(path, "/up") == 0) {
-                if (x_coord == 0) {
-                    x_coord = x_max;
-                } else {
-                    x_coord--;
-                }
-            } else if (strcmp(method, "POST") == 0 && strcmp(path, "/right") == 0) {
-                if (y_coord == y_max) {
-                    y_coord = 0;
-                } else {
-                    y_coord++;
-                }
-            } else if (strcmp(method, "POST") == 0 && strcmp(path, "/reset") == 0) {
+        } else if (strcmp(method, "POST") == 0 && strcmp(path, "/down") == 0) {
+            if (x_coord == x_max) {
                 x_coord = 0;
-                y_coord = 0;
-            } else if (strcmp(method, "POST") == 0 && strcmp(path, "/left") == 0) {
-                if (y_coord == 0) {
-                    y_coord = y_max;
-                } else {
-                    y_coord--;
-                }
-            } else if (strcmp(method, "GET") == 0 && strcmp(path, "/") == 0) {
-                // Request for head page
-                // Do nothing
-                fprintf(stderr, "Request main page!\n");
             } else {
-                if (strcmp(method, "GET") == 0 && sscanf(path, "/coords/%d/%d", &cx, &cy) == 2) {
-                    x_coord = cx;
-                    y_coord = cy;
-                } else {
-                    fprintf(stderr, "Invalid request!\n");
-                    continue;
-                }
+                x_coord++;
             }
-
-            int d = string_snprintf(cookie, "Set-Cookie: x=%d; Path=/\r\nSet-Cookie: y=%d; Path=/\r\n", x_coord, y_coord);
-            if (d < 0) {
-                break;
+            content_type = generate_content(
+                x_coord, y_coord, x_max, y_max, content, robot_grid, cookie,
+                p_tem);
+        } else if (strcmp(method, "POST") == 0 && strcmp(path, "/up") == 0) {
+            if (x_coord == 0) {
+                x_coord = x_max;
+            } else {
+                x_coord--;
             }
-
-            // Generate robot grid (HTML table)
-            string_clear(robot_grid);
-            generate_html_table(robot_grid, x_max, y_max, x_coord, y_coord);
-
-            // Reload HTML template at each request to see the changes
-            // free(p_tem->html_template);
-            // p_tem->html_template = open_and_read("./data/template.html", NULL);
-
-            // Create HTML response
-            content_type = "text/html";
-            d = string_snprintf(content, p_tem->html_template, p_tem->favicon_data, x_coord, y_coord, robot_grid->start);
-            if (d < 0) {
-                break;
+            content_type = generate_content(
+                x_coord, y_coord, x_max, y_max, content, robot_grid, cookie,
+                p_tem);
+        } else if (strcmp(method, "POST") == 0 && strcmp(path, "/right") == 0) {
+            if (y_coord == y_max) {
+                y_coord = 0;
+            } else {
+                y_coord++;
             }
+            content_type = generate_content(
+                x_coord, y_coord, x_max, y_max, content, robot_grid, cookie,
+                p_tem);
+        } else if (strcmp(method, "POST") == 0 && strcmp(path, "/reset") == 0) {
+            x_coord = 0;
+            y_coord = 0;
+            content_type = generate_content(
+                x_coord, y_coord, x_max, y_max, content, robot_grid, cookie,
+                p_tem);
+        } else if (strcmp(method, "POST") == 0 && strcmp(path, "/left") == 0) {
+            if (y_coord == 0) {
+                y_coord = y_max;
+            } else {
+                y_coord--;
+            }
+            content_type = generate_content(
+                x_coord, y_coord, x_max, y_max, content, robot_grid, cookie,
+                p_tem);
+        } else if (strcmp(method, "GET") == 0 && strcmp(path, "/") == 0) {
+            // Request for head page
+            // Do nothing
+            fprintf(stderr, "Request main page!\n");
+            content_type = generate_content(
+                x_coord, y_coord, x_max, y_max, content, robot_grid, cookie,
+                p_tem);
+        } else if (strcmp(method, "GET") == 0 && sscanf(path, "/coords/%d/%d", &cx, &cy) == 2) {
+            x_coord = cx;
+            y_coord = cy;
+            content_type = generate_content(
+                x_coord, y_coord, x_max, y_max, content, robot_grid, cookie,
+                p_tem);
+        } else {
+            fprintf(stderr, "Invalid request!\n");
+            continue;
         }
 
         // Create header for response
