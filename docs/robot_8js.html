@@ -103,6 +103,15 @@ Functions</h2></td></tr>
 <tr class="memitem:a520791e32d9755fa4d880b2a5c77d302"><td class="memItemLeft" align="right" valign="top">function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="robot_8js.html#a520791e32d9755fa4d880b2a5c77d302">onClick</a> (event)</td></tr>
 <tr class="memdesc:a520791e32d9755fa4d880b2a5c77d302"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle click events on the grid.  <a href="robot_8js.html#a520791e32d9755fa4d880b2a5c77d302">More...</a><br /></td></tr>
 <tr class="separator:a520791e32d9755fa4d880b2a5c77d302"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84b7b73cbfb3cd60798048543ecee2fe"><td class="memItemLeft" align="right" valign="top">function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="robot_8js.html#a84b7b73cbfb3cd60798048543ecee2fe">readCookies</a> ()</td></tr>
+<tr class="memdesc:a84b7b73cbfb3cd60798048543ecee2fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads cookies of document.  <a href="robot_8js.html#a84b7b73cbfb3cd60798048543ecee2fe">More...</a><br /></td></tr>
+<tr class="separator:a84b7b73cbfb3cd60798048543ecee2fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70c1e7364b5890a113e77f59e1d05cbf"><td class="memItemLeft" align="right" valign="top">function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="robot_8js.html#a70c1e7364b5890a113e77f59e1d05cbf">generateGrid</a> (x_coord, y_coord, x_max=5, y_max=5)</td></tr>
+<tr class="memdesc:a70c1e7364b5890a113e77f59e1d05cbf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate grid given robot's coordinate and size of grid.  <a href="robot_8js.html#a70c1e7364b5890a113e77f59e1d05cbf">More...</a><br /></td></tr>
+<tr class="separator:a70c1e7364b5890a113e77f59e1d05cbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada17b6c77df82866ad516504a4a155ac"><td class="memItemLeft" align="right" valign="top">function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="robot_8js.html#ada17b6c77df82866ad516504a4a155ac">replaceGrid</a> ()</td></tr>
+<tr class="memdesc:ada17b6c77df82866ad516504a4a155ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace grid by newly generated one (with new robot's coordinates).  <a href="robot_8js.html#ada17b6c77df82866ad516504a4a155ac">More...</a><br /></td></tr>
+<tr class="separator:ada17b6c77df82866ad516504a4a155ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
@@ -137,6 +146,57 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a70c1e7364b5890a113e77f59e1d05cbf" name="a70c1e7364b5890a113e77f59e1d05cbf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a70c1e7364b5890a113e77f59e1d05cbf">&#9670;&nbsp;</a></span>generateGrid()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">function generateGrid </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>x_coord</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>y_coord</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>x_max</em> = <code>5</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>y_max</em> = <code>5</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Generate grid given robot's coordinate and size of grid. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">{int}</td><td>x_coord Robot's x coordinate. </td></tr>
+    <tr><td class="paramname">{int}</td><td>y_coord Robot's y coordinate. </td></tr>
+    <tr><td class="paramname">{int}</td><td>x_max Value max for x (so number of lines in the grid - 1). </td></tr>
+    <tr><td class="paramname">{int}</td><td>y_max Value max for y (so number of columns in the grid - 1). </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -190,6 +250,44 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a84b7b73cbfb3cd60798048543ecee2fe" name="a84b7b73cbfb3cd60798048543ecee2fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a84b7b73cbfb3cd60798048543ecee2fe">&#9670;&nbsp;</a></span>readCookies()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">function readCookies </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reads cookies of document. </p>
+
+</div>
+</div>
+<a id="ada17b6c77df82866ad516504a4a155ac" name="ada17b6c77df82866ad516504a4a155ac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada17b6c77df82866ad516504a4a155ac">&#9670;&nbsp;</a></span>replaceGrid()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">function replaceGrid </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replace grid by newly generated one (with new robot's coordinates). </p>
 
 </div>
 </div>
