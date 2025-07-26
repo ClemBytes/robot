@@ -8,24 +8,27 @@
  * 
  * @param {KeyboardEvent} event - The keydown event.
  */
-function onKeyDown(event) {
-    let promise;
-    if (event.key == "ArrowRight") {
-        promise = fetch("/right", { method: "POST" });
-    } else if (event.key == "ArrowLeft") {
-        promise = fetch("/left", { method: "POST" });
-    } else if (event.key == "ArrowUp") {
-        promise = fetch("/up", { method: "POST" });
-    } else if (event.key == "ArrowDown") {
-        promise = fetch("/down", { method: "POST" });
-    } else if (event.key == "Backspace") {
-        promise = fetch("/reset", { method: "POST" });
-    } else {
-        console.log(event);
-        return;
-    }
-    promise.then(replaceGrid).catch(() => { alert("Could not reach server!"); });
+async function onKeyDown(event) {
     event.preventDefault();
+    try {
+        if (event.key == "ArrowRight") {
+            await fetch("/right", { method: "POST" });
+        } else if (event.key == "ArrowLeft") {
+            await fetch("/left", { method: "POST" });
+        } else if (event.key == "ArrowUp") {
+            await fetch("/up", { method: "POST" });
+        } else if (event.key == "ArrowDown") {
+            await fetch("/down", { method: "POST" });
+        } else if (event.key == "Backspace") {
+            await fetch("/reset", { method: "POST" });
+        } else {
+            console.log(event);
+            return;
+        }
+        replaceGrid();
+    } catch {
+        alert("Could not reach server!");
+    }
 }
 document.addEventListener("keydown", onKeyDown);
 
@@ -34,28 +37,31 @@ document.addEventListener("keydown", onKeyDown);
  * 
  * @param {MouseEvent} event - The click event.
  */
-function onClick(event) {
-    let promise;
-    if (event.target.localName == "td") {
-        const x = event.target.dataset.x;
-        const y = event.target.dataset.y;
-        promise = fetch(`/coords/${x}/${y}`, { method: "GET" });
-    } else if (event.target.id == "up") {
-        promise = fetch("/up", { method: "POST" });
-    } else if (event.target.id == "down") {
-        promise = fetch("/down", { method: "POST" });
-    } else if (event.target.id == "right") {
-        promise = fetch("/right", { method: "POST" });
-    } else if (event.target.id == "left") {
-        promise = fetch("/left", { method: "POST" });
-    } else if (event.target.id == "reset") {
-        promise = fetch("/reset", { method: "POST" });
-    } else {
-        console.log(event);
-        return;
-    }
-    promise.then(replaceGrid).catch(() => { alert("Could not reach server!"); });
+async function onClick(event) {
     event.preventDefault();
+    try {
+        if (event.target.localName == "td") {
+            const x = event.target.dataset.x;
+            const y = event.target.dataset.y;
+            await fetch(`/coords/${x}/${y}`, { method: "GET" });
+        } else if (event.target.id == "up") {
+            await fetch("/up", { method: "POST" });
+        } else if (event.target.id == "down") {
+            await fetch("/down", { method: "POST" });
+        } else if (event.target.id == "right") {
+            await fetch("/right", { method: "POST" });
+        } else if (event.target.id == "left") {
+            await fetch("/left", { method: "POST" });
+        } else if (event.target.id == "reset") {
+            await fetch("/reset", { method: "POST" });
+        } else {
+            console.log(event);
+            return;
+        }
+        replaceGrid();
+    } catch {
+        alert("Could not reach server!");
+    }
 }
 const robot_grid = document.getElementById("robot-grid");
 robot_grid.addEventListener("click", onClick);
@@ -116,76 +122,3 @@ function replaceGrid() {
     const [x_coord, y_coord] = readCookies();
     generateGrid(x_coord, y_coord);
 }
-
-
-
-
-function fetchRetryOnce(url, whenSuccess, whenFailed) {
-    const p = fetch(url);
-    p.then((response) => whenSuccess(response));
-    p.catch(() => {
-        const p2 = fetch(url);
-        p2.then((response) => whenSuccess(response));
-        if (whenFailed) {
-            p2.catch(whenFailed);
-        }
-    })
-}
-
-function bla() {
-    fetchRetryOnce("/", () => alert("success !"));
-}
-
-
-function fetchRetryOnceWithPromise(url) {
-    return new Promise((whenSuccess, whenFailed) => {
-        const p = fetch(url);
-        p.then((response) => whenSuccess(response));
-        p.catch(() => {
-            const p2 = fetch(url);
-            p2.then((response) => whenSuccess(response));
-            if (whenFailed) {
-                p2.catch(whenFailed);
-            }
-        })
-    });
-}
-function blo() {
-    fetchRetryOnceWithPromise("/").then(() => alert("success !"));
-}
-
-
-async function bli() {
-    await fetchRetryOnceWithPromise("/");
-    alert("success !");
-    await wait(1000);
-    // do something
-    await fetch("/");
-}
-
-
-bli();
-
-
-function wait(time) {
-    return new Promise((whatShouldIDoWhenIAmDone, whatShouldIDoWhenIFailed) => {
-        // do something
-        
-        if (true) {
-            whatShouldIDoWhenIAmDone();
-        } else {
-            whatShouldIDoWhenIFailed();
-        }
-    })
-}
-
-function main() {
-    function whenWaitIsDone() { alert("fini!") };
-    function whenWaitIsFailed() { alert("failed!") };
-    const promise = wait(3000);
-    promise.then(whenWaitIsDone);
-    promise.catch(whenWaitIsFailed);
-}
-
-
-main();
