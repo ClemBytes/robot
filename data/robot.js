@@ -95,8 +95,6 @@ function readCookies() {
  */
 function generateGrid(x_coord, y_coord, x_max=5, y_max=5) {
     let grid = "";
-    console.log(x_coord);
-    console.log(y_coord);
     for (let x=0; x<x_max; x++) {
         grid += "<tr>";
         for (y=0; y<y_max; y++) {
@@ -108,7 +106,6 @@ function generateGrid(x_coord, y_coord, x_max=5, y_max=5) {
         }
         grid += "</tr>";
     }
-    console.log(grid);
     document.getElementById("robot-grid").innerHTML = grid;
 }
 
