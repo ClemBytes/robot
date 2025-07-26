@@ -9,17 +9,21 @@
  * @param {KeyboardEvent} event - The keydown event.
  */
 async function onKeyDown(event) {
-    event.preventDefault();
     try {
         if (event.key == "ArrowRight") {
+            event.preventDefault();
             await fetch("/right", { method: "POST" });
         } else if (event.key == "ArrowLeft") {
+            event.preventDefault();
             await fetch("/left", { method: "POST" });
         } else if (event.key == "ArrowUp") {
+            event.preventDefault();
             await fetch("/up", { method: "POST" });
         } else if (event.key == "ArrowDown") {
+            event.preventDefault();
             await fetch("/down", { method: "POST" });
         } else if (event.key == "Backspace") {
+            event.preventDefault();
             await fetch("/reset", { method: "POST" });
         } else {
             console.log(event);
@@ -115,10 +119,15 @@ function generateGrid(x_coord, y_coord, x_max=5, y_max=5) {
     document.getElementById("robot-grid").innerHTML = grid;
 }
 
+function updateCoords(x_coord, y_coord) {
+    document.getElementById("coords").outerHTML = `<p id="coords">Current coordinates: (${x_coord}, ${y_coord})</p>`;
+}
+
 /**
  * @brief Replace grid by newly generated one (with new robot's coordinates).
  */
 function replaceGrid() {
     const [x_coord, y_coord] = readCookies();
     generateGrid(x_coord, y_coord);
+    updateCoords(x_coord, y_coord);
 }
