@@ -108,6 +108,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a6389b664807b5c931e37dfb29b9535be"><td class="memItemLeft" align="right" valign="top">ssize_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="server_8c.html#a6389b664807b5c931e37dfb29b9535be">read_client</a> (int clientfd, char **p_buf, size_t *p_data_len, size_t *p_buf_size)</td></tr>
 <tr class="memdesc:a6389b664807b5c931e37dfb29b9535be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reading client's buffer at given position.  <a href="server_8c.html#a6389b664807b5c931e37dfb29b9535be">More...</a><br /></td></tr>
 <tr class="separator:a6389b664807b5c931e37dfb29b9535be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c727c202469ebd51b620869bdeba04a"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="server_8c.html#a6c727c202469ebd51b620869bdeba04a">generate_content</a> (int x_coord, int y_coord, int x_max, int y_max, struct <a class="el" href="structstring.html">string</a> *content, struct <a class="el" href="structstring.html">string</a> *<a class="el" href="robot_8js.html#a70ea461a521d1ba77a9f27e36a615057">robot_grid</a>, struct <a class="el" href="structstring.html">string</a> *cookie, struct <a class="el" href="structtemplates.html">templates</a> *p_tem)</td></tr>
+<tr class="memdesc:a6c727c202469ebd51b620869bdeba04a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate HTTP response's content for given coordinates.  <a href="server_8c.html#a6c727c202469ebd51b620869bdeba04a">More...</a><br /></td></tr>
+<tr class="separator:a6c727c202469ebd51b620869bdeba04a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a679b3c257edc78213596828b027b05d6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="server_8c.html#a679b3c257edc78213596828b027b05d6">handle_client</a> (int clientfd, struct sockaddr_in client_addr, struct <a class="el" href="structtemplates.html">templates</a> *p_tem)</td></tr>
 <tr class="memdesc:a679b3c257edc78213596828b027b05d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles a given client.  <a href="server_8c.html#a679b3c257edc78213596828b027b05d6">More...</a><br /></td></tr>
 <tr class="separator:a679b3c257edc78213596828b027b05d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -116,6 +119,86 @@ Functions</h2></td></tr>
 <tr class="separator:a840291bc02cba5474a4cb46a9b9566fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="a6c727c202469ebd51b620869bdeba04a" name="a6c727c202469ebd51b620869bdeba04a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c727c202469ebd51b620869bdeba04a">&#9670;&nbsp;</a></span>generate_content()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char * generate_content </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>x_coord</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>y_coord</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>x_max</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>y_max</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structstring.html">string</a> *&#160;</td>
+          <td class="paramname"><em>content</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structstring.html">string</a> *&#160;</td>
+          <td class="paramname"><em>robot_grid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structstring.html">string</a> *&#160;</td>
+          <td class="paramname"><em>cookie</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structtemplates.html">templates</a> *&#160;</td>
+          <td class="paramname"><em>p_tem</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Generate HTTP response's content for given coordinates. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x_coord</td><td>Robot's x coordinate. </td></tr>
+    <tr><td class="paramname">y_coord</td><td>Robot's y coordinate. </td></tr>
+    <tr><td class="paramname">x_max</td><td>Value max for x (so number of lines in the grid - 1). </td></tr>
+    <tr><td class="paramname">y_max</td><td>Value max for y (so number of columns in the grid - 1). </td></tr>
+    <tr><td class="paramname">content</td><td>Pointer to string structure containing response content. </td></tr>
+    <tr><td class="paramname">robot_grid</td><td>Pointer to string structure containing the robot grid. </td></tr>
+    <tr><td class="paramname">cookie</td><td>Pointer to string structure containing cookies. </td></tr>
+    <tr><td class="paramname">p_tem</td><td>p_tem Pointer to the structure containing all template data.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Char* of Content-Type. </dd></dl>
+
+</div>
+</div>
 <a id="a679b3c257edc78213596828b027b05d6" name="a679b3c257edc78213596828b027b05d6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a679b3c257edc78213596828b027b05d6">&#9670;&nbsp;</a></span>handle_client()</h2>
 
