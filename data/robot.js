@@ -9,24 +9,23 @@
  * @param {KeyboardEvent} event - The keydown event.
  */
 function onKeyDown(event) {
+    let promise;
     if (event.key == "ArrowRight") {
-        fetch("/right", { method: "POST" }).then(replaceGrid);
-        event.preventDefault();
+        promise = fetch("/right", { method: "POST" });
     } else if (event.key == "ArrowLeft") {
-        fetch("/left", { method: "POST" }).then(replaceGrid);
-        event.preventDefault();
+        promise = fetch("/left", { method: "POST" });
     } else if (event.key == "ArrowUp") {
-        fetch("/up", { method: "POST" }).then(replaceGrid);
-        event.preventDefault();
+        promise = fetch("/up", { method: "POST" });
     } else if (event.key == "ArrowDown") {
-        fetch("/down", { method: "POST" }).then(replaceGrid);
-        event.preventDefault();
+        promise = fetch("/down", { method: "POST" });
     } else if (event.key == "Backspace") {
-        fetch("/reset", { method: "POST" }).then(replaceGrid);
-        event.preventDefault();
+        promise = fetch("/reset", { method: "POST" });
     } else {
         console.log(event);
+        return;
     }
+    promise.then(replaceGrid);
+    event.preventDefault();
 }
 document.addEventListener("keydown", onKeyDown);
 
@@ -36,26 +35,27 @@ document.addEventListener("keydown", onKeyDown);
  * @param {MouseEvent} event - The click event.
  */
 function onClick(event) {
+    let promise;
     if (event.target.localName == "td") {
         const x = event.target.dataset.x;
         const y = event.target.dataset.y;
-        fetch(`/coords/${x}/${y}`, { method: "GET" }).then(replaceGrid);
+        promise = fetch(`/coords/${x}/${y}`, { method: "GET" });
     } else if (event.target.id == "up") {
-        fetch("/up", { method: "POST" }).then(replaceGrid);
-        event.preventDefault();
+        promise = fetch("/up", { method: "POST" });
     } else if (event.target.id == "down") {
-        fetch("/down", { method: "POST" }).then(replaceGrid);
-        event.preventDefault();
+        promise = fetch("/down", { method: "POST" });
     } else if (event.target.id == "right") {
-        fetch("/right", { method: "POST" }).then(replaceGrid);
-        event.preventDefault();
+        promise = fetch("/right", { method: "POST" });
     } else if (event.target.id == "left") {
-        fetch("/left", { method: "POST" }).then(replaceGrid);
-        event.preventDefault();
+        promise = fetch("/left", { method: "POST" });
     } else if (event.target.id == "reset") {
-        fetch("/reset", { method: "POST" }).then(replaceGrid);
-        event.preventDefault();
+        promise = fetch("/reset", { method: "POST" });
+    } else {
+        console.log(event);
+        return;
     }
+    promise.then(replaceGrid);
+    event.preventDefault();
 }
 const robot_grid = document.getElementById("robot-grid");
 robot_grid.addEventListener("click", onClick);
