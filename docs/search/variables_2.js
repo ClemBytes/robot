@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['favicon_5fdata_0',['favicon_data',['../structtemplates.html#af011da303aa2532fb6d1c6ae64e3e239',1,'templates']]],
-  ['flag_1',['flag',['../namespaceintegration__test.html#adf6340e00d6e9f9f65c6dac452df5f74',1,'integration_test']]]
+  ['down_5fbutton_0',['down_button',['../robot_8js.html#a0d206f2ecbaa044679b04e9de746e007',1,'robot.js']]]
 ];

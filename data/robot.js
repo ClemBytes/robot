@@ -31,8 +31,7 @@ function onKeyDown(event) {
 document.addEventListener("keydown", onKeyDown);
 
 /**
- * Handle click events on the grid.
- * Teleports robot to the corresponding cell coordinates.
+ * Handle click events (on grid or buttons).
  * 
  * @param {MouseEvent} event - The click event.
  */
@@ -41,10 +40,40 @@ function onClick(event) {
         const x = event.target.dataset.x;
         const y = event.target.dataset.y;
         fetch(`/coords/${x}/${y}`, { method: "GET" }).then(replaceGrid);
+    } else if (event.target.id == "up") {
+        fetch("/up", { method: "POST" }).then(replaceGrid);
+        event.preventDefault();
+    } else if (event.target.id == "down") {
+        fetch("/down", { method: "POST" }).then(replaceGrid);
+        event.preventDefault();
+    } else if (event.target.id == "right") {
+        fetch("/right", { method: "POST" }).then(replaceGrid);
+        event.preventDefault();
+    } else if (event.target.id == "left") {
+        fetch("/left", { method: "POST" }).then(replaceGrid);
+        event.preventDefault();
+    } else if (event.target.id == "reset") {
+        fetch("/reset", { method: "POST" }).then(replaceGrid);
+        event.preventDefault();
     }
 }
 const robot_grid = document.getElementById("robot-grid");
 robot_grid.addEventListener("click", onClick);
+
+const up_button = document.getElementById("up");
+up_button.addEventListener("click", onClick);
+
+const down_button = document.getElementById("down");
+down_button.addEventListener("click", onClick);
+
+const right_button = document.getElementById("right");
+right_button.addEventListener("click", onClick);
+
+const left_button = document.getElementById("left");
+left_button.addEventListener("click", onClick);
+
+const reset_button = document.getElementById("reset");
+reset_button.addEventListener("click", onClick);
 
 /**
  * @brief Reads cookies of document.
