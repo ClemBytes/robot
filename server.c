@@ -67,7 +67,7 @@ ssize_t read_client(
  * @param cookie Pointer to string structure containing cookies.
  * @param p_tem p_tem Pointer to the structure containing all template data. 
  * 
- * @return Char* of Content-Type.
+ * @return Content-Type.
  */
 const char* generate_content(int x_coord, int y_coord, int x_max, int y_max,
     struct string* content, struct string* robot_grid, struct string* cookie,
