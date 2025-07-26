@@ -116,3 +116,76 @@ function replaceGrid() {
     const [x_coord, y_coord] = readCookies();
     generateGrid(x_coord, y_coord);
 }
+
+
+
+
+function fetchRetryOnce(url, whenSuccess, whenFailed) {
+    const p = fetch(url);
+    p.then((response) => whenSuccess(response));
+    p.catch(() => {
+        const p2 = fetch(url);
+        p2.then((response) => whenSuccess(response));
+        if (whenFailed) {
+            p2.catch(whenFailed);
+        }
+    })
+}
+
+function bla() {
+    fetchRetryOnce("/", () => alert("success !"));
+}
+
+
+function fetchRetryOnceWithPromise(url) {
+    return new Promise((whenSuccess, whenFailed) => {
+        const p = fetch(url);
+        p.then((response) => whenSuccess(response));
+        p.catch(() => {
+            const p2 = fetch(url);
+            p2.then((response) => whenSuccess(response));
+            if (whenFailed) {
+                p2.catch(whenFailed);
+            }
+        })
+    });
+}
+function blo() {
+    fetchRetryOnceWithPromise("/").then(() => alert("success !"));
+}
+
+
+async function bli() {
+    await fetchRetryOnceWithPromise("/");
+    alert("success !");
+    await wait(1000);
+    // do something
+    await fetch("/");
+}
+
+
+bli();
+
+
+function wait(time) {
+    return new Promise((whatShouldIDoWhenIAmDone, whatShouldIDoWhenIFailed) => {
+        // do something
+        
+        if (true) {
+            whatShouldIDoWhenIAmDone();
+        } else {
+            whatShouldIDoWhenIFailed();
+        }
+    })
+}
+
+function main() {
+    function whenWaitIsDone() { alert("fini!") };
+    function whenWaitIsFailed() { alert("failed!") };
+    const promise = wait(3000);
+    promise.then(whenWaitIsDone);
+    promise.catch(whenWaitIsFailed);
+}
+
+
+main();
