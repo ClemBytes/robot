@@ -69,7 +69,7 @@ ssize_t read_client(
  * 
  * @return Char* of Content-Type.
  */
-char* generate_content(int x_coord, int y_coord, int x_max, int y_max,
+const char* generate_content(int x_coord, int y_coord, int x_max, int y_max,
     struct string* content, struct string* robot_grid, struct string* cookie,
     struct templates* p_tem) {
     int d = string_snprintf(
@@ -230,7 +230,7 @@ void handle_client(
         // fprintf(stderr, "\nClient's request:\n%s\n", buf);
         fprintf(stderr, "\nClient's request:\n%s %s\n", method, path);
 
-        char* content_type;
+        const char* content_type;
         string_clear(content);
         string_clear(cookie);
 
