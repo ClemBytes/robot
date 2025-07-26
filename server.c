@@ -28,8 +28,10 @@
  *         -1: fail
  *          n: read response, number of characters read
  */
-ssize_t read_client(int clientfd, char** p_buf, size_t* p_data_len, size_t* p_buf_size) {
-    ssize_t n = read(clientfd, *p_buf + *p_data_len, *p_buf_size - *p_data_len);
+ssize_t read_client(
+    int clientfd, char** p_buf, size_t* p_data_len, size_t* p_buf_size) {
+    ssize_t n = read(
+        clientfd, *p_buf + *p_data_len, *p_buf_size - *p_data_len);
     if (n == 0) {
         printf("Client %d disconnected\n", clientfd);
         printf("-------------------------------------\n");
@@ -53,6 +55,20 @@ ssize_t read_client(int clientfd, char** p_buf, size_t* p_data_len, size_t* p_bu
     return n;
 }
 
+/**
+ * @brief Generate HTTP response's content for given coordinates.
+ * 
+ * @param x_coord Robot's x coordinate.
+ * @param y_coord Robot's y coordinate.
+ * @param x_max Value max for x (so number of lines in the grid - 1).
+ * @param y_max Value max for y (so number of columns in the grid - 1).
+ * @param content Pointer to string structure containing response content.
+ * @param robot_grid Pointer to string structure containing the robot grid.
+ * @param cookie Pointer to string structure containing cookies.
+ * @param p_tem p_tem Pointer to the structure containing all template data. 
+ * 
+ * @return Char* of Content-Type.
+ */
 char* generate_content(int x_coord, int y_coord, int x_max, int y_max,
     struct string* content, struct string* robot_grid, struct string* cookie,
     struct templates* p_tem) {
@@ -87,10 +103,13 @@ char* generate_content(int x_coord, int y_coord, int x_max, int y_max,
  * @param client_addr Client's address.
  * @param p_tem Pointer to the structure containing all template data.
  */
-void handle_client(int clientfd, struct sockaddr_in client_addr, struct templates* p_tem) {
+void handle_client(
+    int clientfd, struct sockaddr_in client_addr, struct templates* p_tem) {
     // Get client IP address in '0.0.0.0' format for printing
     char client_ip_address[16];
-    const char* ret2 = inet_ntop(AF_INET, &client_addr.sin_addr, client_ip_address, sizeof client_ip_address);
+    const char* ret2 = inet_ntop(
+        AF_INET, &client_addr.sin_addr, client_ip_address,
+        sizeof client_ip_address);
     if (ret2 == NULL) {
         perror("inet_ntop() failed");
         return;
@@ -134,7 +153,8 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
             return;
         }
         if (n < 0) {
-            fprintf(stderr, "%s:%d - read_client() failed\n", __FILE__, __LINE__);
+            fprintf(
+                stderr, "%s:%d - read_client() failed\n", __FILE__, __LINE__);
             free(buf);
             string_deinit(cookie);
             string_deinit(content);
@@ -144,7 +164,9 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
         }
 
         while (1) {
-            int r = poll(&client_pollfd, 1, 0); // timeout = 0 causes poll() to return immediately, even if no file descriptors are ready
+            // timeout = 0 causes poll() to return immediately,
+            // even if no file descriptors are ready
+            int r = poll(&client_pollfd, 1, 0);
             if (r < 0) {
                 perror("poll() failed");
                 string_deinit(cookie);
@@ -164,7 +186,9 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
                 break;
             }
             if (n < 0) {
-                fprintf(stderr, "%s:%d - read_client() failed\n", __FILE__, __LINE__);
+                fprintf(
+                    stderr,
+                    "%s:%d - read_client() failed\n", __FILE__, __LINE__);
                 free(buf);
                 break;
             }
@@ -184,7 +208,9 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
         // Parse client's request
         char method[16], path[1024], version[16];
         int cookie_x, cookie_y, cookie_found;
-        parse_client_request(buf, data_len, method, path, version, &cookie_x, &cookie_y, &cookie_found);
+        parse_client_request(
+            buf, data_len, method, path, version, &cookie_x,
+            &cookie_y, &cookie_found);
 
         // Init x_coord and y_coord
         int x_coord, y_coord;
@@ -211,19 +237,31 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
         int cx, cy;
 
         // Generate response depending on request
-        if (strcmp(method, "GET") == 0 && strcmp(path, "/data/template.css") == 0) {
+        if (
+            strcmp(method, "GET") == 0 &&
+            strcmp(path, "/data/template.css") == 0) {
             // Request for CSS file
             content_type = "text/css";
-            string_append_with_size(content, p_tem->css_template, p_tem->css_template_size);
-        } else if (strcmp(method, "GET") == 0 && strcmp(path, "/data/robot.png") == 0) {
+            string_append_with_size(
+                content, p_tem->css_template, p_tem->css_template_size);
+        } else if (
+            strcmp(method, "GET") == 0 &&
+            strcmp(path, "/data/robot.png") == 0) {
             // Request for robot PNG file
             content_type = "image/png";
-            string_append_with_size(content, p_tem->robot_png, p_tem->robot_png_size);
-        } else if (strcmp(method, "GET") == 0 && strcmp(path, "/data/robot.js") == 0) {
+            string_append_with_size(
+                content, p_tem->robot_png, p_tem->robot_png_size);
+        } else if (
+            strcmp(method, "GET") == 0 &&
+            strcmp(path, "/data/robot.js") == 0) {
             // Request for robot PNG file
             content_type = "application/javascript";
-            string_append_with_size(content, p_tem->js_script, p_tem->js_script_size);
-        } else if (strcmp(method, "GET") == 0 && strcmp(path, "/.well-known/appspecific/com.chrome.devtools.json") == 0) {
+            string_append_with_size(
+                content, p_tem->js_script, p_tem->js_script_size);
+        } else if (
+            strcmp(method, "GET") == 0 &&
+            strcmp(path,
+                "/.well-known/appspecific/com.chrome.devtools.json") == 0) {
             // Google Chrome is to curious…
             content_type = "text/html";
             // Do nothing
@@ -245,7 +283,8 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
             content_type = generate_content(
                 x_coord, y_coord, x_max, y_max, content, robot_grid, cookie,
                 p_tem);
-        } else if (strcmp(method, "POST") == 0 && strcmp(path, "/right") == 0) {
+        } else if (
+            strcmp(method, "POST") == 0 && strcmp(path, "/right") == 0) {
             if (y_coord == y_max) {
                 y_coord = 0;
             } else {
@@ -254,7 +293,8 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
             content_type = generate_content(
                 x_coord, y_coord, x_max, y_max, content, robot_grid, cookie,
                 p_tem);
-        } else if (strcmp(method, "POST") == 0 && strcmp(path, "/reset") == 0) {
+        } else if (
+            strcmp(method, "POST") == 0 && strcmp(path, "/reset") == 0) {
             x_coord = 0;
             y_coord = 0;
             content_type = generate_content(
@@ -276,7 +316,9 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
             content_type = generate_content(
                 x_coord, y_coord, x_max, y_max, content, robot_grid, cookie,
                 p_tem);
-        } else if (strcmp(method, "GET") == 0 && sscanf(path, "/coords/%d/%d", &cx, &cy) == 2) {
+        } else if (
+            strcmp(method, "GET") == 0 &&
+            sscanf(path, "/coords/%d/%d", &cx, &cy) == 2) {
             x_coord = cx;
             y_coord = cy;
             content_type = generate_content(
@@ -288,7 +330,10 @@ void handle_client(int clientfd, struct sockaddr_in client_addr, struct template
         }
 
         // Create header for response
-        int h = string_snprintf(header, "HTTP/1.0 200 OK\r\nContent-Type: %s\r\nContent-Length: %zu\r\n%s\r\n", content_type, string_len(content), cookie->start);
+        int h = string_snprintf(
+            header, 
+            "HTTP/1.0 200 OK\r\nContent-Type: %s\r\nContent-Length: %zu\r\n%s\r\n",
+            content_type, string_len(content), cookie->start);
         if (h < 0) {
             break;
         }
@@ -346,7 +391,8 @@ int main(void) {
 
     // I always want this to avoid error when I use this twice in a row
     int optval = 1;
-    int ret = setsockopt(sockfd, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof optval);
+    int ret = setsockopt(
+        sockfd, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof optval);
     if (ret < 0) {
         perror("setsockopt() failed");
         return 1;
@@ -390,7 +436,8 @@ int main(void) {
         // Get client connexion address
         struct sockaddr_in client_addr;
         socklen_t client_addr_len = sizeof client_addr;
-        int clientfd = accept(sockfd, (struct sockaddr*) &client_addr, &client_addr_len);
+        int clientfd = accept(
+            sockfd, (struct sockaddr*) &client_addr, &client_addr_len);
         if (clientfd < 0) {
             perror("accept() failed");
             return 1;
