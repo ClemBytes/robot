@@ -22,7 +22,7 @@ function onKeyDown(event) {
         fetch("/down", { method: "POST" }).then(replaceGrid);
         event.preventDefault();
     } else if (event.key == "Backspace") {
-        fetch("/resetn", { method: "POST" }).then(replaceGrid);
+        fetch("/reset", { method: "POST" }).then(replaceGrid);
         event.preventDefault();
     } else {
         console.log(event);
