@@ -432,8 +432,39 @@ int main() {
     // smart pointer
     std::unique_ptr<int> smart_pointer = std::make_unique<int>();
 
+    /*
+    Cat* cat = (Cat*) malloc(sizeof(Cat));
+    cat_init(cat);
+    cat_deinit(cat);
+    free(cat);
+    */
 
+    /*
+    Cat* cat = new Cat(); // allocate memory + call constructor
+    delete cat; // call destructor + deallocate memory
 
+    Cat* cat = new Cat[10]; // allocate memory + call constructors
+    delete[] cat; // call destructors + deallocate memory
+    */
+
+    std::vector<int> w;
+    w.push_back(3);
+    // C style
+    for (size_t i = 0; i < w.size(); i++) {
+        printf("%d\n", w[i]);
+    }
+    // C++
+    for (std::vector<int>::iterator it = w.begin(); it != w.end(); ++it) {
+        printf("%d\n", *it);
+    }
+    // C++ auto
+    for (auto it = w.begin(); it != w.end(); ++it) {
+        printf("%d\n", *it);
+    }
+    // C++ range-for loop
+    for (auto val: w) {
+        printf("%d\n", val);
+    }
 }
 
 namespace bla {
