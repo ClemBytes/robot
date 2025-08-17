@@ -16,6 +16,8 @@ And more specifically the following articles: [clembytes.fr/category/robot](http
 
 Move a little robot. But it's an excuse for working on basic programming skills. So to add more fun, I am doing it in C, using only the standard library.
 
+**Note:** I am currently [rewriting it in Rust and going a bit further](https://github.com/ClemBytes/rustbot).
+
 ## 📁 Project structure
 
 - `server.c` - Server program file
@@ -60,4 +62,4 @@ Here is what I plan to do in the future on this project:
 
 ## 📈 Project status
 
-Ongoing work!
+Actually [rewriting it in Rust and going further](https://github.com/ClemBytes/rustbot)!
